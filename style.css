@@ -1,9 +1,12 @@
-/* =====================================================
+/* =========================================================
    CRAZY CHICKEN
-   STYLE V2
-===================================================== */
+   STYLE.CSS
+   ========================================================= */
 
-/* ================= RESET ================= */
+
+/* =========================================================
+   RESET
+   ========================================================= */
 
 * {
     margin: 0;
@@ -17,14 +20,11 @@ html {
 
 body {
     background: #080808;
-    color: #f5f5f5;
-    font-family: "Inter", sans-serif;
-    overflow-x: hidden;
-}
+    color: #f4f4f4;
 
-a {
-    color: inherit;
-    text-decoration: none;
+    font-family: "Inter", sans-serif;
+
+    overflow-x: hidden;
 }
 
 img {
@@ -32,126 +32,250 @@ img {
     width: 100%;
 }
 
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
 button {
     font-family: inherit;
 }
 
+::selection {
+    background: #e50914;
+    color: #fff;
+}
+
+
+/* =========================================================
+   VARIÁVEIS
+   ========================================================= */
+
 :root {
+
+    --red: #e50914;
+    --red-dark: #a90009;
     --black: #080808;
     --black-2: #0e0e0e;
     --black-3: #151515;
 
-    --red: #e50914;
-    --red-light: #ff1824;
-    --red-dark: #8e050b;
-
-    --gold: #d2a63a;
-
-    --white: #f5f5f5;
-    --gray: #929292;
-    --gray-dark: #555;
+    --white: #f4f4f4;
+    --gray: #858585;
+    --gray-dark: #4e4e4e;
 
     --border: rgba(255, 255, 255, 0.09);
 
-    --container: 1180px;
+    --container: 1200px;
+
 }
+
+
+/* =========================================================
+   CONTAINER
+   ========================================================= */
 
 .container {
-    width: min(var(--container), 90%);
-    margin: auto;
+    width: min(
+        calc(100% - 50px),
+        var(--container)
+    );
+
+    margin-inline: auto;
 }
 
-.section {
-    padding: 120px 0;
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #080808;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #292929;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--red);
 }
 
 
-/* ================= HEADER ================= */
+/* =========================================================
+   HEADER
+   ========================================================= */
 
 .header {
-    position: absolute;
-    z-index: 100;
+    position: fixed;
 
-    width: 100%;
     top: 0;
     left: 0;
 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    width: 100%;
+
+    z-index: 1000;
+
+    background:
+        rgba(8, 8, 8, 0.88);
+
+    backdrop-filter: blur(14px);
+
+    border-bottom:
+        1px solid var(--border);
 }
 
 .nav {
-    height: 86px;
+    height: 82px;
 
     display: flex;
+
     align-items: center;
     justify-content: space-between;
 
     gap: 30px;
 }
 
+
+/* =========================================================
+   LOGO
+   ========================================================= */
+
 .logo {
-    font-family: "Bebas Neue", sans-serif;
-    font-size: 31px;
-    letter-spacing: 3px;
+    display: inline-block;
+
+    font-family:
+        "Bebas Neue",
+        sans-serif;
+
+    font-size: 30px;
+
+    letter-spacing: 1px;
+
+    white-space: nowrap;
 }
 
 .logo span {
     color: var(--red);
 }
 
+
+/* =========================================================
+   MENU
+   ========================================================= */
+
 .menu {
     display: flex;
+
     align-items: center;
-    gap: 28px;
+
+    gap: 34px;
 }
 
 .menu a {
-    color: #bcbcbc;
+    position: relative;
+
+    color: #aaa;
 
     font-size: 11px;
-    font-weight: 800;
 
-    letter-spacing: 1px;
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+
     text-transform: uppercase;
+
+    transition: 0.3s;
+}
+
+.menu a::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    bottom: -8px;
+
+    width: 0;
+    height: 2px;
+
+    background: var(--red);
 
     transition: 0.3s;
 }
 
 .menu a:hover {
-    color: var(--red);
+    color: #fff;
 }
 
+.menu a:hover::after {
+    width: 100%;
+}
+
+
+/* =========================================================
+   WHATSAPP HEADER
+   ========================================================= */
+
 .header-whatsapp {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 42px;
+
+    padding: 0 20px;
+
     background: var(--red);
 
-    padding: 13px 20px;
+    color: #fff;
 
     font-size: 10px;
-    font-weight: 900;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
 
     text-transform: uppercase;
-    letter-spacing: 1px;
 
     transition: 0.3s;
 }
 
 .header-whatsapp:hover {
-    background: var(--red-light);
+    background: #fff;
+
+    color: #080808;
+
     transform: translateY(-2px);
 }
+
+
+/* =========================================================
+   MENU MOBILE
+   ========================================================= */
 
 .menu-mobile {
     display: none;
 
     border: 0;
-    background: none;
-    color: white;
+
+    background: transparent;
+
+    color: #fff;
 
     font-size: 25px;
+
+    cursor: pointer;
 }
 
 
-/* ================= HERO ================= */
+/* =========================================================
+   HERO
+   ========================================================= */
 
 .hero {
     position: relative;
@@ -159,6 +283,7 @@ button {
     min-height: 100vh;
 
     display: flex;
+
     align-items: center;
 
     overflow: hidden;
@@ -166,121 +291,192 @@ button {
     background: #050505;
 }
 
+
+/* =========================================================
+   HERO BACKGROUND
+   ========================================================= */
+
 .hero-bg {
     position: absolute;
+
     inset: 0;
 
     background:
         linear-gradient(
             90deg,
-            rgba(0, 0, 0, 0.98) 0%,
-            rgba(0, 0, 0, 0.80) 45%,
-            rgba(0, 0, 0, 0.38) 100%
+            rgba(0, 0, 0, 0.96) 0%,
+            rgba(0, 0, 0, 0.76) 45%,
+            rgba(0, 0, 0, 0.2) 100%
         ),
-        url("img/hero.jpg") center/cover;
+        url("img/hero.jpg");
+
+    background-position: center;
+
+    background-size: cover;
+
+    z-index: 0;
+
+    animation: heroZoom 12s ease-in-out infinite alternate;
 }
 
-.hero-bg::after {
-    content: "";
+@keyframes heroZoom {
 
-    position: absolute;
-    inset: 0;
+    from {
+        transform: scale(1);
+    }
 
-    background:
-        radial-gradient(
-            circle at 75% 50%,
-            rgba(229, 9, 20, 0.22),
-            transparent 30%
-        );
+    to {
+        transform: scale(1.06);
+    }
+
 }
+
+
+/* =========================================================
+   HERO NOISE
+   ========================================================= */
 
 .hero-noise {
     position: absolute;
+
     inset: 0;
 
-    opacity: 0.07;
+    pointer-events: none;
+
+    opacity: 0.08;
 
     background-image:
-        url("https://grainy-gradients.vercel.app/noise.svg");
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+
+    z-index: 1;
 }
+
+
+/* =========================================================
+   HERO CONTENT
+   ========================================================= */
 
 .hero-content {
     position: relative;
-    z-index: 3;
 
-    padding-top: 90px;
+    z-index: 2;
+
+    padding-top: 82px;
 }
 
 .hero-copy {
-    max-width: 760px;
+    max-width: 700px;
 }
+
+
+/* =========================================================
+   EYEBROW
+   ========================================================= */
 
 .eyebrow {
     display: flex;
+
     align-items: center;
+
     gap: 12px;
 
-    color: var(--red);
+    margin-bottom: 24px;
 
-    font-size: 10px;
-    font-weight: 900;
+    color: #aaa;
+
+    font-size: 9px;
+
+    font-weight: 800;
 
     letter-spacing: 4px;
 }
 
 .eyebrow span {
+    display: block;
+
     width: 25px;
-    height: 1px;
+    height: 2px;
 
     background: var(--red);
 }
 
+
+/* =========================================================
+   HERO TITLE
+   ========================================================= */
+
 .hero h1 {
-    margin-top: 22px;
+    margin-bottom: 25px;
 
-    font-family: "Bebas Neue", sans-serif;
+    font-family:
+        "Bebas Neue",
+        sans-serif;
 
-    font-size: clamp(80px, 11vw, 145px);
+    font-size:
+        clamp(75px, 11vw, 150px);
 
-    line-height: 0.82;
+    line-height: 0.8;
 
-    letter-spacing: 3px;
+    letter-spacing: 1px;
 }
 
 .hero h1 em {
     color: var(--red);
+
     font-style: normal;
 }
 
+
+/* =========================================================
+   HERO DESCRIPTION
+   ========================================================= */
+
 .hero-copy > p {
-    max-width: 520px;
+    max-width: 490px;
 
-    margin: 30px 0;
+    color: #a7a7a7;
 
-    color: #aaa;
+    font-size: 14px;
 
-    font-size: 15px;
     line-height: 1.8;
 }
 
+
+/* =========================================================
+   HERO BUTTONS
+   ========================================================= */
+
 .hero-actions {
     display: flex;
+
+    align-items: center;
+
     gap: 12px;
+
+    margin-top: 32px;
 }
 
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
 .btn {
-    min-height: 54px;
-
-    padding: 0 27px;
-
     display: inline-flex;
+
     align-items: center;
     justify-content: center;
 
+    min-height: 50px;
+
+    padding: 0 26px;
+
     font-size: 10px;
+
     font-weight: 900;
 
     letter-spacing: 1.5px;
+
     text-transform: uppercase;
 
     transition: 0.3s;
@@ -288,107 +484,154 @@ button {
 
 .btn-red {
     background: var(--red);
-    color: white;
+
+    color: #fff;
 }
 
 .btn-red:hover {
-    background: var(--red-light);
-    transform: translateY(-3px);
+    background: #fff;
 
-    box-shadow:
-        0 15px 35px rgba(229, 9, 20, 0.2);
+    color: #080808;
+
+    transform: translateY(-3px);
 }
 
 .btn-outline {
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255,255,255,0.25);
+
+    color: #fff;
 }
 
 .btn-outline:hover {
-    border-color: var(--red);
-    color: var(--red);
+    border-color: #fff;
+
+    background: #fff;
+
+    color: #080808;
+
+    transform: translateY(-3px);
 }
 
-.hero-stats {
-    margin-top: 70px;
 
+/* =========================================================
+   HERO STATS
+   ========================================================= */
+
+.hero-stats {
     display: flex;
-    gap: 55px;
+
+    align-items: center;
+
+    gap: 45px;
+
+    margin-top: 70px;
 }
 
 .hero-stats div {
     display: flex;
+
     flex-direction: column;
+
     gap: 5px;
 }
 
 .hero-stats strong {
-    font-family: "Bebas Neue", sans-serif;
+    color: #fff;
 
-    font-size: 28px;
+    font-family:
+        "Bebas Neue",
+        sans-serif;
 
-    color: white;
+    font-size: 30px;
 }
 
 .hero-stats span {
     color: #666;
 
     font-size: 8px;
-    font-weight: 900;
+
+    font-weight: 800;
 
     letter-spacing: 2px;
 }
 
+
+/* =========================================================
+   HERO BOTTOM
+   ========================================================= */
+
 .hero-bottom {
     position: absolute;
 
-    z-index: 5;
-
+    right: 45px;
     bottom: 35px;
-    left: 5%;
+
+    z-index: 3;
 
     display: flex;
+
     align-items: center;
+
     gap: 15px;
 
-    color: #666;
+    color: #777;
 
     font-size: 8px;
+
+    font-weight: 800;
+
     letter-spacing: 3px;
 }
 
 .hero-bottom div {
-    width: 60px;
+    width: 50px;
     height: 1px;
 
-    background: #444;
+    background: #555;
 }
 
 
-/* ================= TITULOS ================= */
+/* =========================================================
+   SECTIONS
+   ========================================================= */
+
+.section {
+    padding: 110px 0;
+}
+
+
+/* =========================================================
+   SECTION HEADING
+   ========================================================= */
 
 .section-heading {
-    margin-bottom: 55px;
-
     display: flex;
-    align-items: end;
+
+    align-items: flex-end;
     justify-content: space-between;
 
-    gap: 30px;
+    gap: 40px;
+
+    margin-bottom: 55px;
 }
 
 .section-heading > p {
-    max-width: 360px;
+    max-width: 380px;
 
     color: #777;
 
-    font-size: 13px;
+    font-size: 12px;
+
     line-height: 1.8;
 }
 
 .section-tag {
+    display: inline-block;
+
     color: var(--red);
 
     font-size: 9px;
+
     font-weight: 900;
 
     letter-spacing: 3px;
@@ -396,55 +639,55 @@ button {
 
 .section-heading h2,
 .about-copy h2,
-.instagram-copy h2,
-.contact h2 {
-    margin-top: 12px;
+.contact-box h2 {
+    margin-top: 10px;
 
-    font-family: "Bebas Neue", sans-serif;
+    font-family:
+        "Bebas Neue",
+        sans-serif;
 
-    font-size: clamp(55px, 7vw, 85px);
+    font-size:
+        clamp(50px, 6vw, 80px);
 
-    line-height: 0.88;
+    line-height: 0.85;
 }
 
 .section-heading h2 strong,
 .about-copy h2 strong,
-.instagram-copy h2 strong,
-.contact h2 strong {
-    color: var(--red);
-}
-
-.text-link {
-    color: #aaa;
-
-    font-size: 9px;
-    font-weight: 900;
-
-    letter-spacing: 1px;
-
-    transition: 0.3s;
-}
-
-.text-link:hover {
+.contact-box h2 strong {
     color: var(--red);
 }
 
 
-/* ================= CATEGORIAS ================= */
+/* =========================================================
+   CATEGORIAS
+   ========================================================= */
 
 .categories {
     background: #0b0b0b;
 }
 
+
+/* =========================================================
+   CATEGORY GRID
+   ========================================================= */
+
 .category-grid {
     display: grid;
 
-    grid-template-columns: 1.4fr 1fr;
+    grid-template-columns:
+        1.5fr 1fr;
 
-    grid-template-rows: 280px 280px;
+    grid-template-rows:
+        280px 280px;
 
-    gap: 15px;
+    gap: 12px;
 }
+
+
+/* =========================================================
+   CATEGORY CARD
+   ========================================================= */
 
 .category-card {
     position: relative;
@@ -452,9 +695,11 @@ button {
     overflow: hidden;
 
     background: #151515;
+
+    min-height: 280px;
 }
 
-.category-large {
+.category-card.category-large {
     grid-row: span 2;
 }
 
@@ -464,66 +709,87 @@ button {
 
     object-fit: cover;
 
-    transition: 0.7s;
+    transition:
+        transform 0.7s ease;
 }
 
 .category-card:hover img {
-    transform: scale(1.07);
+    transform: scale(1.08);
 }
+
+
+/* =========================================================
+   CATEGORY OVERLAY
+   ========================================================= */
 
 .category-overlay {
     position: absolute;
+
     inset: 0;
 
     background:
         linear-gradient(
             0deg,
-            rgba(0, 0, 0, 0.9),
-            transparent 65%
+            rgba(0,0,0,0.92),
+            rgba(0,0,0,0.05)
         );
 }
+
+
+/* =========================================================
+   CATEGORY CONTENT
+   ========================================================= */
 
 .category-content {
     position: absolute;
 
     left: 30px;
+    right: 30px;
     bottom: 28px;
-
-    z-index: 2;
 }
 
 .category-content span {
     color: var(--red);
 
     font-size: 8px;
+
     font-weight: 900;
 
     letter-spacing: 2px;
 }
 
 .category-content h3 {
-    margin: 5px 0;
+    margin: 6px 0 8px;
 
-    font-family: "Bebas Neue", sans-serif;
+    font-family:
+        "Bebas Neue",
+        sans-serif;
 
-    font-size: 45px;
+    font-size: 48px;
+
+    line-height: 0.9;
 }
 
 .category-content p {
+    margin-bottom: 14px;
+
     color: #aaa;
 
     font-size: 11px;
-
-    margin-bottom: 15px;
 }
 
 .category-content b {
-    font-size: 9px;
-    letter-spacing: 1px;
+    color: #fff;
+
+    font-size: 8px;
+
+    letter-spacing: 2px;
 }
 
 
-/* ================= FEATURED ================= */
+/* =========================================================
+   DESTAQUES
+   ========================================================= */
 
 .featured {
     background: #080808;
@@ -532,242 +798,340 @@ button {
 .featured-grid {
     display: grid;
 
-    grid-template-columns: 1.5fr 1fr 1fr;
+    grid-template-columns:
+        1.4fr 1fr 1fr;
 
-    gap: 15px;
+    gap: 12px;
 }
 
 .featured-card {
+    overflow: hidden;
+
     background: #111;
 
     border: 1px solid var(--border);
-
-    transition: 0.35s;
-}
-
-.featured-card:hover {
-    transform: translateY(-7px);
-
-    border-color: rgba(229, 9, 20, 0.4);
 }
 
 .featured-image {
-    height: 330px;
-
     position: relative;
+
+    height: 330px;
 
     overflow: hidden;
 }
 
-.featured-main .featured-image {
-    height: 430px;
-}
-
 .featured-image img {
+    width: 100%;
     height: 100%;
+
     object-fit: cover;
 
-    transition: 0.6s;
+    transition:
+        transform 0.6s ease;
 }
 
 .featured-card:hover img {
     transform: scale(1.06);
 }
 
+
+/* =========================================================
+   BADGE
+   ========================================================= */
+
 .badge {
     position: absolute;
 
-    top: 15px;
-    left: 15px;
+    top: 18px;
+    left: 18px;
 
-    padding: 7px 10px;
+    padding: 8px 12px;
 
     background: var(--red);
 
+    color: #fff;
+
     font-size: 8px;
+
     font-weight: 900;
-    letter-spacing: 1px;
+
+    letter-spacing: 1.5px;
 }
 
+
+/* =========================================================
+   FEATURED INFO
+   ========================================================= */
+
 .featured-info {
-    padding: 25px;
+    padding: 27px;
 }
 
 .product-type {
-    color: var(--gold);
+    color: var(--red);
 
     font-size: 8px;
+
     font-weight: 900;
 
     letter-spacing: 2px;
 }
 
 .featured-info h3 {
-    margin: 8px 0;
+    margin: 7px 0 12px;
 
-    font-size: 21px;
+    font-family:
+        "Bebas Neue",
+        sans-serif;
+
+    font-size: 32px;
 }
 
 .featured-info p {
+    margin-bottom: 20px;
+
     color: #777;
 
     font-size: 11px;
-    line-height: 1.7;
 
-    min-height: 45px;
+    line-height: 1.7;
 }
 
 .product-cta {
     display: inline-block;
 
-    margin-top: 18px;
+    color: #fff;
 
-    color: var(--red);
+    font-size: 8px;
 
-    font-size: 9px;
     font-weight: 900;
 
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
 
     transition: 0.3s;
 }
 
 .product-cta:hover {
-    color: white;
+    color: var(--red);
 }
 
 
-/* ================= BRAND ================= */
+/* =========================================================
+   TEXT LINK
+   ========================================================= */
+
+.text-link {
+    color: #fff;
+
+    font-size: 9px;
+
+    font-weight: 900;
+
+    letter-spacing: 1.5px;
+
+    transition: 0.3s;
+}
+
+.text-link:hover {
+    color: var(--red);
+}
+
+
+/* =========================================================
+   BRAND SECTION
+   ========================================================= */
 
 .brand-section {
     position: relative;
 
-    min-height: 500px;
+    min-height: 450px;
 
     display: flex;
+
     align-items: center;
 
     overflow: hidden;
+
+    background: #111;
 }
 
 .brand-bg {
     position: absolute;
+
     inset: 0;
 
     background:
         linear-gradient(
             90deg,
-            rgba(229, 9, 20, 0.95),
-            rgba(229, 9, 20, 0.75)
+            rgba(0,0,0,0.94),
+            rgba(0,0,0,0.4)
         ),
-        url("img/banner.jpg") center/cover;
+        url("img/banner.jpg");
 
-    filter: saturate(1.1);
+    background-size: cover;
+
+    background-position: center;
 }
 
 .brand-content {
     position: relative;
+
     z-index: 2;
 }
 
 .brand-content > span {
-    color: #180000;
+    color: var(--red);
 
-    font-size: 10px;
+    font-size: 9px;
+
     font-weight: 900;
 
     letter-spacing: 4px;
 }
 
 .brand-content h2 {
-    max-width: 900px;
+    max-width: 850px;
 
-    margin: 15px 0;
+    margin: 18px 0;
 
-    font-family: "Bebas Neue", sans-serif;
+    font-family:
+        "Bebas Neue",
+        sans-serif;
 
-    font-size: clamp(55px, 8vw, 105px);
+    font-size:
+        clamp(50px, 7vw, 90px);
 
-    line-height: 0.85;
+    line-height: 0.86;
 }
 
 .brand-content h2 strong {
-    color: #170000;
+    color: var(--red);
 }
 
 .brand-content p {
-    font-size: 13px;
+    color: #888;
+
+    font-size: 12px;
 }
 
 
-/* ================= CATALOGO ================= */
+/* =========================================================
+   CATÁLOGO
+   ========================================================= */
 
 .catalog {
     background: #0b0b0b;
 }
 
-.filters {
-    margin-bottom: 40px;
 
+/* =========================================================
+   FILTERS
+   ========================================================= */
+
+.filters {
     display: flex;
+
     flex-wrap: wrap;
 
     gap: 8px;
+
+    margin-bottom: 45px;
+
+    border-bottom:
+        1px solid var(--border);
+
+    padding-bottom: 18px;
 }
 
 .filter {
-    padding: 12px 18px;
+    min-height: 42px;
 
-    background: #141414;
+    padding: 0 18px;
 
     border: 1px solid var(--border);
 
+    background: transparent;
+
     color: #777;
 
+    cursor: pointer;
+
     font-size: 9px;
+
     font-weight: 900;
 
-    letter-spacing: 1px;
-
-    cursor: pointer;
+    letter-spacing: 1.5px;
 
     transition: 0.3s;
 }
 
-.filter:hover,
+.filter:hover {
+    color: #fff;
+
+    border-color: #555;
+}
+
 .filter.active {
     background: var(--red);
+
     border-color: var(--red);
 
-    color: white;
+    color: #fff;
 }
+
+
+/* =========================================================
+   CATALOG GRID
+   ========================================================= */
 
 .catalog-grid {
     display: grid;
 
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns:
+        repeat(3, 1fr);
 
-    gap: 15px;
+    gap: 18px;
 }
 
+
+/* =========================================================
+   PRODUCT
+   ========================================================= */
+
 .product {
-    background: #111;
+    background: #101010;
 
     border: 1px solid var(--border);
 
-    transition: 0.35s;
+    overflow: hidden;
+
+    animation:
+        productIn 0.35s ease;
 }
 
-.product:hover {
-    transform: translateY(-6px);
+@keyframes productIn {
 
-    border-color: rgba(229, 9, 20, 0.35);
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
 }
+
+
+/* =========================================================
+   PRODUCT PHOTO
+   ========================================================= */
 
 .product-photo {
-    height: 350px;
-
     position: relative;
+
+    height: 330px;
 
     overflow: hidden;
 
@@ -780,12 +1144,18 @@ button {
 
     object-fit: cover;
 
-    transition: 0.6s;
+    transition:
+        transform 0.6s ease;
 }
 
 .product:hover .product-photo img {
     transform: scale(1.06);
 }
+
+
+/* =========================================================
+   PRODUCT NUMBER
+   ========================================================= */
 
 .product-number {
     position: absolute;
@@ -793,65 +1163,102 @@ button {
     top: 15px;
     left: 15px;
 
-    color: white;
+    color: rgba(255,255,255,0.5);
 
-    font-family: "Bebas Neue", sans-serif;
+    font-family:
+        "Bebas Neue",
+        sans-serif;
 
-    font-size: 20px;
+    font-size: 24px;
 }
+
+
+/* =========================================================
+   PRODUCT BADGE
+   ========================================================= */
 
 .product-badge {
     position: absolute;
 
-    top: 15px;
     right: 15px;
+    top: 15px;
 
-    padding: 6px 9px;
+    padding: 7px 10px;
 
     background: var(--red);
 
+    color: #fff;
+
     font-size: 7px;
-    font-weight: 900;
-}
 
-.product-details {
-    padding: 23px;
-}
-
-.product-details > span {
-    color: var(--gold);
-
-    font-size: 8px;
-    font-weight: 900;
-
-    letter-spacing: 2px;
-}
-
-.product-details h3 {
-    margin: 8px 0;
-
-    font-size: 20px;
-}
-
-.product-details p {
-    color: #777;
-
-    font-size: 11px;
-
-    margin-bottom: 20px;
-}
-
-.product-details a {
-    color: var(--red);
-
-    font-size: 9px;
     font-weight: 900;
 
     letter-spacing: 1px;
 }
 
 
-/* ================= SOBRE ================= */
+/* =========================================================
+   PRODUCT DETAILS
+   ========================================================= */
+
+.product-details {
+    padding: 25px;
+}
+
+.product-details > span {
+    color: var(--red);
+
+    font-size: 8px;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+}
+
+.product-details h3 {
+    margin: 8px 0 8px;
+
+    font-family:
+        "Bebas Neue",
+        sans-serif;
+
+    font-size: 30px;
+}
+
+.product-details p {
+    min-height: 36px;
+
+    color: #777;
+
+    font-size: 10px;
+
+    line-height: 1.6;
+}
+
+.product-details a {
+    display: inline-block;
+
+    margin-top: 20px;
+
+    color: #fff;
+
+    font-size: 8px;
+
+    font-weight: 900;
+
+    letter-spacing: 1.5px;
+
+    transition: 0.3s;
+}
+
+.product-details a:hover {
+    color: var(--red);
+}
+
+
+/* =========================================================
+   SOBRE
+   ========================================================= */
 
 .about {
     background: #080808;
@@ -860,78 +1267,101 @@ button {
 .about-grid {
     display: grid;
 
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns:
+        1fr 1fr;
 
     gap: 100px;
 
     align-items: center;
 }
 
-.about-visual {
-    min-height: 500px;
 
+/* =========================================================
+   ABOUT VISUAL
+   ========================================================= */
+
+.about-visual {
     position: relative;
 
+    min-height: 500px;
+
     display: flex;
+
     align-items: center;
     justify-content: center;
 
     background:
         radial-gradient(
             circle,
-            rgba(229, 9, 20, 0.15),
-            transparent 55%
+            rgba(229,9,20,0.13),
+            transparent 65%
         );
-
-    border: 1px solid var(--border);
 }
 
 .about-circle {
-    width: 260px;
-    height: 260px;
+    width: 280px;
+    height: 280px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
-    border: 1px solid rgba(229, 9, 20, 0.4);
+    border:
+        1px solid rgba(229,9,20,0.4);
 
     border-radius: 50%;
 
-    font-size: 110px;
+    background:
+        radial-gradient(
+            circle,
+            #171717,
+            #090909
+        );
 
-    filter: grayscale(1);
+    font-size: 100px;
+
+    box-shadow:
+        0 0 80px
+        rgba(229,9,20,0.08);
 }
 
 .about-vertical {
     position: absolute;
 
-    right: 15px;
-    top: 50%;
+    right: 20px;
 
-    transform: rotate(90deg);
+    writing-mode: vertical-rl;
 
-    color: #444;
+    color: #555;
 
     font-size: 8px;
+
     font-weight: 900;
 
     letter-spacing: 4px;
 }
 
+
+/* =========================================================
+   ABOUT COPY
+   ========================================================= */
+
 .about-copy > p {
-    max-width: 540px;
+    max-width: 520px;
 
-    color: #888;
+    margin-top: 22px;
 
-    font-size: 14px;
+    color: #777;
+
+    font-size: 12px;
+
     line-height: 1.9;
-
-    margin-top: 20px;
 }
 
 .about-line {
     width: 100%;
+
     height: 1px;
 
     margin: 35px 0;
@@ -939,36 +1369,49 @@ button {
     background: var(--border);
 }
 
+
+/* =========================================================
+   ABOUT POINTS
+   ========================================================= */
+
 .about-points {
     display: flex;
-    gap: 50px;
+
+    gap: 45px;
 }
 
 .about-points div {
     display: flex;
+
     flex-direction: column;
-    gap: 5px;
+
+    gap: 6px;
 }
 
 .about-points strong {
     color: var(--red);
 
-    font-family: "Bebas Neue", sans-serif;
+    font-family:
+        "Bebas Neue",
+        sans-serif;
 
-    font-size: 28px;
+    font-size: 30px;
 }
 
 .about-points span {
-    color: #666;
+    color: #777;
 
     font-size: 8px;
+
     font-weight: 900;
 
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
 }
 
 
-/* ================= INSTAGRAM ================= */
+/* =========================================================
+   INSTAGRAM
+   ========================================================= */
 
 .instagram {
     background: #0e0e0e;
@@ -977,135 +1420,285 @@ button {
 .instagram-grid {
     display: grid;
 
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns:
+        1fr 1fr;
 
-    min-height: 550px;
+    min-height: 560px;
 }
 
+
+/* =========================================================
+   INSTAGRAM COPY
+   ========================================================= */
+
 .instagram-copy {
-    padding: 80px 8%;
+    padding: 80px 10%;
 
     display: flex;
+
     flex-direction: column;
+
     align-items: flex-start;
+
     justify-content: center;
 }
 
+.instagram-copy h2 {
+    margin-top: 12px;
+
+    font-family:
+        "Bebas Neue",
+        sans-serif;
+
+    font-size:
+        clamp(55px, 7vw, 85px);
+
+    line-height: 0.88;
+}
+
+.instagram-copy h2 strong {
+    color: var(--red);
+}
+
 .instagram-copy p {
-    max-width: 400px;
+    max-width: 430px;
 
     margin: 25px 0;
 
     color: #777;
 
     font-size: 13px;
+
     line-height: 1.8;
 }
 
-.instagram-wall {
-    display: grid;
 
-    grid-template-columns: 1fr 1fr;
-}
+/* =========================================================
+   INSTAGRAM SINGLE IMAGE
+   ========================================================= */
 
-.instagram-wall div {
+.instagram-single {
+    position: relative;
+
+    display: block;
+
+    min-height: 560px;
+
     overflow: hidden;
+
+    background: #151515;
 }
 
-.instagram-wall img {
+.instagram-single img {
     width: 100%;
     height: 100%;
 
     object-fit: cover;
 
-    transition: 0.5s;
+    transition:
+        transform 0.7s ease;
 }
 
-.instagram-wall div:hover img {
-    transform: scale(1.08);
+.instagram-single:hover img {
+    transform: scale(1.06);
 }
 
 
-/* ================= CONTATO ================= */
+/* =========================================================
+   INSTAGRAM OVERLAY
+   ========================================================= */
+
+.instagram-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(0,0,0,0.05),
+            rgba(0,0,0,0.88)
+        );
+
+    opacity: 0;
+
+    transition: 0.4s;
+}
+
+.instagram-single:hover .instagram-overlay {
+    opacity: 1;
+}
+
+.instagram-overlay span {
+    color: var(--red);
+
+    font-size: 9px;
+
+    font-weight: 900;
+
+    letter-spacing: 4px;
+}
+
+.instagram-overlay strong {
+    margin: 10px 0;
+
+    font-family:
+        "Bebas Neue",
+        sans-serif;
+
+    font-size: 48px;
+}
+
+.instagram-overlay b {
+    font-size: 9px;
+
+    letter-spacing: 2px;
+}
+
+
+/* =========================================================
+   CONTACT
+   ========================================================= */
 
 .contact {
     background: #080808;
 }
 
 .contact-box {
-    padding: 70px;
+    position: relative;
 
     display: flex;
+
     align-items: center;
     justify-content: space-between;
 
     gap: 50px;
 
+    padding: 70px;
+
+    overflow: hidden;
+
     background:
         linear-gradient(
             135deg,
-            #151515,
-            #090909
+            #161616,
+            #0e0e0e
         );
 
-    border: 1px solid var(--border);
+    border:
+        1px solid var(--border);
 }
 
-.contact h2 {
-    margin-bottom: 20px;
+.contact-box::after {
+    content: "";
+
+    position: absolute;
+
+    right: -150px;
+    top: -150px;
+
+    width: 350px;
+    height: 350px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(229,9,20,0.08);
+
+    pointer-events: none;
 }
 
-.contact p {
-    max-width: 500px;
+.contact-box p {
+    max-width: 550px;
+
+    margin-top: 20px;
 
     color: #777;
 
-    font-size: 13px;
+    font-size: 12px;
+
     line-height: 1.8;
 }
 
-.whatsapp-big {
-    min-width: 250px;
-    min-height: 65px;
 
-    display: flex;
+/* =========================================================
+   WHATSAPP BIG
+   ========================================================= */
+
+.whatsapp-big {
+    position: relative;
+
+    z-index: 2;
+
+    display: inline-flex;
+
     align-items: center;
+
     justify-content: center;
 
-    gap: 10px;
+    gap: 12px;
 
-    background: #20c463;
+    min-width: 240px;
 
-    font-size: 10px;
+    min-height: 60px;
+
+    padding: 0 25px;
+
+    background: #16a34a;
+
+    color: #fff;
+
+    font-size: 9px;
+
     font-weight: 900;
 
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
 
     transition: 0.3s;
 }
 
 .whatsapp-big:hover {
-    background: #29df73;
+    background: #fff;
 
-    transform: translateY(-4px);
+    color: #111;
 
-    box-shadow:
-        0 15px 35px rgba(32, 196, 99, 0.15);
+    transform: translateY(-3px);
+}
+
+.whatsapp-big span {
+    font-size: 16px;
 }
 
 
-/* ================= FOOTER ================= */
+/* =========================================================
+   FOOTER
+   ========================================================= */
 
 footer {
     background: #050505;
+
+    border-top:
+        1px solid var(--border);
 }
 
 .footer {
-    padding: 60px 0;
+    min-height: 200px;
+
+    padding: 55px 0;
 
     display: grid;
 
-    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-columns:
+        2fr 1fr 1fr;
 
     gap: 50px;
 }
@@ -1116,13 +1709,20 @@ footer {
     color: #555;
 
     font-size: 8px;
-    font-weight: 900;
+
+    font-weight: 800;
 
     letter-spacing: 2px;
 }
 
+
+/* =========================================================
+   FOOTER LINKS
+   ========================================================= */
+
 .footer-links {
     display: flex;
+
     flex-direction: column;
 
     gap: 12px;
@@ -1132,8 +1732,13 @@ footer {
 .instagram-link {
     color: #777;
 
-    font-size: 10px;
+    font-size: 9px;
+
     font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
 
     transition: 0.3s;
 }
@@ -1143,84 +1748,127 @@ footer {
     color: var(--red);
 }
 
-.footer-bottom {
-    padding: 18px 0;
 
-    border-top: 1px solid var(--border);
+/* =========================================================
+   FOOTER BOTTOM
+   ========================================================= */
+
+.footer-bottom {
+    border-top:
+        1px solid var(--border);
 }
 
 .footer-bottom .container {
+    min-height: 60px;
+
     display: flex;
+
+    align-items: center;
     justify-content: space-between;
 
+    gap: 20px;
+}
+
+.footer-bottom span {
     color: #444;
 
-    font-size: 8px;
+    font-size: 7px;
+
     font-weight: 800;
 
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
 }
 
 
-/* ================= WHATSAPP ================= */
+/* =========================================================
+   WHATSAPP FLUTUANTE
+   ========================================================= */
 
 .whatsapp-float {
     position: fixed;
 
-    z-index: 200;
-
     right: 25px;
     bottom: 25px;
 
-    width: 60px;
-    height: 60px;
+    z-index: 999;
+
+    width: 58px;
+    height: 58px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
     border-radius: 50%;
 
-    background: #20c463;
+    background: #16a34a;
 
-    color: white;
+    color: #fff;
 
     font-size: 23px;
 
     box-shadow:
-        0 10px 30px rgba(0, 0, 0, 0.5);
+        0 10px 35px
+        rgba(0,0,0,0.35);
 
     transition: 0.3s;
+
+    animation:
+        whatsappPulse 2.5s infinite;
 }
 
 .whatsapp-float:hover {
-    transform: scale(1.1);
+    transform: scale(1.08);
+
+    background: #20c964;
+}
+
+@keyframes whatsappPulse {
+
+    0% {
+        box-shadow:
+            0 0 0 0
+            rgba(22,163,74,0.45);
+    }
+
+    70% {
+        box-shadow:
+            0 0 0 15px
+            rgba(22,163,74,0);
+    }
+
+    100% {
+        box-shadow:
+            0 0 0 0
+            rgba(22,163,74,0);
+    }
+
 }
 
 
-/* ================= RESPONSIVO ================= */
+/* =========================================================
+   RESPONSIVIDADE
+   ========================================================= */
 
-@media (max-width: 950px) {
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1000px) {
 
     .menu {
-        display: none;
+        gap: 18px;
     }
 
-    .menu-mobile {
-        display: block;
-    }
-
-    .category-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .category-large {
-        grid-column: span 2;
-        grid-row: auto;
+    .header-whatsapp {
+        padding: 0 14px;
     }
 
     .featured-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns:
+            repeat(2, 1fr);
     }
 
     .featured-main {
@@ -1228,72 +1876,198 @@ footer {
     }
 
     .catalog-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .about-grid {
+        gap: 50px;
+    }
+
+}
+
+
+/* =========================================================
+   TABLET / MENU MOBILE
+   ========================================================= */
+
+@media (max-width: 850px) {
+
+    .nav {
+        height: 75px;
+    }
+
+    .menu {
+        display: none;
+    }
+
+    .menu.mobile-open {
+        position: absolute;
+
+        top: 75px;
+        left: 0;
+
+        width: 100%;
+
+        padding: 25px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 20px;
+
+        background: #0b0b0b;
+
+        border-bottom:
+            1px solid var(--border);
+    }
+
+    .menu.mobile-open a {
+        font-size: 11px;
+    }
+
+    .menu-mobile {
+        display: block;
+    }
+
+    .header-whatsapp {
+        margin-left: auto;
+    }
+
+    .category-grid {
+        grid-template-columns: 1fr;
+
+        grid-template-rows:
+            repeat(3, 280px);
+    }
+
+    .category-card.category-large {
+        grid-row: auto;
     }
 
     .about-grid {
         grid-template-columns: 1fr;
     }
 
-    .instagram-grid {
-        grid-template-columns: 1fr;
+    .about-visual {
+        min-height: 350px;
     }
 
-    .instagram-copy {
-        min-height: 400px;
-    }
 }
 
 
+/* =========================================================
+   CELULAR GRANDE
+   ========================================================= */
+
 @media (max-width: 650px) {
 
-    .section {
-        padding: 80px 0;
+    .container {
+        width: min(
+            calc(100% - 30px),
+            var(--container)
+        );
+    }
+
+
+    /* HEADER */
+
+    .logo {
+        font-size: 25px;
     }
 
     .header-whatsapp {
         display: none;
     }
 
+
+    /* HERO */
+
     .hero {
-        min-height: 760px;
+        min-height: 800px;
+    }
+
+    .hero-bg {
+        background-position:
+            62% center;
+
+        background:
+            linear-gradient(
+                90deg,
+                rgba(0,0,0,0.96),
+                rgba(0,0,0,0.65)
+            ),
+            url("img/hero.jpg");
+
+        background-size: cover;
+
+        background-position: center;
     }
 
     .hero h1 {
-        font-size: 76px;
+        font-size:
+            clamp(70px, 21vw, 110px);
     }
 
     .hero-actions {
         flex-direction: column;
-        align-items: stretch;
-    }
 
-    .hero-actions .btn {
-        width: 100%;
+        align-items: stretch;
+
+        max-width: 280px;
     }
 
     .hero-stats {
         gap: 25px;
+
         margin-top: 50px;
     }
 
-    .section-heading {
-        display: block;
+    .hero-bottom {
+        right: 20px;
+        bottom: 20px;
     }
 
-    .section-heading > p {
-        margin-top: 20px;
+
+    /* SECTION */
+
+    .section {
+        padding: 80px 0;
     }
+
+    .section-heading {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        margin-bottom: 35px;
+    }
+
+    .section-heading h2 {
+        font-size: 58px;
+    }
+
+
+    /* CATEGORIAS */
 
     .category-grid {
-        display: flex;
-        flex-direction: column;
+        grid-template-rows:
+            repeat(3, 250px);
     }
 
-    .category-card,
-    .category-large {
-        height: 300px;
+    .category-card {
+        min-height: 250px;
     }
+
+    .category-content h3 {
+        font-size: 40px;
+    }
+
+
+    /* DESTAQUES */
 
     .featured-grid {
         grid-template-columns: 1fr;
@@ -1303,9 +2077,29 @@ footer {
         grid-column: auto;
     }
 
-    .featured-image,
-    .featured-main .featured-image {
-        height: 330px;
+    .featured-image {
+        height: 300px;
+    }
+
+
+    /* CATÁLOGO */
+
+    .filters {
+        overflow-x: auto;
+
+        flex-wrap: nowrap;
+
+        padding-bottom: 12px;
+
+        scrollbar-width: none;
+    }
+
+    .filters::-webkit-scrollbar {
+        display: none;
+    }
+
+    .filter {
+        flex: 0 0 auto;
     }
 
     .catalog-grid {
@@ -1313,26 +2107,71 @@ footer {
     }
 
     .product-photo {
-        height: 380px;
+        height: 350px;
     }
 
+
+    /* BRAND */
+
+    .brand-section {
+        min-height: 400px;
+    }
+
+    .brand-content h2 {
+        font-size: 60px;
+    }
+
+
+    /* ABOUT */
+
     .about-visual {
-        min-height: 380px;
+        min-height: 300px;
     }
 
     .about-circle {
-        width: 210px;
-        height: 210px;
+        width: 220px;
+        height: 220px;
+
+        font-size: 80px;
+    }
+
+    .about-vertical {
+        right: 0;
     }
 
     .about-points {
         gap: 25px;
     }
 
+
+    /* INSTAGRAM */
+
+    .instagram-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .instagram-copy {
+        min-height: 400px;
+
+        padding: 70px 8%;
+    }
+
+    .instagram-single {
+        min-height: 420px;
+    }
+
+    .instagram-overlay {
+        opacity: 1;
+    }
+
+
+    /* CONTACT */
+
     .contact-box {
-        padding: 40px 25px;
+        padding: 45px 25px;
 
         flex-direction: column;
+
         align-items: flex-start;
     }
 
@@ -1340,20 +2179,72 @@ footer {
         width: 100%;
     }
 
+
+    /* FOOTER */
+
     .footer {
         grid-template-columns: 1fr;
+
+        gap: 35px;
+
+        padding: 45px 0;
     }
 
     .footer-bottom .container {
+        min-height: 80px;
+
         flex-direction: column;
-        gap: 10px;
+
+        justify-content: center;
+
+        align-items: flex-start;
+
+        gap: 8px;
     }
 
     .whatsapp-float {
-        width: 55px;
-        height: 55px;
-
         right: 18px;
         bottom: 18px;
+
+        width: 54px;
+        height: 54px;
     }
+
+}
+
+
+/* =========================================================
+   CELULAR PEQUENO
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+    .hero h1 {
+        font-size: 70px;
+    }
+
+    .hero-stats {
+        gap: 15px;
+    }
+
+    .hero-stats strong {
+        font-size: 25px;
+    }
+
+    .section-heading h2 {
+        font-size: 50px;
+    }
+
+    .brand-content h2 {
+        font-size: 50px;
+    }
+
+    .about-points {
+        gap: 18px;
+    }
+
+    .about-points strong {
+        font-size: 25px;
+    }
+
 }
