@@ -3,349 +3,893 @@ import {
   isConfigured
 } from "/js/supabaseClient.js";
 
-const loginForm =
-  document.getElementById("loginForm");
 
-const registerForm =
-  document.getElementById("registerForm");
+import {
+  $,
+  $$,
+  showToast,
+  setButtonLoading,
+  showSetupWarning,
+  getSession,
+  getProfile
+} from "/js/common.js";
+
+
+const tabs =
+  $$(".auth-tab");
+
+
+const loginForm =
+  $("#loginForm");
+
+
+const signupForm =
+  $("#signupForm");
+
 
 const resetForm =
-  document.getElementById("resetForm");
-
-const loginButton =
-  document.getElementById("loginButton");
-
-const registerButton =
-  document.getElementById("registerButton");
-
-const resetButton =
-  document.getElementById("resetButton");
-
-const authMessage =
-  document.getElementById("authMessage");
+  $("#resetForm");
 
 
-function showMessage(
-  message,
-  type = "error"
+const newPasswordForm =
+  $("#newPasswordForm");
+
+
+const authTabs =
+  $("#authTabs");
+
+
+const authTitle =
+  $("#authTitle");
+
+
+const authSubtitle =
+  $("#authSubtitle");
+
+
+if (
+  !isConfigured
 ) {
-  if (!authMessage) return;
-
-  authMessage.textContent = message;
-
-  authMessage.className =
-    `message show ${type}`;
+  showSetupWarning();
 }
 
 
-function clearMessage() {
-  if (!authMessage) return;
+function safeRedirectTarget() {
 
-  authMessage.textContent = "";
-  authMessage.className = "message";
-}
-
-
-function getRedirectPath() {
   const params =
     new URLSearchParams(
-      window.location.search
+      location.search
     );
 
-  const redirect =
-    params.get("redirect");
 
-  if (
-    redirect &&
-    redirect.startsWith("/") &&
-    !redirect.startsWith("//")
-  ) {
-    return redirect;
+  const target =
+    params.get(
+      "redirect"
+    );
+
+
+  if (!target) {
+    return null;
   }
 
-  return "/";
+
+  if (
+    !target.startsWith("/") ||
+    target.startsWith("//")
+  ) {
+    return null;
+  }
+
+
+  return target;
 }
 
 
-async function redirectUser(user) {
+function showMode(mode) {
 
-  const {
-    data: profile,
-    error
-  } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
+  [
+    loginForm,
+    signupForm,
+    resetForm,
+    newPasswordForm
+  ]
+  .forEach(
+    form => {
 
-  if (error) {
-    console.error(
-      "Erro ao carregar perfil:",
-      error
-    );
-  }
+      if (form) {
+        form.hidden =
+          true;
+      }
 
-  const wanted =
-    getRedirectPath();
+    }
+  );
+
+
+  tabs.forEach(
+    tab =>
+      tab.classList.toggle(
+        "active",
+        tab.dataset.tab ===
+          mode
+      )
+  );
+
 
   if (
-    wanted === "/admin" &&
-    profile?.role === "admin"
+    mode === "login"
   ) {
-    window.location.replace("/admin");
-    return;
+
+    authTabs.hidden =
+      false;
+
+    loginForm.hidden =
+      false;
+
+    authTitle.textContent =
+      "Bem-vindo";
+
+    authSubtitle.textContent =
+      "Entre na sua conta para continuar.";
   }
 
-  if (profile?.role === "admin") {
-    window.location.replace("/admin");
-    return;
+
+  if (
+    mode === "signup"
+  ) {
+
+    authTabs.hidden =
+      false;
+
+    signupForm.hidden =
+      false;
+
+    authTitle.textContent =
+      "Criar conta";
+
+    authSubtitle.textContent =
+      "Cadastre-se para salvar seus dados e acompanhar pedidos.";
   }
 
-  window.location.replace("/");
+
+  if (
+    mode === "reset"
+  ) {
+
+    authTabs.hidden =
+      true;
+
+    resetForm.hidden =
+      false;
+
+    authTitle.textContent =
+      "Recuperar senha";
+
+    authSubtitle.textContent =
+      "Enviaremos um link seguro para seu e-mail.";
+  }
+
+
+  if (
+    mode ===
+    "new-password"
+  ) {
+
+    authTabs.hidden =
+      true;
+
+    newPasswordForm.hidden =
+      false;
+
+    authTitle.textContent =
+      "Nova senha";
+
+    authSubtitle.textContent =
+      "Defina uma nova senha para sua conta.";
+  }
 }
 
 
-loginForm?.addEventListener(
-  "submit",
-  async (event) => {
+async function redirectAfterLogin(
+  user
+) {
 
-    event.preventDefault();
+  const profile =
+    await getProfile(
+      user.id
+    )
+    .catch(
+      () => null
+    );
 
-    clearMessage();
 
-    if (!isConfigured || !supabase) {
-      showMessage(
-        "Supabase não configurado."
+  const requested =
+    safeRedirectTarget();
+
+
+  if (
+    requested ===
+    "/admin.html"
+  ) {
+
+    if (
+      profile?.role ===
+      "admin"
+    ) {
+
+      location.replace(
+        "/admin.html"
       );
-      return;
+
+    } else {
+
+      showToast(
+        "Esta conta não tem permissão de administrador.",
+        "error"
+      );
+
+
+      setTimeout(
+        () =>
+          location.replace(
+            "/account.html"
+          ),
+        700
+      );
     }
 
-    const email =
-      document
-        .getElementById("loginEmail")
-        .value
-        .trim();
 
-    const password =
-      document
-        .getElementById("loginPassword")
-        .value;
+    return;
+  }
 
-    loginButton.disabled = true;
-    loginButton.textContent =
-      "Entrando...";
 
-    try {
+  if (requested) {
 
-      const {
-        data,
-        error
-      } =
-        await supabase.auth
-          .signInWithPassword({
-            email,
-            password
-          });
+    location.replace(
+      requested
+    );
 
-      if (error) throw error;
+    return;
+  }
 
-      if (!data.user) {
-        throw new Error(
-          "Usuário não encontrado."
-        );
-      }
 
-      showMessage(
-        "Login realizado!",
-        "success"
-      );
+  location.replace(
+    profile?.role ===
+      "admin"
 
-      await redirectUser(
-        data.user
-      );
+      ? "/admin.html"
 
-    } catch (error) {
+      : "/account.html"
+  );
+}
 
-      console.error(error);
 
-      if (
-        error.message
-          ?.toLowerCase()
-          .includes(
-            "email not confirmed"
-          )
-      ) {
-        showMessage(
-          "Confirme seu e-mail antes de entrar."
-        );
-      } else {
-        showMessage(
-          "E-mail ou senha incorretos."
-        );
-      }
+tabs.forEach(
+  tab => {
 
-    } finally {
-
-      loginButton.disabled = false;
-      loginButton.textContent =
-        "Entrar";
-    }
+    tab.addEventListener(
+      "click",
+      () =>
+        showMode(
+          tab.dataset.tab
+        )
+    );
 
   }
 );
 
 
-registerForm?.addEventListener(
-  "submit",
-  async (event) => {
+$("#forgotButton")
+  ?.addEventListener(
+    "click",
+    () =>
+      showMode(
+        "reset"
+      )
+  );
 
-    event.preventDefault();
 
-    clearMessage();
+$$(
+  "[data-back-login]"
+)
+.forEach(
+  button => {
 
-    const name =
-      document
-        .getElementById(
-          "registerName"
+    button.addEventListener(
+      "click",
+      () =>
+        showMode(
+          "login"
         )
-        .value
-        .trim();
+    );
 
-    const email =
-      document
-        .getElementById(
-          "registerEmail"
-        )
-        .value
-        .trim();
+  }
+);
 
-    const password =
-      document
-        .getElementById(
-          "registerPassword"
-        )
-        .value;
 
-    const confirmation =
-      document
-        .getElementById(
-          "registerPasswordConfirm"
-        )
-        .value;
+$$(
+  "[data-toggle-password]"
+)
+.forEach(
+  button => {
 
-    if (password !== confirmation) {
-      showMessage(
-        "As senhas não são iguais."
-      );
-      return;
-    }
+    button.addEventListener(
+      "click",
+      () => {
 
-    registerButton.disabled = true;
-    registerButton.textContent =
-      "Criando conta...";
+        const input =
+          document.getElementById(
+            button.dataset
+              .togglePassword
+          );
 
-    try {
 
-      const {
-        data,
-        error
-      } =
-        await supabase.auth.signUp({
-          email,
-          password,
+        if (!input) {
+          return;
+        }
 
-          options: {
-            data: {
-              full_name: name
-            },
 
-            emailRedirectTo:
-              `${window.location.origin}/login`
-          }
-        });
+        const showing =
+          input.type ===
+          "text";
 
-      if (error) throw error;
 
-      if (
-        data.session &&
-        data.user
-      ) {
-        await redirectUser(
-          data.user
-        );
+        input.type =
+          showing
+
+            ? "password"
+
+            : "text";
+
+
+        button.textContent =
+          showing
+
+            ? "Mostrar"
+
+            : "Ocultar";
+      }
+    );
+
+  }
+);
+
+
+loginForm
+  ?.addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+
+      if (!supabase) {
+
+        showSetupWarning();
 
         return;
       }
 
-      showMessage(
-        "Conta criada. Verifique seu e-mail para confirmar o cadastro.",
-        "success"
+
+      const button =
+        $("#loginButton");
+
+
+      setButtonLoading(
+        button,
+        true,
+        "Entrando..."
       );
 
-    } catch (error) {
 
-      console.error(error);
+      try {
 
-      showMessage(
-        error.message ||
-        "Não foi possível criar a conta."
-      );
-
-    } finally {
-
-      registerButton.disabled = false;
-
-      registerButton.textContent =
-        "Criar minha conta";
-    }
-
-  }
-);
+        const email =
+          $("#loginEmail")
+            .value
+            .trim();
 
 
-resetForm?.addEventListener(
-  "submit",
-  async (event) => {
+        const password =
+          $("#loginPassword")
+            .value;
 
-    event.preventDefault();
 
-    const email =
-      document
-        .getElementById("resetEmail")
-        .value
-        .trim();
+        const {
+          data,
+          error
+        } =
+          await supabase.auth
+            .signInWithPassword(
+              {
+                email,
+                password
+              }
+            );
 
-    resetButton.disabled = true;
 
-    try {
+        if (error) {
+          throw error;
+        }
 
-      const { error } =
-        await supabase.auth
-          .resetPasswordForEmail(
-            email,
-            {
-              redirectTo:
-                `${window.location.origin}/login`
-            }
+
+        if (!data.user) {
+
+          throw new Error(
+            "Não foi possível autenticar sua conta."
+          );
+        }
+
+
+        showToast(
+          "Login realizado com sucesso.",
+          "success"
+        );
+
+
+        await redirectAfterLogin(
+          data.user
+        );
+
+
+      } catch (error) {
+
+        const raw =
+          String(
+            error?.message ||
+            ""
           );
 
-      if (error) throw error;
 
-      showMessage(
-        "Confira seu e-mail para recuperar sua senha.",
-        "success"
-      );
+        if (
+          raw
+            .toLowerCase()
+            .includes(
+              "email not confirmed"
+            )
+        ) {
 
-    } catch (error) {
+          showToast(
+            "Confirme seu e-mail antes de entrar.",
+            "error"
+          );
 
-      showMessage(
-        "Não foi possível enviar a recuperação."
-      );
+        } else if (
+          raw
+            .toLowerCase()
+            .includes(
+              "invalid login"
+            )
+        ) {
 
-    } finally {
+          showToast(
+            "E-mail ou senha incorretos.",
+            "error"
+          );
 
-      resetButton.disabled = false;
+        } else {
+
+          showToast(
+            raw ||
+            "Não foi possível entrar.",
+            "error"
+          );
+        }
+
+
+      } finally {
+
+        setButtonLoading(
+          button,
+          false
+        );
+      }
+
     }
+  );
 
+
+signupForm
+  ?.addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+
+      if (!supabase) {
+
+        showSetupWarning();
+
+        return;
+      }
+
+
+      const button =
+        $("#signupButton");
+
+
+      setButtonLoading(
+        button,
+        true,
+        "Criando conta..."
+      );
+
+
+      try {
+
+        const fullName =
+          $("#signupName")
+            .value
+            .trim();
+
+
+        const email =
+          $("#signupEmail")
+            .value
+            .trim();
+
+
+        const password =
+          $("#signupPassword")
+            .value;
+
+
+        const confirmPassword =
+          $("#signupPasswordConfirm")
+            .value;
+
+
+        if (
+          password.length <
+          8
+        ) {
+
+          throw new Error(
+            "A senha precisa ter pelo menos 8 caracteres."
+          );
+        }
+
+
+        if (
+          password !==
+          confirmPassword
+        ) {
+
+          throw new Error(
+            "As senhas não são iguais."
+          );
+        }
+
+
+        const {
+          data,
+          error
+        } =
+          await supabase.auth
+            .signUp(
+              {
+                email,
+                password,
+
+                options: {
+
+                  data: {
+                    full_name:
+                      fullName
+                  },
+
+                  emailRedirectTo:
+                    `${location.origin}/login.html`
+                }
+              }
+            );
+
+
+        if (error) {
+          throw error;
+        }
+
+
+        if (
+          data.session &&
+          data.user
+        ) {
+
+          showToast(
+            "Conta criada com sucesso.",
+            "success"
+          );
+
+
+          await redirectAfterLogin(
+            data.user
+          );
+
+
+          return;
+        }
+
+
+        showToast(
+          "Conta criada. Confira seu e-mail para confirmar o cadastro.",
+          "success"
+        );
+
+
+        showMode(
+          "login"
+        );
+
+
+        $("#loginEmail").value =
+          email;
+
+
+      } catch (error) {
+
+        showToast(
+          error?.message ||
+          "Não foi possível criar a conta.",
+          "error"
+        );
+
+
+      } finally {
+
+        setButtonLoading(
+          button,
+          false
+        );
+      }
+
+    }
+  );
+
+
+resetForm
+  ?.addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+
+      if (!supabase) {
+
+        showSetupWarning();
+
+        return;
+      }
+
+
+      const button =
+        $("#resetButton");
+
+
+      setButtonLoading(
+        button,
+        true,
+        "Enviando..."
+      );
+
+
+      try {
+
+        const email =
+          $("#resetEmail")
+            .value
+            .trim();
+
+
+        const {
+          error
+        } =
+          await supabase.auth
+            .resetPasswordForEmail(
+              email,
+              {
+                redirectTo:
+                  `${location.origin}/login.html`
+              }
+            );
+
+
+        if (error) {
+          throw error;
+        }
+
+
+        showToast(
+          "Se o e-mail estiver cadastrado, você receberá o link de recuperação.",
+          "success"
+        );
+
+
+        showMode(
+          "login"
+        );
+
+
+      } catch (error) {
+
+        showToast(
+          error?.message ||
+          "Não foi possível enviar a recuperação.",
+          "error"
+        );
+
+
+      } finally {
+
+        setButtonLoading(
+          button,
+          false
+        );
+      }
+
+    }
+  );
+
+
+newPasswordForm
+  ?.addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+
+      if (!supabase) {
+
+        showSetupWarning();
+
+        return;
+      }
+
+
+      const button =
+        $("#newPasswordButton");
+
+
+      setButtonLoading(
+        button,
+        true,
+        "Salvando..."
+      );
+
+
+      try {
+
+        const password =
+          $("#newPassword")
+            .value;
+
+
+        if (
+          password.length <
+          8
+        ) {
+
+          throw new Error(
+            "A senha precisa ter pelo menos 8 caracteres."
+          );
+        }
+
+
+        const {
+          error
+        } =
+          await supabase.auth
+            .updateUser(
+              {
+                password
+              }
+            );
+
+
+        if (error) {
+          throw error;
+        }
+
+
+        showToast(
+          "Senha alterada com sucesso.",
+          "success"
+        );
+
+
+        setTimeout(
+          () =>
+            location.replace(
+              "/account.html"
+            ),
+          700
+        );
+
+
+      } catch (error) {
+
+        showToast(
+          error?.message ||
+          "Não foi possível alterar a senha.",
+          "error"
+        );
+
+
+      } finally {
+
+        setButtonLoading(
+          button,
+          false
+        );
+      }
+
+    }
+  );
+
+
+if (supabase) {
+
+  supabase.auth
+    .onAuthStateChange(
+      event => {
+
+        if (
+          event ===
+          "PASSWORD_RECOVERY"
+        ) {
+
+          showMode(
+            "new-password"
+          );
+        }
+
+      }
+    );
+
+
+  const recoveryInUrl =
+    location.hash
+      .includes(
+        "type=recovery"
+      ) ||
+
+    location.search
+      .includes(
+        "type=recovery"
+      );
+
+
+  if (
+    recoveryInUrl
+  ) {
+
+    showMode(
+      "new-password"
+    );
+
+  } else {
+
+    getSession()
+
+      .then(
+        async session => {
+
+          if (
+            session &&
+            safeRedirectTarget()
+          ) {
+
+            await redirectAfterLogin(
+              session.user
+            );
+          }
+
+        }
+      )
+
+      .catch(
+        () => {}
+      );
   }
-);
+}

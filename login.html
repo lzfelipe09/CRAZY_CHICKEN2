@@ -1,42 +1,39 @@
-<!DOCTYPE html>
+<!doctype html>
+
 <html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Entrar | Crazy Chicken</title>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  >
+
+  <meta
+    name="theme-color"
+    content="#090909"
+  >
+
+  <title>
+    Entrar | Crazy Chicken
+  </title>
+
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
 
-    :root {
-      --bg: #090909;
-      --panel: #121212;
-      --panel-2: #181818;
-      --border: #2a2a2a;
-      --text: #ffffff;
-      --muted: #989898;
-      --red: #ff2f37;
-      --red-dark: #d91f27;
+    * {
+      box-sizing: border-box;
     }
 
     html,
     body {
+      margin: 0;
       min-height: 100%;
-    }
-
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background:
-        radial-gradient(circle at top right, rgba(255, 47, 55, 0.09), transparent 28%),
-        radial-gradient(circle at bottom left, rgba(255, 47, 55, 0.05), transparent 30%),
-        var(--bg);
-      color: var(--text);
+      font-family: Inter, Arial, sans-serif;
+      background: #090909;
+      color: #fff;
     }
 
     a {
@@ -49,217 +46,202 @@
       font: inherit;
     }
 
-    button {
-      cursor: pointer;
-    }
-
     [hidden] {
       display: none !important;
+    }
+
+    body {
+      background:
+        radial-gradient(
+          circle at 10% 0,
+          rgba(239,43,45,.14),
+          transparent 28rem
+        ),
+        #090909;
     }
 
     .page {
       min-height: 100vh;
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
+      grid-template-columns:
+        1.05fr .95fr;
     }
 
-    /* =========================
-       LADO ESQUERDO
-    ========================= */
-
     .hero {
-      padding: 50px;
+      padding: 44px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      border-right: 1px solid var(--border);
-      min-height: 100vh;
+      border-right:
+        1px solid #282828;
     }
 
     .brand {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       gap: 12px;
+      font-size: 21px;
       font-weight: 900;
-      font-size: 22px;
-      width: fit-content;
     }
 
-    .brand-icon {
+    .logo {
       width: 44px;
       height: 44px;
+      border-radius: 13px;
+      background:
+        linear-gradient(
+          145deg,
+          #ef2b2d,
+          #8b1012
+        );
       display: grid;
       place-items: center;
-      border-radius: 13px;
-      background: #181818;
-      border: 1px solid var(--border);
-      font-size: 24px;
+      box-shadow:
+        0 12px 30px
+        rgba(239,43,45,.25);
     }
 
     .brand small {
       display: block;
-      color: var(--muted);
-      font-size: 10px;
+      font-size: 9px;
+      color: #8f8f8f;
       text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-top: 4px;
-      font-weight: 600;
+      letter-spacing: .18em;
+      margin-top: 3px;
     }
 
-    .hero-content {
-      max-width: 640px;
-      padding: 80px 0;
+    .hero-copy {
+      max-width: 680px;
+      padding: 70px 0;
     }
 
     .kicker {
-      color: var(--red);
-      text-transform: uppercase;
-      letter-spacing: 2.4px;
+      color: #ff7678;
       font-size: 12px;
-      font-weight: 900;
-      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      font-weight: 800;
     }
 
     .hero h1 {
-      font-size: clamp(48px, 7vw, 88px);
-      line-height: 0.95;
-      letter-spacing: -4px;
-      margin-bottom: 26px;
+      font-size:
+        clamp(
+          50px,
+          7vw,
+          90px
+        );
+
+      line-height: .92;
+      letter-spacing: -.07em;
+      margin: 16px 0 22px;
     }
 
     .hero h1 span {
-      color: var(--red);
+      color: #ef2b2d;
     }
 
     .hero p {
-      color: var(--muted);
-      line-height: 1.8;
-      max-width: 560px;
-      font-size: 16px;
+      color: #aaa;
+      line-height: 1.7;
+      max-width: 580px;
     }
 
-    .feature-list {
-      display: grid;
-      gap: 14px;
-      margin-top: 32px;
-      max-width: 500px;
-    }
-
-    .feature {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      color: #d8d8d8;
-      font-size: 14px;
-    }
-
-    .feature-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 9px;
-      background: #181818;
-      border: 1px solid var(--border);
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-    }
-
-    .hero-footer {
+    .hero-foot {
       color: #666;
       font-size: 12px;
     }
 
-    /* =========================
-       ÁREA DO FORMULÁRIO
-    ========================= */
-
     .auth-side {
       display: grid;
       place-items: center;
-      padding: 40px;
-      min-height: 100vh;
+      padding: 32px;
     }
 
-    .auth-card {
-      width: 100%;
-      max-width: 480px;
-      background: linear-gradient(145deg, #151515, #101010);
-      border: 1px solid var(--border);
-      border-radius: 20px;
+    .card {
+      width:
+        min(
+          480px,
+          100%
+        );
+
+      background:
+        linear-gradient(
+          145deg,
+          #151515,
+          #101010
+        );
+
+      border:
+        1px solid #292929;
+
+      border-radius: 24px;
       padding: 30px;
-      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3);
+
+      box-shadow:
+        0 28px 80px
+        rgba(0,0,0,.35);
     }
 
-    .auth-top {
-      margin-bottom: 24px;
+    .card h2 {
+      font-size: 32px;
+      margin: 0 0 8px;
     }
 
-    .auth-top h2 {
-      font-size: 30px;
-      letter-spacing: -1px;
-      margin-bottom: 9px;
-    }
-
-    .auth-top p {
-      color: var(--muted);
+    .sub {
+      color: #999;
       line-height: 1.6;
-      font-size: 14px;
+      margin: 0 0 22px;
     }
 
-    /* =========================
-       ABAS
-    ========================= */
-
-    .auth-tabs {
+    .tabs {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      padding: 5px;
+      grid-template-columns:
+        1fr 1fr;
+
       background: #0b0b0b;
-      border: 1px solid var(--border);
-      border-radius: 12px;
+
+      border:
+        1px solid #292929;
+
+      border-radius: 13px;
+
+      padding: 5px;
+      gap: 6px;
+
       margin-bottom: 22px;
     }
 
     .auth-tab {
-      border: none;
-      border-radius: 9px;
-      min-height: 42px;
+      border: 0;
       background: transparent;
       color: #888;
-      font-weight: 800;
-      transition: .2s;
-    }
 
-    .auth-tab:hover {
-      color: white;
-      background: #151515;
+      padding: 12px;
+
+      border-radius: 9px;
+      font-weight: 800;
+
+      cursor: pointer;
     }
 
     .auth-tab.active {
-      background: var(--red);
-      color: white;
+      background: #ef2b2d;
+      color: #fff;
     }
 
-    /* =========================
-       FORM
-    ========================= */
-
-    .auth-form {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
+    .form {
+      display: grid;
+      gap: 14px;
     }
 
     .field {
-      display: flex;
-      flex-direction: column;
+      display: grid;
       gap: 7px;
     }
 
     .field label {
-      color: #d4d4d4;
       font-size: 13px;
+      color: #d8d8d8;
       font-weight: 700;
     }
 
@@ -270,343 +252,335 @@
     .input {
       width: 100%;
       min-height: 48px;
-      padding: 12px 14px;
+
+      padding:
+        12px 14px;
+
+      border:
+        1px solid #303030;
+
       border-radius: 11px;
-      background: #0a0a0a;
-      border: 1px solid #303030;
-      color: white;
-      outline: none;
-      transition: .2s;
+
+      background: #090909;
+      color: #fff;
+
+      outline: 0;
     }
 
     .input:focus {
-      border-color: var(--red);
-      box-shadow: 0 0 0 3px rgba(255, 47, 55, 0.09);
+      border-color: #ef2b2d;
+
+      box-shadow:
+        0 0 0 3px
+        rgba(239,43,45,.1);
     }
 
-    .input::placeholder {
-      color: #5f5f5f;
+    .with-action {
+      padding-right: 86px;
     }
 
-    .password-input {
-      padding-right: 90px;
-    }
-
-    .show-password {
+    .toggle {
       position: absolute;
+
       right: 8px;
       top: 50%;
-      transform: translateY(-50%);
-      border: none;
+
+      transform:
+        translateY(-50%);
+
+      border: 0;
       background: transparent;
-      color: #999;
-      padding: 8px;
-      font-size: 12px;
-      font-weight: 700;
-    }
 
-    .show-password:hover {
-      color: white;
-    }
-
-    .btn {
-      border: none;
-      min-height: 48px;
-      border-radius: 11px;
-      font-weight: 900;
-      transition: .2s;
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-    }
-
-    .btn-primary {
-      background: var(--red);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: var(--red-dark);
-    }
-
-    .btn-secondary {
-      background: #1a1a1a;
-      color: white;
-      border: 1px solid #303030;
-    }
-
-    .btn-secondary:hover {
-      background: #232323;
-    }
-
-    .auth-links {
-      display: flex;
-      justify-content: space-between;
-      gap: 14px;
-      margin-top: 5px;
-      flex-wrap: wrap;
-    }
-
-    .auth-links button,
-    .auth-links a {
-      border: none;
-      background: transparent;
       color: #999;
       font-size: 12px;
+
       cursor: pointer;
     }
 
-    .auth-links button:hover,
-    .auth-links a:hover {
-      color: white;
+    .btn {
+      min-height: 48px;
+
+      border: 0;
+      border-radius: 11px;
+
+      font-weight: 850;
+
+      cursor: pointer;
     }
 
-    .back-store {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 22px;
+    .btn.primary {
+      background:
+        linear-gradient(
+          145deg,
+          #ef2b2d,
+          #b9191c
+        );
+
+      color: #fff;
+    }
+
+    .btn.secondary {
+      background: #1b1b1b;
+      color: #fff;
+
+      border:
+        1px solid #303030;
+    }
+
+    .links {
+      display: flex;
+
+      justify-content:
+        space-between;
+
+      gap: 10px;
+
+      flex-wrap: wrap;
+
+      margin-top: 4px;
+    }
+
+    .link-btn {
+      border: 0;
+      background: transparent;
+
+      color: #999;
+
+      padding: 0;
+
+      cursor: pointer;
+
+      font-size: 12px;
+    }
+
+    .back {
+      display: inline-block;
+
+      margin-top: 20px;
+
       color: #aaa;
       font-size: 13px;
     }
 
-    .back-store:hover {
-      color: white;
+    .setup-warning {
+      position: fixed;
+
+      top: 0;
+      left: 0;
+      right: 0;
+
+      z-index: 999;
+
+      padding: 10px;
+
+      background: #ffe38a;
+      color: #241d00;
+
+      text-align: center;
     }
 
-    /* =========================
-       MENSAGENS
-    ========================= */
+    .toast-root {
+      position: fixed;
 
-    .message {
-      display: none;
-      margin-bottom: 16px;
-      padding: 12px 14px;
-      border-radius: 10px;
-      font-size: 13px;
-      line-height: 1.5;
+      right: 18px;
+      bottom: 18px;
+
+      z-index: 1000;
+
+      display: grid;
+      gap: 10px;
     }
 
-    .message.show {
-      display: block;
+    .toast {
+      background: #191919;
+
+      border:
+        1px solid #333;
+
+      padding: 13px 16px;
+
+      border-radius: 11px;
+
+      opacity: 0;
+
+      transform:
+        translateY(8px);
+
+      transition: .2s;
+
+      max-width: 360px;
     }
 
-    .message.error {
-      background: rgba(255, 61, 61, 0.1);
-      border: 1px solid rgba(255, 61, 61, 0.3);
-      color: #ff9797;
+    .toast.show {
+      opacity: 1;
+      transform: none;
     }
 
-    .message.success {
-      background: rgba(70, 209, 127, 0.1);
-      border: 1px solid rgba(70, 209, 127, 0.3);
-      color: #83e5a7;
+    .toast-success {
+      border-color: #23663e;
     }
 
-    /* =========================
-       RESPONSIVO
-    ========================= */
+    .toast-error {
+      border-color: #76282c;
+    }
 
-    @media (max-width: 950px) {
+    @media(
+      max-width: 900px
+    ) {
+
       .page {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+          1fr;
       }
 
       .hero {
         min-height: auto;
-        padding: 30px 22px;
-        border-right: none;
-        border-bottom: 1px solid var(--border);
+
+        border-right: 0;
+
+        border-bottom:
+          1px solid #282828;
+
+        padding: 24px;
       }
 
-      .hero-content {
-        padding: 55px 0 25px;
+      .hero-copy {
+        padding:
+          44px 0 20px;
       }
 
-      .hero h1 {
-        font-size: clamp(48px, 13vw, 70px);
-      }
-
-      .feature-list,
-      .hero-footer {
+      .hero-foot {
         display: none;
       }
 
       .auth-side {
-        min-height: auto;
-        padding: 30px 18px 60px;
-      }
-    }
-
-    @media (max-width: 500px) {
-      .auth-card {
-        padding: 22px 17px;
-      }
-
-      .auth-top h2 {
-        font-size: 26px;
-      }
-
-      .hero {
-        padding-top: 22px;
-      }
-
-      .hero-content {
-        padding-top: 42px;
+        padding:
+          24px 16px 50px;
       }
 
       .hero h1 {
-        letter-spacing: -2px;
+        font-size: 56px;
       }
     }
+
   </style>
+
 </head>
+
 
 <body>
 
-  <div class="page">
 
-    <!-- =========================
-         APRESENTAÇÃO
-    ========================== -->
+  <main class="page">
+
 
     <section class="hero">
 
-      <a href="/" class="brand">
 
-        <div class="brand-icon">
+      <a
+        class="brand"
+        href="/index.html"
+      >
+
+        <span class="logo">
           🐔
-        </div>
+        </span>
 
-        <div>
+        <span>
           Crazy Chicken
-          <small>Área do cliente</small>
-        </div>
+
+          <small>
+            área do cliente
+          </small>
+        </span>
 
       </a>
 
 
-      <div class="hero-content">
+      <div class="hero-copy">
 
         <div class="kicker">
           Conta segura
         </div>
 
         <h1>
-          Entre.<br>
-          Escolha.<br>
-          <span>Peça.</span>
+          Entre.
+          <br>
+
+          Escolha.
+          <br>
+
+          <span>
+            Peça.
+          </span>
         </h1>
 
         <p>
-          Crie sua conta para salvar seus dados,
-          endereço, favoritos e acompanhar seus pedidos
-          na Crazy Chicken.
+          Faça login para salvar seus
+          dados, acompanhar pedidos e
+          finalizar compras com mais
+          rapidez.
         </p>
 
-
-        <div class="feature-list">
-
-          <div class="feature">
-
-            <div class="feature-icon">
-              🔒
-            </div>
-
-            <div>
-              <strong>Login seguro</strong><br>
-              <span style="color:#777;">
-                Autenticação protegida pelo Supabase.
-              </span>
-            </div>
-
-          </div>
-
-
-          <div class="feature">
-
-            <div class="feature-icon">
-              📍
-            </div>
-
-            <div>
-              <strong>Endereço salvo</strong><br>
-              <span style="color:#777;">
-                Mais rapidez na hora de fazer o pedido.
-              </span>
-            </div>
-
-          </div>
-
-
-          <div class="feature">
-
-            <div class="feature-icon">
-              🛒
-            </div>
-
-            <div>
-              <strong>Pedidos organizados</strong><br>
-              <span style="color:#777;">
-                Histórico e informações em um só lugar.
-              </span>
-            </div>
-
-          </div>
-
-        </div>
-
       </div>
 
 
-      <div class="hero-footer">
+      <div class="hero-foot">
         Crazy Chicken Ecommerce
       </div>
+
 
     </section>
 
 
-    <!-- =========================
-         LOGIN / CADASTRO
-    ========================== -->
-
     <section class="auth-side">
 
-      <div class="auth-card">
 
-        <div class="auth-top">
-
-          <h2 id="authTitle">
-            Bem-vindo
-          </h2>
-
-          <p id="authSubtitle">
-            Entre na sua conta ou crie seu cadastro.
-          </p>
-
-        </div>
+      <div class="card">
 
 
-        <div id="authMessage" class="message"></div>
+        <h2 id="authTitle">
+          Bem-vindo
+        </h2>
 
 
-        <div class="auth-tabs">
+        <p
+          class="sub"
+          id="authSubtitle"
+        >
+          Entre na sua conta para continuar.
+        </p>
 
-          <button class="auth-tab active" id="loginTab" type="button">
+
+        <div
+          class="tabs"
+          id="authTabs"
+        >
+
+          <button
+            class="auth-tab active"
+            type="button"
+            data-tab="login"
+          >
             Entrar
           </button>
 
-          <button class="auth-tab" id="registerTab" type="button">
+          <button
+            class="auth-tab"
+            type="button"
+            data-tab="signup"
+          >
             Criar conta
           </button>
 
         </div>
 
 
-        <!-- LOGIN -->
+        <form
+          class="form"
+          id="loginForm"
+        >
 
-        <form id="loginForm" class="auth-form">
 
           <div class="field">
 
@@ -614,8 +588,13 @@
               E-mail
             </label>
 
-            <input class="input" id="loginEmail" type="email" autocomplete="email" placeholder="seuemail@email.com"
-              required>
+            <input
+              class="input"
+              id="loginEmail"
+              type="email"
+              autocomplete="email"
+              required
+            >
 
           </div>
 
@@ -626,12 +605,23 @@
               Senha
             </label>
 
+
             <div class="input-wrap">
 
-              <input class="input password-input" id="loginPassword" type="password" autocomplete="current-password"
-                placeholder="Sua senha" required>
+              <input
+                class="input with-action"
+                id="loginPassword"
+                type="password"
+                autocomplete="current-password"
+                required
+              >
 
-              <button type="button" class="show-password" data-toggle-password="loginPassword">
+
+              <button
+                class="toggle"
+                type="button"
+                data-toggle-password="loginPassword"
+              >
                 Mostrar
               </button>
 
@@ -640,65 +630,104 @@
           </div>
 
 
-          <button type="submit" class="btn btn-primary" id="loginButton">
+          <button
+            class="btn primary"
+            id="loginButton"
+            type="submit"
+          >
             Entrar
           </button>
 
 
-          <div class="auth-links">
+          <div class="links">
 
-            <button type="button" id="forgotPasswordButton">
+            <button
+              class="link-btn"
+              id="forgotButton"
+              type="button"
+            >
               Esqueci minha senha
             </button>
 
-            <a href="/">
-              Voltar para a loja
+
+            <a
+              class="link-btn"
+              href="/index.html"
+            >
+              Voltar à loja
             </a>
 
           </div>
 
+
         </form>
 
 
-        <!-- CADASTRO -->
+        <form
+          class="form"
+          id="signupForm"
+          hidden
+        >
 
-        <form id="registerForm" class="auth-form" hidden>
 
           <div class="field">
 
-            <label for="registerName">
+            <label for="signupName">
               Nome
             </label>
 
-            <input class="input" id="registerName" type="text" autocomplete="name" placeholder="Seu nome" required>
+            <input
+              class="input"
+              id="signupName"
+              type="text"
+              autocomplete="name"
+              required
+            >
 
           </div>
 
 
           <div class="field">
 
-            <label for="registerEmail">
+            <label for="signupEmail">
               E-mail
             </label>
 
-            <input class="input" id="registerEmail" type="email" autocomplete="email" placeholder="seuemail@email.com"
-              required>
+            <input
+              class="input"
+              id="signupEmail"
+              type="email"
+              autocomplete="email"
+              required
+            >
 
           </div>
 
 
           <div class="field">
 
-            <label for="registerPassword">
+            <label for="signupPassword">
               Senha
             </label>
 
+
             <div class="input-wrap">
 
-              <input class="input password-input" id="registerPassword" type="password" autocomplete="new-password"
-                minlength="6" placeholder="Crie uma senha" required>
+              <input
+                class="input with-action"
+                id="signupPassword"
+                type="password"
+                minlength="8"
+                autocomplete="new-password"
+                required
+              >
 
-              <button type="button" class="show-password" data-toggle-password="registerPassword">
+
+              <button
+                class="toggle"
+                type="button"
+                data-toggle-password="signupPassword"
+              >
                 Mostrar
               </button>
 
@@ -709,16 +738,28 @@
 
           <div class="field">
 
-            <label for="registerPasswordConfirm">
+            <label for="signupPasswordConfirm">
               Confirmar senha
             </label>
 
+
             <div class="input-wrap">
 
-              <input class="input password-input" id="registerPasswordConfirm" type="password"
-                autocomplete="new-password" minlength="6" placeholder="Digite novamente" required>
+              <input
+                class="input with-action"
+                id="signupPasswordConfirm"
+                type="password"
+                minlength="8"
+                autocomplete="new-password"
+                required
+              >
 
-              <button type="button" class="show-password" data-toggle-password="registerPasswordConfirm">
+
+              <button
+                class="toggle"
+                type="button"
+                data-toggle-password="signupPasswordConfirm"
+              >
                 Mostrar
               </button>
 
@@ -727,21 +768,33 @@
           </div>
 
 
-          <button type="submit" class="btn btn-primary" id="registerButton">
+          <button
+            class="btn primary"
+            id="signupButton"
+            type="submit"
+          >
             Criar minha conta
           </button>
 
 
-          <a href="/" class="back-store">
-            ← Voltar para a loja
-          </a>
+          <button
+            class="link-btn"
+            type="button"
+            data-back-login
+          >
+            Já tenho conta
+          </button>
+
 
         </form>
 
 
-        <!-- RECUPERAÇÃO -->
+        <form
+          class="form"
+          id="resetForm"
+          hidden
+        >
 
-        <form id="resetForm" class="auth-form" hidden>
 
           <div class="field">
 
@@ -749,171 +802,102 @@
               E-mail
             </label>
 
-            <input class="input" id="resetEmail" type="email" autocomplete="email" placeholder="seuemail@email.com"
-              required>
+            <input
+              class="input"
+              id="resetEmail"
+              type="email"
+              required
+            >
 
           </div>
 
 
-          <button type="submit" class="btn btn-primary" id="resetButton">
+          <button
+            class="btn primary"
+            id="resetButton"
+            type="submit"
+          >
             Enviar recuperação
           </button>
 
 
-          <button type="button" class="btn btn-secondary" id="backLoginButton">
-            Voltar para o login
+          <button
+            class="btn secondary"
+            type="button"
+            data-back-login
+          >
+            Voltar ao login
           </button>
+
 
         </form>
 
+
+        <form
+          class="form"
+          id="newPasswordForm"
+          hidden
+        >
+
+
+          <div class="field">
+
+            <label for="newPassword">
+              Nova senha
+            </label>
+
+            <input
+              class="input"
+              id="newPassword"
+              type="password"
+              minlength="8"
+              required
+            >
+
+          </div>
+
+
+          <button
+            class="btn primary"
+            id="newPasswordButton"
+            type="submit"
+          >
+            Salvar nova senha
+          </button>
+
+
+        </form>
+
+
+        <a
+          class="back"
+          href="/index.html"
+        >
+          ← Voltar para a loja
+        </a>
+
+
       </div>
+
 
     </section>
 
-  </div>
+
+  </main>
 
 
-  <!-- =========================
-       INTERAÇÃO VISUAL
-  ========================== -->
-
-  <script>
-    const loginTab =
-      document.getElementById("loginTab");
-
-    const registerTab =
-      document.getElementById("registerTab");
-
-    const loginForm =
-      document.getElementById("loginForm");
-
-    const registerForm =
-      document.getElementById("registerForm");
-
-    const resetForm =
-      document.getElementById("resetForm");
-
-    const forgotPasswordButton =
-      document.getElementById("forgotPasswordButton");
-
-    const backLoginButton =
-      document.getElementById("backLoginButton");
-
-    const title =
-      document.getElementById("authTitle");
-
-    const subtitle =
-      document.getElementById("authSubtitle");
+  <div
+    id="toastRoot"
+    class="toast-root"
+  ></div>
 
 
-    function showLogin() {
-      loginForm.hidden = false;
-      registerForm.hidden = true;
-      resetForm.hidden = true;
-
-      loginTab.classList.add("active");
-      registerTab.classList.remove("active");
-
-      title.textContent = "Bem-vindo";
-
-      subtitle.textContent =
-        "Entre na sua conta ou crie seu cadastro.";
-    }
+  <script
+    type="module"
+    src="/js/auth.js"
+  ></script>
 
 
-    function showRegister() {
-      loginForm.hidden = true;
-      registerForm.hidden = false;
-      resetForm.hidden = true;
-
-      registerTab.classList.add("active");
-      loginTab.classList.remove("active");
-
-      title.textContent =
-        "Criar conta";
-
-      subtitle.textContent =
-        "Faça seu cadastro para salvar seus dados e pedidos.";
-    }
-
-
-    function showReset() {
-      loginForm.hidden = true;
-      registerForm.hidden = true;
-      resetForm.hidden = false;
-
-      loginTab.classList.remove("active");
-      registerTab.classList.remove("active");
-
-      title.textContent =
-        "Recuperar senha";
-
-      subtitle.textContent =
-        "Informe seu e-mail para receber as instruções.";
-    }
-
-
-    loginTab.addEventListener(
-      "click",
-      showLogin
-    );
-
-
-    registerTab.addEventListener(
-      "click",
-      showRegister
-    );
-
-
-    forgotPasswordButton.addEventListener(
-      "click",
-      showReset
-    );
-
-
-    backLoginButton.addEventListener(
-      "click",
-      showLogin
-    );
-
-
-    document
-      .querySelectorAll("[data-toggle-password]")
-      .forEach((button) => {
-
-        button.addEventListener(
-          "click",
-          () => {
-
-            const input =
-              document.getElementById(
-                button.dataset.togglePassword
-              );
-
-            if (!input) return;
-
-            if (input.type === "password") {
-              input.type = "text";
-              button.textContent = "Ocultar";
-            } else {
-              input.type = "password";
-              button.textContent = "Mostrar";
-            }
-
-          }
-        );
-
-      });
-  </script>
-
-
-  <!--
-    IMPORTANTE:
-    Esse JS faz o login real no Supabase.
-    Não remova.
-  -->
-
-  <script type="module" src="/js/auth.js"></script>
 </body>
 
 </html>
