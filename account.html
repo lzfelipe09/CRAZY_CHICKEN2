@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,17 +8,25 @@
   <title>Minha conta | Crazy Chicken</title>
   <link rel="stylesheet" href="./css/styles.css" />
 </head>
+
 <body>
   <header class="site-header">
     <div class="container header-row">
-      <a class="brand" href="/"><span class="brand-mark">🐔</span><span>Crazy Chicken<small>minha conta</small></span></a>
-      <div class="header-actions"><a class="header-link" href="/">Voltar à loja</a><a data-admin-link class="header-link" href="/admin" hidden>Admin</a></div>
+      <a class="brand" href="/"><span class="brand-mark">🐔</span><span>Crazy Chicken<small>minha
+            conta</small></span></a>
+      <div class="header-actions"><a class="header-link" href="/">Voltar à loja</a><a data-admin-link
+          class="header-link" href="/admin" hidden>Admin</a></div>
     </div>
   </header>
 
   <main class="page-shell">
     <div class="container">
-      <div class="page-heading"><div><span class="section-kicker">Área do cliente</span><h1>Minha conta</h1><p class="muted" id="accountEmail"></p></div><button class="btn btn-ghost" id="logoutButton" type="button">Sair da conta</button></div>
+      <div class="page-heading">
+        <div><span class="section-kicker">Área do cliente</span>
+          <h1>Minha conta</h1>
+          <p class="muted" id="accountEmail"></p>
+        </div><button class="btn btn-ghost" id="logoutButton" type="button">Sair da conta</button>
+      </div>
       <div class="dashboard-grid">
         <aside class="sidebar" id="accountNav">
           <button class="active" type="button" data-section="profile">👤 Meus dados</button>
@@ -32,25 +41,44 @@
               <h2 class="card-title">Dados de contato e entrega</h2>
               <p class="muted">Estes dados são usados para montar seu pedido. Você pode alterá-los quando quiser.</p>
               <form id="profileForm" class="form-grid" style="margin-top:20px">
-                <div class="form-group span-2"><label for="fullName">Nome completo</label><input class="input" id="fullName" required maxlength="120" autocomplete="name"></div>
-                <div class="form-group"><label for="phone">WhatsApp / telefone</label><input class="input" id="phone" required maxlength="20" autocomplete="tel" placeholder="(44) 99999-9999"></div>
-                <div class="form-group"><label for="postalCode">CEP</label><input class="input" id="postalCode" required maxlength="9" autocomplete="postal-code" placeholder="00000-000"></div>
-                <div class="form-group span-2"><label for="street">Rua / avenida</label><input class="input" id="street" required maxlength="180" autocomplete="street-address"></div>
-                <div class="form-group"><label for="number">Número</label><input class="input" id="number" required maxlength="20"></div>
-                <div class="form-group"><label for="complement">Complemento</label><input class="input" id="complement" maxlength="120" placeholder="Opcional"></div>
-                <div class="form-group"><label for="city">Cidade</label><input class="input" id="city" required maxlength="120" autocomplete="address-level2"></div>
-                <div class="form-group"><label for="state">Estado</label><input class="input" id="state" required maxlength="2" autocomplete="address-level1" placeholder="PR"></div>
-                <div class="span-2"><button class="btn btn-primary" id="saveProfileButton" type="submit">Salvar meus dados</button></div>
+                <div class="form-group span-2"><label for="fullName">Nome completo</label><input class="input"
+                    id="fullName" required maxlength="120" autocomplete="name"></div>
+                <div class="form-group"><label for="phone">WhatsApp / telefone</label><input class="input" id="phone"
+                    required maxlength="20" autocomplete="tel" placeholder="(44) 99999-9999"></div>
+                <div class="form-group"><label for="postalCode">CEP</label><input class="input" id="postalCode" required
+                    maxlength="9" autocomplete="postal-code" placeholder="00000-000"></div>
+                <div class="form-group span-2"><label for="street">Rua / avenida</label><input class="input" id="street"
+                    required maxlength="180" autocomplete="street-address"></div>
+                <div class="form-group"><label for="number">Número</label><input class="input" id="number" required
+                    maxlength="20"></div>
+                <div class="form-group"><label for="complement">Complemento</label><input class="input" id="complement"
+                    maxlength="120" placeholder="Opcional"></div>
+                <div class="form-group"><label for="city">Cidade</label><input class="input" id="city" required
+                    maxlength="120" autocomplete="address-level2"></div>
+                <div class="form-group"><label for="state">Estado</label><input class="input" id="state" required
+                    maxlength="2" autocomplete="address-level1" placeholder="PR"></div>
+                <div class="span-2"><button class="btn btn-primary" id="saveProfileButton" type="submit">Salvar meus
+                    dados</button></div>
               </form>
             </div>
           </div>
 
           <div class="account-section" data-account-section="orders" hidden>
-            <div class="content-card"><h2 class="card-title">Meus pedidos</h2><div id="ordersList"><div class="empty-state"><strong>Carregando...</strong></div></div></div>
+            <div class="content-card">
+              <h2 class="card-title">Meus pedidos</h2>
+              <div id="ordersList">
+                <div class="empty-state"><strong>Carregando...</strong></div>
+              </div>
+            </div>
           </div>
 
           <div class="account-section" data-account-section="favorites" hidden>
-            <div class="content-card"><h2 class="card-title">Produtos favoritos</h2><div class="product-grid" id="favoritesGrid"><div class="empty-state"><strong>Carregando...</strong></div></div></div>
+            <div class="content-card">
+              <h2 class="card-title">Produtos favoritos</h2>
+              <div class="product-grid" id="favoritesGrid">
+                <div class="empty-state"><strong>Carregando...</strong></div>
+              </div>
+            </div>
           </div>
         </section>
       </div>
@@ -58,6 +86,7 @@
   </main>
 
   <div id="toastRoot" class="toast-root"></div>
-  <script type="module" src="./js/account.js"></script>
+  <script type="module" src="/js/account.js"></script>
 </body>
+
 </html>
