@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Crazy Chicken - catálogo online com carrinho e atendimento pelo WhatsApp." />
+  <meta name="theme-color" content="#090909" />
+  <title>Crazy Chicken | Loja</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="brand" href="/">
+        <span class="brand-mark">🐔</span>
+        <span>Crazy Chicken<small>catálogo online</small></span>
+      </a>
+      <nav class="header-nav" aria-label="Navegação principal">
+        <a href="#produtos">Produtos</a>
+        <a href="#vantagens">Como funciona</a>
+        <a href="/conta">Meus pedidos</a>
+        <a data-admin-link href="/admin" hidden>Admin</a>
+      </nav>
+      <div class="header-actions">
+        <span data-auth-slot></span>
+        <button class="icon-btn" id="openCart" type="button" aria-label="Abrir carrinho">
+          🛒 <span class="cart-count" id="cartCount">0</span>
+        </button>
+        <button class="icon-btn menu-btn" data-menu-trigger type="button" aria-label="Abrir menu" aria-expanded="false">☰</button>
+      </div>
+    </div>
+    <nav class="mobile-menu" data-mobile-menu aria-label="Navegação móvel">
+      <a href="#produtos">Produtos</a>
+      <a href="#vantagens">Como funciona</a>
+      <a href="/conta">Minha conta</a>
+      <a href="/login">Entrar / criar conta</a>
+      <a data-admin-link href="/admin" hidden>Painel Admin</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">⚡ catálogo atualizado em tempo real</span>
+          <h1>Seu estilo.<br><span class="text-red">Sua escolha.</span></h1>
+          <p>Explore os produtos da Crazy Chicken, salve seus favoritos, monte o carrinho e envie o pedido completo pelo WhatsApp. Clientes cadastrados acompanham o histórico de pedidos pela própria conta.</p>
+          <div class="hero-buttons">
+            <a class="btn btn-primary" href="#produtos">Ver produtos</a>
+            <a class="btn btn-secondary" href="/login">Criar minha conta</a>
+          </div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="hero-product-stage"><span class="hero-chicken">🐔</span></div>
+          <div class="hero-stats">
+            <div class="stat-chip"><strong>Compra simples</strong><span>Carrinho rápido e organizado</span></div>
+            <div class="stat-chip"><strong>Conta do cliente</strong><span>Dados e pedidos em um só lugar</span></div>
+            <div class="stat-chip"><strong>Atendimento</strong><span>Finalização pelo WhatsApp</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="produtos">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">Catálogo</span>
+            <h2 class="section-title">Produtos Crazy Chicken</h2>
+          </div>
+          <p class="section-sub">Os produtos abaixo vêm diretamente do banco de dados. Quando o administrador altera preço, estoque, foto ou disponibilidade, a loja atualiza sem editar HTML.</p>
+        </div>
+
+        <div class="store-toolbar">
+          <label class="search-box">
+            <span class="search-icon">⌕</span>
+            <span class="sr-only">Pesquisar produtos</span>
+            <input id="searchInput" type="search" placeholder="Pesquisar por nome, categoria..." autocomplete="off" />
+          </label>
+          <select class="sort-select" id="sortSelect" aria-label="Ordenar produtos">
+            <option value="featured">Destaques</option>
+            <option value="newest">Mais recentes</option>
+            <option value="price-asc">Menor preço</option>
+            <option value="price-desc">Maior preço</option>
+            <option value="name">Nome A-Z</option>
+          </select>
+        </div>
+
+        <div class="category-row" id="categoryRow">
+          <button class="category-chip active" type="button" data-category="all">Todos</button>
+        </div>
+
+        <div id="productGrid" class="product-grid" aria-live="polite">
+          <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="vantagens">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">Experiência</span>
+            <h2 class="section-title">Uma loja pronta para crescer</h2>
+          </div>
+        </div>
+        <div class="feature-strip">
+          <article class="feature-card"><span>👤</span><strong>Conta do cliente</strong><p>Cadastro seguro, endereço salvo, favoritos e histórico de pedidos.</p></article>
+          <article class="feature-card"><span>🛒</span><strong>Carrinho persistente</strong><p>Os itens continuam no carrinho mesmo após atualizar a página.</p></article>
+          <article class="feature-card"><span>🔒</span><strong>Login seguro</strong><p>Autenticação e regras de acesso ficam no Supabase, não escondidas no HTML.</p></article>
+          <article class="feature-card"><span>📲</span><strong>Pedido pelo WhatsApp</strong><p>O sistema registra o pedido e monta a mensagem automaticamente.</p></article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <a class="brand" href="/"><span class="brand-mark">🐔</span><span>Crazy Chicken<small>catálogo online</small></span></a>
+        <p>Catálogo digital com atendimento direto e uma experiência simples para encontrar seus produtos favoritos.</p>
+      </div>
+      <div><h4>Navegação</h4><a href="#produtos">Produtos</a><br><a href="/conta">Minha conta</a><br><a href="/login">Entrar</a></div>
+      <div><h4>Atendimento</h4><a id="footerWhatsapp" href="#" target="_blank" rel="noopener">WhatsApp</a><br><a id="footerInstagram" href="#" target="_blank" rel="noopener">Instagram</a></div>
+    </div>
+    <div class="container footer-bottom"><span>© <span id="year"></span> Crazy Chicken.</span><span>Pedidos sujeitos à confirmação de estoque e entrega.</span></div>
+  </footer>
+
+  <div class="drawer-backdrop" id="cartBackdrop"></div>
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Carrinho de compras">
+    <div class="drawer-head"><h3>Seu carrinho</h3><button class="icon-btn" id="closeCart" type="button" aria-label="Fechar carrinho">×</button></div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-summary">
+      <div class="summary-row"><span>Itens</span><strong id="cartItemsTotal">0</strong></div>
+      <div class="summary-row total"><span>Subtotal</span><strong id="cartSubtotal">R$ 0,00</strong></div>
+      <p class="summary-note">O valor da entrega é confirmado de acordo com o CEP. Para finalizar, você precisa estar conectado à sua conta e com os dados de entrega preenchidos.</p>
+      <button class="btn btn-primary btn-block" id="checkoutButton" type="button">Finalizar pelo WhatsApp</button>
+    </div>
+  </aside>
+
+  <div id="toastRoot" class="toast-root"></div>
+  <script type="module" src="./js/store.js"></script>
+</body>
+</html>
