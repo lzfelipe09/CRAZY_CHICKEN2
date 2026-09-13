@@ -1,144 +1,3334 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Crazy Chicken - catálogo online com carrinho e atendimento pelo WhatsApp." />
-  <meta name="theme-color" content="#090909" />
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="theme-color"
+    content="#080808"
+  >
+
+  <meta
+    name="description"
+    content="Crazy Chicken - catálogo online, produtos, carrinho e pedidos."
+  >
+
   <title>Crazy Chicken | Loja</title>
-  <link rel="stylesheet" href="./css/styles.css" />
+
+
+  <style>
+
+    /* =====================================================
+       RESET
+    ===================================================== */
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #080808;
+      --bg-soft: #0e0e0e;
+      --panel: #121212;
+      --panel-2: #171717;
+      --panel-3: #1d1d1d;
+
+      --border: #292929;
+      --border-light: #353535;
+
+      --text: #ffffff;
+      --text-soft: #d8d8d8;
+      --muted: #8e8e8e;
+
+      --red: #ef2b2d;
+      --red-2: #ff4447;
+      --red-dark: #a81417;
+
+      --green: #4cd67d;
+
+      --radius-sm: 10px;
+      --radius: 16px;
+      --radius-lg: 24px;
+      --radius-xl: 32px;
+
+      --shadow:
+        0 30px 80px
+        rgba(0, 0, 0, 0.4);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+
+      min-height: 100vh;
+
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+      background:
+        radial-gradient(
+          circle at 10% -10%,
+          rgba(239, 43, 45, 0.15),
+          transparent 32rem
+        ),
+        radial-gradient(
+          circle at 100% 20%,
+          rgba(239, 43, 45, 0.06),
+          transparent 30rem
+        ),
+        var(--bg);
+
+      color: var(--text);
+    }
+
+    body.no-scroll {
+      overflow: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    ::selection {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .container {
+      width:
+        min(
+          1240px,
+          calc(100% - 40px)
+        );
+
+      margin-inline: auto;
+    }
+
+
+    /* =====================================================
+       HEADER
+    ===================================================== */
+
+    .header {
+      position: sticky;
+      top: 0;
+
+      z-index: 70;
+
+      background:
+        rgba(
+          8,
+          8,
+          8,
+          0.88
+        );
+
+      border-bottom:
+        1px solid
+        rgba(
+          255,
+          255,
+          255,
+          0.08
+        );
+
+      backdrop-filter:
+        blur(18px);
+    }
+
+    .header-row {
+      min-height: 78px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+
+      gap: 12px;
+
+      font-weight: 900;
+
+      white-space: nowrap;
+    }
+
+    .brand-logo {
+      width: 45px;
+      height: 45px;
+
+      border-radius: 14px;
+
+      display: grid;
+      place-items: center;
+
+      font-size: 24px;
+
+      background:
+        linear-gradient(
+          145deg,
+          var(--red),
+          var(--red-dark)
+        );
+
+      box-shadow:
+        0 10px 28px
+        rgba(
+          239,
+          43,
+          45,
+          0.22
+        );
+    }
+
+    .brand-name {
+      font-size: 20px;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-name small {
+      display: block;
+
+      color: #777;
+
+      font-size: 9px;
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.2em;
+
+      margin-top: 3px;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+
+      gap: 27px;
+
+      color: #bdbdbd;
+
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .nav a {
+      transition:
+        color 0.2s;
+    }
+
+    .nav a:hover {
+      color: #fff;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+
+      gap: 9px;
+    }
+
+    .auth-slot a {
+      min-height: 42px;
+
+      display: flex;
+      align-items: center;
+
+      padding:
+        0 15px;
+
+      border:
+        1px solid
+        var(--border);
+
+      border-radius: 11px;
+
+      color: #ddd;
+
+      background:
+        #131313;
+
+      font-size: 13px;
+      font-weight: 700;
+
+      transition:
+        0.2s;
+    }
+
+    .auth-slot a:hover {
+      background: #1b1b1b;
+      border-color: #444;
+    }
+
+    .cart-button {
+      min-height: 42px;
+
+      position: relative;
+
+      display: flex;
+      align-items: center;
+
+      gap: 8px;
+
+      border: 0;
+
+      border-radius: 11px;
+
+      padding:
+        0 16px;
+
+      background:
+        linear-gradient(
+          145deg,
+          var(--red),
+          #bd191c
+        );
+
+      color: #fff;
+
+      font-weight: 850;
+
+      box-shadow:
+        0 10px 28px
+        rgba(
+          239,
+          43,
+          45,
+          0.17
+        );
+    }
+
+    .cart-icon {
+      font-size: 17px;
+    }
+
+    .cart-count {
+      min-width: 21px;
+      height: 21px;
+
+      padding:
+        0 5px;
+
+      border-radius: 999px;
+
+      display: grid;
+      place-items: center;
+
+      background: #fff;
+      color: #111;
+
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+
+    /* =====================================================
+       HERO
+    ===================================================== */
+
+    .hero {
+      padding:
+        50px 0 34px;
+    }
+
+    .hero-grid {
+      display: grid;
+
+      grid-template-columns:
+        minmax(0, 1.1fr)
+        minmax(390px, 0.9fr);
+
+      gap: 18px;
+    }
+
+    .hero-main {
+      position: relative;
+
+      min-height: 500px;
+
+      overflow: hidden;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      padding: 50px;
+
+      border:
+        1px solid
+        var(--border);
+
+      border-radius:
+        var(--radius-xl);
+
+      background:
+        linear-gradient(
+          145deg,
+          #171717,
+          #0d0d0d
+        );
+
+      box-shadow:
+        var(--shadow);
+    }
+
+    .hero-main::before {
+      content: "";
+
+      position: absolute;
+
+      width: 450px;
+      height: 450px;
+
+      right: -200px;
+      top: -210px;
+
+      border-radius: 50%;
+
+      background:
+        radial-gradient(
+          circle,
+          rgba(
+            239,
+            43,
+            45,
+            0.25
+          ),
+          transparent 70%
+        );
+
+      pointer-events: none;
+    }
+
+    .hero-main::after {
+      content: "";
+
+      position: absolute;
+
+      width: 250px;
+      height: 1px;
+
+      left: 50px;
+      bottom: 34px;
+
+      background:
+        linear-gradient(
+          90deg,
+          var(--red),
+          transparent
+        );
+
+      opacity: 0.6;
+    }
+
+    .hero-kicker {
+      width: fit-content;
+
+      padding:
+        7px 11px;
+
+      border:
+        1px solid
+        rgba(
+          239,
+          43,
+          45,
+          0.35
+        );
+
+      border-radius:
+        999px;
+
+      background:
+        rgba(
+          239,
+          43,
+          45,
+          0.08
+        );
+
+      color: #ff7476;
+
+      font-size: 10px;
+      font-weight: 900;
+
+      letter-spacing: 0.15em;
+
+      text-transform: uppercase;
+    }
+
+    .hero-title {
+      max-width: 780px;
+
+      margin:
+        20px 0 19px;
+
+      font-size:
+        clamp(
+          52px,
+          7vw,
+          88px
+        );
+
+      line-height: 0.91;
+
+      letter-spacing:
+        -0.065em;
+
+      font-weight: 950;
+    }
+
+    .hero-title span {
+      display: block;
+
+      color: var(--red);
+    }
+
+    .hero-description {
+      max-width: 650px;
+
+      color: #aaa;
+
+      font-size: 16px;
+
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+
+      gap: 11px;
+
+      flex-wrap: wrap;
+
+      margin-top: 28px;
+    }
+
+    .btn {
+      min-height: 46px;
+
+      border: 0;
+
+      border-radius: 12px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      gap: 8px;
+
+      padding:
+        0 18px;
+
+      font-weight: 850;
+
+      transition:
+        transform 0.2s,
+        background 0.2s,
+        border 0.2s;
+    }
+
+    .btn:hover {
+      transform:
+        translateY(-2px);
+    }
+
+    .btn.primary {
+      color: #fff;
+
+      background:
+        linear-gradient(
+          145deg,
+          var(--red),
+          #b9181b
+        );
+
+      box-shadow:
+        0 12px 30px
+        rgba(
+          239,
+          43,
+          45,
+          0.18
+        );
+    }
+
+    .btn.secondary {
+      color: #fff;
+
+      background:
+        #171717;
+
+      border:
+        1px solid
+        #303030;
+    }
+
+    .hero-side {
+      display: grid;
+
+      grid-template-rows:
+        1fr auto;
+
+      gap: 18px;
+    }
+
+    .showcase {
+      position: relative;
+
+      min-height: 340px;
+
+      overflow: hidden;
+
+      display: grid;
+      place-items: center;
+
+      border:
+        1px solid
+        var(--border);
+
+      border-radius:
+        var(--radius-xl);
+
+      background:
+        radial-gradient(
+          circle at center,
+          rgba(
+            239,
+            43,
+            45,
+            0.19
+          ),
+          transparent 55%
+        ),
+        linear-gradient(
+          145deg,
+          #161616,
+          #0b0b0b
+        );
+    }
+
+    .showcase::before {
+      content: "";
+
+      position: absolute;
+
+      width: 280px;
+      height: 280px;
+
+      border:
+        1px solid
+        rgba(
+          255,
+          255,
+          255,
+          0.05
+        );
+
+      border-radius: 50%;
+    }
+
+    .showcase::after {
+      content: "";
+
+      position: absolute;
+
+      width: 200px;
+      height: 200px;
+
+      border:
+        1px solid
+        rgba(
+          239,
+          43,
+          45,
+          0.2
+        );
+
+      border-radius: 50%;
+    }
+
+    .showcase-chicken {
+      position: relative;
+
+      z-index: 3;
+
+      font-size: 150px;
+
+      filter:
+        drop-shadow(
+          0 30px 30px
+          rgba(
+            0,
+            0,
+            0,
+            0.65
+          )
+        );
+    }
+
+    .showcase-tag {
+      position: absolute;
+
+      left: 22px;
+      bottom: 22px;
+
+      z-index: 4;
+
+      padding:
+        10px 13px;
+
+      border:
+        1px solid
+        #333;
+
+      border-radius: 12px;
+
+      background:
+        rgba(
+          8,
+          8,
+          8,
+          0.82
+        );
+
+      backdrop-filter:
+        blur(10px);
+
+      font-size: 11px;
+
+      color: #aaa;
+    }
+
+    .showcase-tag strong {
+      display: block;
+
+      color: #fff;
+
+      margin-bottom: 3px;
+
+      font-size: 13px;
+    }
+
+    .hero-benefits {
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          3,
+          1fr
+        );
+
+      gap: 10px;
+    }
+
+    .benefit-mini {
+      min-height: 125px;
+
+      padding: 17px;
+
+      border:
+        1px solid
+        var(--border);
+
+      border-radius: 17px;
+
+      background:
+        var(--panel);
+
+      display: flex;
+      flex-direction: column;
+
+      justify-content:
+        space-between;
+    }
+
+    .benefit-mini-icon {
+      width: 36px;
+      height: 36px;
+
+      border-radius: 10px;
+
+      display: grid;
+      place-items: center;
+
+      background:
+        #1d1d1d;
+
+      font-size: 17px;
+    }
+
+    .benefit-mini strong {
+      font-size: 12px;
+    }
+
+    .benefit-mini span {
+      display: block;
+
+      margin-top: 3px;
+
+      color: #777;
+
+      font-size: 10px;
+
+      line-height: 1.4;
+    }
+
+
+    /* =====================================================
+       TRUST BAR
+    ===================================================== */
+
+    .trust-bar {
+      margin-top: 18px;
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          4,
+          1fr
+        );
+
+      border:
+        1px solid
+        var(--border);
+
+      border-radius:
+        18px;
+
+      overflow: hidden;
+
+      background: #101010;
+    }
+
+    .trust-item {
+      padding:
+        18px;
+
+      display: flex;
+      align-items: center;
+
+      gap: 11px;
+
+      border-right:
+        1px solid
+        var(--border);
+    }
+
+    .trust-item:last-child {
+      border-right: 0;
+    }
+
+    .trust-icon {
+      width: 38px;
+      height: 38px;
+
+      flex-shrink: 0;
+
+      border-radius: 10px;
+
+      display: grid;
+      place-items: center;
+
+      background:
+        #1a1a1a;
+    }
+
+    .trust-item strong {
+      display: block;
+
+      font-size: 12px;
+    }
+
+    .trust-item span {
+      display: block;
+
+      margin-top: 3px;
+
+      color: #777;
+
+      font-size: 10px;
+    }
+
+
+    /* =====================================================
+       PRODUCTS SECTION
+    ===================================================== */
+
+    .section {
+      padding:
+        75px 0;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+
+      gap: 25px;
+
+      margin-bottom: 26px;
+    }
+
+    .section-kicker {
+      color: var(--red-2);
+
+      font-size: 10px;
+
+      font-weight: 900;
+
+      letter-spacing:
+        0.18em;
+
+      text-transform:
+        uppercase;
+
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-size:
+        clamp(
+          32px,
+          4vw,
+          46px
+        );
+
+      letter-spacing:
+        -0.045em;
+
+      line-height: 1;
+
+      margin: 0;
+    }
+
+    .section-description {
+      max-width: 460px;
+
+      color: #888;
+
+      font-size: 13px;
+
+      line-height: 1.6;
+
+      text-align: right;
+    }
+
+
+    /* =====================================================
+       TOOLBAR
+    ===================================================== */
+
+    .catalog-controls {
+      position: sticky;
+
+      top: 91px;
+
+      z-index: 30;
+
+      padding: 10px;
+
+      display: grid;
+
+      grid-template-columns:
+        minmax(0, 1fr)
+        210px;
+
+      gap: 10px;
+
+      border:
+        1px solid
+        var(--border);
+
+      border-radius:
+        16px;
+
+      background:
+        rgba(
+          13,
+          13,
+          13,
+          0.92
+        );
+
+      backdrop-filter:
+        blur(14px);
+
+      box-shadow:
+        0 12px 30px
+        rgba(
+          0,
+          0,
+          0,
+          0.17
+        );
+    }
+
+    .search-wrapper {
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+
+      left: 14px;
+      top: 50%;
+
+      transform:
+        translateY(-50%);
+
+      color: #666;
+
+      pointer-events: none;
+    }
+
+    .catalog-controls input,
+    .catalog-controls select {
+      width: 100%;
+
+      min-height: 47px;
+
+      outline: 0;
+
+      border:
+        1px solid
+        #2e2e2e;
+
+      border-radius: 11px;
+
+      background: #090909;
+
+      color: #fff;
+    }
+
+    .catalog-controls input {
+      padding:
+        0 14px 0 43px;
+    }
+
+    .catalog-controls select {
+      padding:
+        0 13px;
+    }
+
+    .catalog-controls input:focus,
+    .catalog-controls select:focus {
+      border-color:
+        rgba(
+          239,
+          43,
+          45,
+          0.7
+        );
+
+      box-shadow:
+        0 0 0 3px
+        rgba(
+          239,
+          43,
+          45,
+          0.08
+        );
+    }
+
+    .categories {
+      display: flex;
+
+      gap: 8px;
+
+      overflow-x: auto;
+
+      padding:
+        15px 1px 20px;
+
+      scrollbar-width: none;
+    }
+
+    .categories::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      min-height: 38px;
+
+      flex-shrink: 0;
+
+      border:
+        1px solid
+        #303030;
+
+      border-radius: 999px;
+
+      padding:
+        0 15px;
+
+      background:
+        #121212;
+
+      color: #aaa;
+
+      font-size: 12px;
+      font-weight: 750;
+
+      transition:
+        0.2s;
+    }
+
+    .chip:hover {
+      border-color: #555;
+      color: #fff;
+    }
+
+    .chip.active {
+      color: #fff;
+
+      border-color:
+        rgba(
+          239,
+          43,
+          45,
+          0.6
+        );
+
+      background:
+        rgba(
+          239,
+          43,
+          45,
+          0.13
+        );
+    }
+
+
+    /* =====================================================
+       PRODUCT GRID
+    ===================================================== */
+
+    .product-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          4,
+          minmax(
+            0,
+            1fr
+          )
+        );
+
+      gap: 17px;
+    }
+
+    .product-card {
+      min-width: 0;
+
+      overflow: hidden;
+
+      border:
+        1px solid
+        var(--border);
+
+      border-radius:
+        21px;
+
+      background:
+        linear-gradient(
+          160deg,
+          #151515,
+          #0d0d0d
+        );
+
+      transition:
+        transform 0.25s,
+        border-color 0.25s,
+        box-shadow 0.25s;
+    }
+
+    .product-card:hover {
+      transform:
+        translateY(-5px);
+
+      border-color:
+        #3a3a3a;
+
+      box-shadow:
+        0 24px 50px
+        rgba(
+          0,
+          0,
+          0,
+          0.25
+        );
+    }
+
+    .product-media {
+      position: relative;
+
+      aspect-ratio: 1 / 1;
+
+      overflow: hidden;
+
+      background:
+        radial-gradient(
+          circle at center,
+          #202020,
+          #111
+        );
+    }
+
+    .product-media img {
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
+
+      transition:
+        transform 0.35s;
+    }
+
+    .product-card:hover
+    .product-media img {
+      transform:
+        scale(1.04);
+    }
+
+    .product-placeholder {
+      width: 100%;
+      height: 100%;
+
+      display: grid;
+      place-items: center;
+
+      font-size: 78px;
+
+      background:
+        radial-gradient(
+          circle,
+          rgba(
+            239,
+            43,
+            45,
+            0.08
+          ),
+          transparent 50%
+        );
+    }
+
+    .badges {
+      position: absolute;
+
+      left: 11px;
+      top: 11px;
+
+      display: flex;
+      flex-wrap: wrap;
+
+      gap: 6px;
+    }
+
+    .badges span {
+      padding:
+        6px 9px;
+
+      border:
+        1px solid
+        rgba(
+          255,
+          255,
+          255,
+          0.12
+        );
+
+      border-radius: 999px;
+
+      background:
+        rgba(
+          5,
+          5,
+          5,
+          0.76
+        );
+
+      color: #fff;
+
+      backdrop-filter:
+        blur(7px);
+
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    .favorite {
+      position: absolute;
+
+      right: 11px;
+      top: 11px;
+
+      width: 38px;
+      height: 38px;
+
+      border:
+        1px solid
+        rgba(
+          255,
+          255,
+          255,
+          0.15
+        );
+
+      border-radius: 50%;
+
+      background:
+        rgba(
+          5,
+          5,
+          5,
+          0.75
+        );
+
+      color: #fff;
+
+      font-size: 19px;
+
+      backdrop-filter:
+        blur(7px);
+    }
+
+    .favorite:hover,
+    .favorite.active {
+      color: #ff6668;
+
+      border-color:
+        rgba(
+          239,
+          43,
+          45,
+          0.45
+        );
+    }
+
+    .product-body {
+      padding: 18px;
+    }
+
+    .product-body small {
+      display: block;
+
+      color: #ff7476;
+
+      font-size: 10px;
+
+      font-weight: 800;
+
+      text-transform: uppercase;
+
+      letter-spacing:
+        0.08em;
+    }
+
+    .product-body h3 {
+      margin:
+        8px 0 8px;
+
+      font-size: 19px;
+
+      line-height: 1.2;
+
+      letter-spacing:
+        -0.02em;
+    }
+
+    .product-body p {
+      min-height: 43px;
+
+      color: #888;
+
+      font-size: 12px;
+
+      line-height: 1.55;
+
+      display: -webkit-box;
+
+      -webkit-line-clamp: 2;
+
+      -webkit-box-orient:
+        vertical;
+
+      overflow: hidden;
+    }
+
+    .price-line {
+      min-height: 57px;
+
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+
+      gap: 12px;
+
+      margin:
+        15px 0;
+    }
+
+    .price-line s {
+      display: block;
+
+      color: #666;
+
+      font-size: 11px;
+
+      margin-bottom: 2px;
+    }
+
+    .price-line strong {
+      display: block;
+
+      color: #fff;
+
+      font-size: 21px;
+
+      letter-spacing:
+        -0.03em;
+    }
+
+    .price-line span {
+      color: #777;
+
+      font-size: 10px;
+
+      text-align: right;
+    }
+
+    .product-body .btn {
+      width: 100%;
+    }
+
+    .product-body .btn:disabled {
+      cursor: not-allowed;
+
+      opacity: 0.45;
+
+      transform: none;
+    }
+
+
+    /* =====================================================
+       EMPTY / LOADING
+    ===================================================== */
+
+    .empty {
+      grid-column:
+        1 / -1;
+
+      min-height: 180px;
+
+      padding: 30px;
+
+      display: grid;
+      place-items: center;
+
+      align-content: center;
+
+      text-align: center;
+
+      border:
+        1px dashed
+        #353535;
+
+      border-radius:
+        18px;
+
+      color: #888;
+
+      background:
+        rgba(
+          255,
+          255,
+          255,
+          0.01
+        );
+    }
+
+    .empty strong {
+      display: block;
+
+      margin-bottom: 6px;
+
+      color: #fff;
+
+      font-size: 15px;
+    }
+
+    .empty span {
+      display: block;
+
+      color: #777;
+
+      font-size: 12px;
+    }
+
+
+    /* =====================================================
+       EXPERIENCE SECTION
+    ===================================================== */
+
+    .experience {
+      padding:
+        25px 0 85px;
+    }
+
+    .experience-box {
+      overflow: hidden;
+
+      display: grid;
+
+      grid-template-columns:
+        0.85fr 1.15fr;
+
+      border:
+        1px solid
+        var(--border);
+
+      border-radius:
+        26px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #151515,
+          #0c0c0c
+        );
+    }
+
+    .experience-intro {
+      position: relative;
+
+      padding: 40px;
+
+      background:
+        radial-gradient(
+          circle at 0 0,
+          rgba(
+            239,
+            43,
+            45,
+            0.16
+          ),
+          transparent 60%
+        );
+    }
+
+    .experience-intro h2 {
+      margin:
+        10px 0 15px;
+
+      font-size:
+        clamp(
+          31px,
+          4vw,
+          48px
+        );
+
+      line-height: 1;
+
+      letter-spacing:
+        -0.05em;
+    }
+
+    .experience-intro p {
+      color: #8d8d8d;
+
+      font-size: 13px;
+
+      line-height: 1.7;
+    }
+
+    .experience-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          2,
+          1fr
+        );
+
+      border-left:
+        1px solid
+        var(--border);
+    }
+
+    .experience-item {
+      min-height: 180px;
+
+      padding: 28px;
+
+      border-right:
+        1px solid
+        var(--border);
+
+      border-bottom:
+        1px solid
+        var(--border);
+    }
+
+    .experience-item:nth-child(2n) {
+      border-right: 0;
+    }
+
+    .experience-item:nth-last-child(-n + 2) {
+      border-bottom: 0;
+    }
+
+    .experience-icon {
+      width: 42px;
+      height: 42px;
+
+      margin-bottom: 24px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 11px;
+
+      background:
+        #1c1c1c;
+
+      font-size: 19px;
+    }
+
+    .experience-item strong {
+      display: block;
+
+      margin-bottom: 8px;
+
+      font-size: 14px;
+    }
+
+    .experience-item p {
+      color: #7d7d7d;
+
+      font-size: 11px;
+
+      line-height: 1.55;
+    }
+
+
+    /* =====================================================
+       FOOTER
+    ===================================================== */
+
+    .footer {
+      border-top:
+        1px solid
+        var(--border);
+
+      background:
+        #090909;
+    }
+
+    .footer-main {
+      padding:
+        45px 0 35px;
+
+      display: grid;
+
+      grid-template-columns:
+        1.3fr
+        0.7fr
+        0.7fr;
+
+      gap: 50px;
+    }
+
+    .footer-brand p {
+      max-width: 390px;
+
+      margin-top: 16px;
+
+      color: #777;
+
+      font-size: 12px;
+
+      line-height: 1.7;
+    }
+
+    .footer-column strong {
+      display: block;
+
+      margin-bottom: 13px;
+
+      font-size: 12px;
+    }
+
+    .footer-column a {
+      display: block;
+
+      width: fit-content;
+
+      margin-bottom: 9px;
+
+      color: #777;
+
+      font-size: 12px;
+    }
+
+    .footer-column a:hover {
+      color: #fff;
+    }
+
+    .footer-bottom {
+      min-height: 65px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 20px;
+
+      border-top:
+        1px solid
+        #202020;
+
+      color: #666;
+
+      font-size: 11px;
+    }
+
+
+    /* =====================================================
+       CART DRAWER
+    ===================================================== */
+
+    .cart-backdrop {
+      position: fixed;
+
+      inset: 0;
+
+      z-index: 90;
+
+      background:
+        rgba(
+          0,
+          0,
+          0,
+          0.72
+        );
+
+      opacity: 0;
+
+      visibility: hidden;
+
+      transition:
+        0.25s;
+
+      backdrop-filter:
+        blur(4px);
+    }
+
+    .cart-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .cart-drawer {
+      position: fixed;
+
+      top: 0;
+      right: 0;
+
+      z-index: 100;
+
+      width:
+        min(
+          440px,
+          100%
+        );
+
+      height: 100vh;
+
+      display: flex;
+      flex-direction: column;
+
+      border-left:
+        1px solid
+        #2b2b2b;
+
+      background:
+        #0d0d0d;
+
+      box-shadow:
+        -30px 0 80px
+        rgba(
+          0,
+          0,
+          0,
+          0.35
+        );
+
+      transform:
+        translateX(100%);
+
+      transition:
+        transform 0.28s ease;
+    }
+
+    .cart-drawer.open {
+      transform:
+        translateX(0);
+    }
+
+    .drawer-header {
+      min-height: 82px;
+
+      padding:
+        18px 20px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 20px;
+
+      border-bottom:
+        1px solid
+        var(--border);
+    }
+
+    .drawer-header strong {
+      display: block;
+
+      font-size: 18px;
+    }
+
+    .drawer-header span {
+      display: block;
+
+      margin-top: 4px;
+
+      color: #777;
+
+      font-size: 10px;
+    }
+
+    .drawer-close {
+      width: 40px;
+      height: 40px;
+
+      flex-shrink: 0;
+
+      display: grid;
+      place-items: center;
+
+      border:
+        1px solid
+        #303030;
+
+      border-radius: 10px;
+
+      background: #171717;
+
+      color: #fff;
+
+      font-size: 20px;
+    }
+
+    .cart-items {
+      flex: 1;
+
+      overflow-y: auto;
+
+      padding:
+        8px 19px 20px;
+    }
+
+    .cart-item {
+      display: grid;
+
+      grid-template-columns:
+        68px
+        minmax(0, 1fr)
+        auto;
+
+      gap: 12px;
+
+      align-items: start;
+
+      padding:
+        15px 0;
+
+      border-bottom:
+        1px solid
+        #242424;
+    }
+
+    .cart-thumb {
+      width: 68px;
+      height: 68px;
+
+      overflow: hidden;
+
+      display: grid;
+      place-items: center;
+
+      border:
+        1px solid
+        #292929;
+
+      border-radius: 11px;
+
+      background: #181818;
+
+      font-size: 29px;
+    }
+
+    .cart-thumb img {
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
+    }
+
+    .cart-info {
+      min-width: 0;
+    }
+
+    .cart-info strong {
+      display: block;
+
+      font-size: 13px;
+
+      white-space: nowrap;
+
+      overflow: hidden;
+
+      text-overflow: ellipsis;
+    }
+
+    .cart-info span {
+      display: block;
+
+      margin-top: 5px;
+
+      color: #777;
+
+      font-size: 10px;
+    }
+
+    .qty {
+      display: flex;
+      align-items: center;
+
+      gap: 10px;
+
+      margin-top: 10px;
+    }
+
+    .qty button {
+      width: 28px;
+      height: 28px;
+
+      display: grid;
+      place-items: center;
+
+      border:
+        1px solid
+        #303030;
+
+      border-radius: 8px;
+
+      background:
+        #171717;
+
+      color: #fff;
+    }
+
+    .qty b {
+      min-width: 15px;
+
+      text-align: center;
+
+      font-size: 11px;
+    }
+
+    .remove {
+      width: 31px;
+      height: 31px;
+
+      display: grid;
+      place-items: center;
+
+      border:
+        1px solid
+        #303030;
+
+      border-radius: 8px;
+
+      background:
+        #171717;
+
+      color: #999;
+
+      font-size: 17px;
+    }
+
+    .remove:hover {
+      color: #fff;
+
+      border-color:
+        rgba(
+          239,
+          43,
+          45,
+          0.5
+        );
+    }
+
+    .drawer-footer {
+      padding: 19px;
+
+      border-top:
+        1px solid
+        var(--border);
+
+      background:
+        #0b0b0b;
+    }
+
+    .drawer-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 15px;
+
+      margin-bottom: 13px;
+    }
+
+    .drawer-summary span {
+      color: #888;
+
+      font-size: 12px;
+    }
+
+    .drawer-summary strong {
+      font-size: 21px;
+    }
+
+    .drawer-note {
+      margin-bottom: 15px;
+
+      color: #696969;
+
+      font-size: 10px;
+
+      line-height: 1.55;
+    }
+
+    .drawer-footer .btn {
+      width: 100%;
+    }
+
+
+    /* =====================================================
+       SETUP WARNING
+    ===================================================== */
+
+    .setup-warning {
+      position: relative;
+
+      z-index: 200;
+
+      padding:
+        10px 15px;
+
+      background:
+        #ffe38a;
+
+      color:
+        #241d00;
+
+      text-align: center;
+
+      font-size: 12px;
+    }
+
+
+    /* =====================================================
+       TOAST
+    ===================================================== */
+
+    .toast-root {
+      position: fixed;
+
+      right: 18px;
+      bottom: 18px;
+
+      z-index: 150;
+
+      display: grid;
+
+      gap: 9px;
+    }
+
+    .toast {
+      min-width: 260px;
+
+      max-width: 360px;
+
+      padding:
+        13px 15px;
+
+      border:
+        1px solid
+        #333;
+
+      border-radius: 11px;
+
+      background:
+        #181818;
+
+      color: #fff;
+
+      box-shadow:
+        0 15px 40px
+        rgba(
+          0,
+          0,
+          0,
+          0.35
+        );
+
+      opacity: 0;
+
+      transform:
+        translateY(8px);
+
+      transition:
+        0.2s;
+
+      font-size: 12px;
+    }
+
+    .toast.show {
+      opacity: 1;
+
+      transform:
+        translateY(0);
+    }
+
+    .toast-success {
+      border-color:
+        #246c41;
+    }
+
+    .toast-error {
+      border-color:
+        #772b2e;
+    }
+
+
+    /* =====================================================
+       RESPONSIVE - TABLET
+    ===================================================== */
+
+    @media (
+      max-width: 1050px
+    ) {
+
+      .hero-grid {
+        grid-template-columns:
+          1fr;
+      }
+
+      .hero-side {
+        grid-template-columns:
+          1fr;
+
+        grid-template-rows:
+          auto auto;
+      }
+
+      .showcase {
+        min-height: 310px;
+      }
+
+      .product-grid {
+        grid-template-columns:
+          repeat(
+            3,
+            1fr
+          );
+      }
+
+      .nav {
+        display: none;
+      }
+
+      .experience-box {
+        grid-template-columns:
+          1fr;
+      }
+
+      .experience-grid {
+        border-left: 0;
+
+        border-top:
+          1px solid
+          var(--border);
+      }
+    }
+
+
+    /* =====================================================
+       RESPONSIVE - MOBILE / SMALL TABLET
+    ===================================================== */
+
+    @media (
+      max-width: 780px
+    ) {
+
+      .container {
+        width:
+          min(
+            100% - 24px,
+            1240px
+          );
+      }
+
+      .header-row {
+        min-height: 69px;
+      }
+
+      .brand-logo {
+        width: 40px;
+        height: 40px;
+      }
+
+      .brand-name {
+        font-size: 16px;
+      }
+
+      .brand-name small {
+        display: none;
+      }
+
+      .auth-slot {
+        display: none;
+      }
+
+      .cart-button {
+        padding:
+          0 12px;
+      }
+
+      .cart-label {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 25px;
+      }
+
+      .hero-main {
+        min-height: 430px;
+
+        padding:
+          30px 25px;
+      }
+
+      .hero-main::after {
+        left: 25px;
+      }
+
+      .hero-title {
+        font-size:
+          clamp(
+            49px,
+            15vw,
+            68px
+          );
+      }
+
+      .hero-description {
+        font-size: 14px;
+      }
+
+      .hero-benefits {
+        grid-template-columns:
+          1fr;
+      }
+
+      .benefit-mini {
+        min-height: 90px;
+      }
+
+      .trust-bar {
+        grid-template-columns:
+          repeat(
+            2,
+            1fr
+          );
+      }
+
+      .trust-item:nth-child(2) {
+        border-right: 0;
+      }
+
+      .trust-item:nth-child(-n+2) {
+        border-bottom:
+          1px solid
+          var(--border);
+      }
+
+      .section {
+        padding:
+          60px 0;
+      }
+
+      .section-heading {
+        align-items:
+          flex-start;
+
+        flex-direction:
+          column;
+
+        margin-bottom: 20px;
+      }
+
+      .section-description {
+        text-align: left;
+      }
+
+      .catalog-controls {
+        position: static;
+
+        grid-template-columns:
+          1fr;
+      }
+
+      .product-grid {
+        grid-template-columns:
+          repeat(
+            2,
+            minmax(
+              0,
+              1fr
+            )
+          );
+
+        gap: 12px;
+      }
+
+      .experience-intro {
+        padding: 28px;
+      }
+
+      .experience-grid {
+        grid-template-columns:
+          1fr;
+      }
+
+      .experience-item {
+        border-right: 0;
+
+        border-bottom:
+          1px solid
+          var(--border) !important;
+      }
+
+      .experience-item:last-child {
+        border-bottom:
+          0 !important;
+      }
+
+      .footer-main {
+        grid-template-columns:
+          1fr;
+
+        gap: 30px;
+      }
+    }
+
+
+    /* =====================================================
+       RESPONSIVE - PHONE
+    ===================================================== */
+
+    @media (
+      max-width: 520px
+    ) {
+
+      .hero-side {
+        display: none;
+      }
+
+      .hero-main {
+        min-height: 440px;
+      }
+
+      .hero-actions {
+        align-items:
+          stretch;
+
+        flex-direction:
+          column;
+      }
+
+      .hero-actions .btn {
+        width: 100%;
+      }
+
+      .trust-bar {
+        grid-template-columns:
+          1fr;
+      }
+
+      .trust-item {
+        border-right: 0;
+
+        border-bottom:
+          1px solid
+          var(--border);
+      }
+
+      .trust-item:last-child {
+        border-bottom: 0;
+      }
+
+      .product-grid {
+        grid-template-columns:
+          1fr;
+      }
+
+      .footer-bottom {
+        align-items:
+          flex-start;
+
+        flex-direction:
+          column;
+
+        justify-content:
+          center;
+
+        padding:
+          18px 0;
+      }
+    }
+
+  </style>
+
 </head>
+
+
 <body>
-  <header class="site-header">
+
+
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+
+  <header class="header">
+
     <div class="container header-row">
-      <a class="brand" href="/">
-        <span class="brand-mark">🐔</span>
-        <span>Crazy Chicken<small>catálogo online</small></span>
+
+
+      <a
+        class="brand"
+        href="/index.html"
+      >
+
+        <span class="brand-logo">
+          🐔
+        </span>
+
+        <span class="brand-name">
+
+          Crazy Chicken
+
+          <small>
+            catálogo online
+          </small>
+
+        </span>
+
       </a>
-      <nav class="header-nav" aria-label="Navegação principal">
-        <a href="#produtos">Produtos</a>
-        <a href="#vantagens">Como funciona</a>
-        <a href="/conta">Meus pedidos</a>
-        <a data-admin-link href="/admin" hidden>Admin</a>
+
+
+      <nav class="nav">
+
+        <a href="#produtos">
+          Produtos
+        </a>
+
+        <a href="#como-funciona">
+          Como funciona
+        </a>
+
+        <a href="/account.html">
+          Minha conta
+        </a>
+
+        <a
+          href="/admin.html"
+          data-admin-link
+          hidden
+        >
+          Admin
+        </a>
+
       </nav>
+
+
       <div class="header-actions">
-        <span data-auth-slot></span>
-        <button class="icon-btn" id="openCart" type="button" aria-label="Abrir carrinho">
-          🛒 <span class="cart-count" id="cartCount">0</span>
+
+        <span
+          class="auth-slot"
+          data-auth-slot
+        >
+
+          <a href="/login.html">
+            Entrar
+          </a>
+
+        </span>
+
+
+        <button
+          class="cart-button"
+          id="openCart"
+          type="button"
+        >
+
+          <span class="cart-icon">
+            🛒
+          </span>
+
+          <span class="cart-label">
+            Carrinho
+          </span>
+
+          <span
+            class="cart-count"
+            id="cartCount"
+          >
+            0
+          </span>
+
         </button>
-        <button class="icon-btn menu-btn" data-menu-trigger type="button" aria-label="Abrir menu" aria-expanded="false">☰</button>
+
       </div>
+
     </div>
-    <nav class="mobile-menu" data-mobile-menu aria-label="Navegação móvel">
-      <a href="#produtos">Produtos</a>
-      <a href="#vantagens">Como funciona</a>
-      <a href="/conta">Minha conta</a>
-      <a href="/login">Entrar / criar conta</a>
-      <a data-admin-link href="/admin" hidden>Painel Admin</a>
-    </nav>
+
   </header>
 
+
   <main>
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
     <section class="hero">
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <span class="eyebrow">⚡ catálogo atualizado em tempo real</span>
-          <h1>Seu estilo.<br><span class="text-red">Sua escolha.</span></h1>
-          <p>Explore os produtos da Crazy Chicken, salve seus favoritos, monte o carrinho e envie o pedido completo pelo WhatsApp. Clientes cadastrados acompanham o histórico de pedidos pela própria conta.</p>
-          <div class="hero-buttons">
-            <a class="btn btn-primary" href="#produtos">Ver produtos</a>
-            <a class="btn btn-secondary" href="/login">Criar minha conta</a>
+
+      <div class="container">
+
+
+        <div class="hero-grid">
+
+
+          <div class="hero-main">
+
+
+            <div class="hero-kicker">
+              Crazy Chicken • Catálogo online
+            </div>
+
+
+            <h1 class="hero-title">
+
+              Seu estilo.
+
+              <span>
+                Sua escolha.
+              </span>
+
+            </h1>
+
+
+            <p class="hero-description">
+
+              Encontre os produtos da Crazy Chicken,
+              escolha seus favoritos, monte seu carrinho
+              e finalize seu pedido de forma rápida e segura.
+
+            </p>
+
+
+            <div class="hero-actions">
+
+              <a
+                class="btn primary"
+                href="#produtos"
+              >
+                Ver produtos
+                <span>→</span>
+              </a>
+
+
+              <a
+                class="btn secondary"
+                href="/login.html"
+              >
+                👤 Entrar ou criar conta
+              </a>
+
+            </div>
+
+
           </div>
-        </div>
-        <div class="hero-visual" aria-hidden="true">
-          <div class="hero-product-stage"><span class="hero-chicken">🐔</span></div>
-          <div class="hero-stats">
-            <div class="stat-chip"><strong>Compra simples</strong><span>Carrinho rápido e organizado</span></div>
-            <div class="stat-chip"><strong>Conta do cliente</strong><span>Dados e pedidos em um só lugar</span></div>
-            <div class="stat-chip"><strong>Atendimento</strong><span>Finalização pelo WhatsApp</span></div>
+
+
+          <div class="hero-side">
+
+
+            <div class="showcase">
+
+              <div class="showcase-chicken">
+                🐔
+              </div>
+
+
+              <div class="showcase-tag">
+
+                <strong>
+                  Crazy Chicken
+                </strong>
+
+                Catálogo atualizado
+                direto pelo painel admin
+
+              </div>
+
+            </div>
+
+
+            <div class="hero-benefits">
+
+
+              <div class="benefit-mini">
+
+                <div class="benefit-mini-icon">
+                  🛒
+                </div>
+
+                <div>
+
+                  <strong>
+                    Carrinho rápido
+                  </strong>
+
+                  <span>
+                    Seus itens ficam salvos
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <div class="benefit-mini">
+
+                <div class="benefit-mini-icon">
+                  🔒
+                </div>
+
+                <div>
+
+                  <strong>
+                    Conta segura
+                  </strong>
+
+                  <span>
+                    Login via Supabase
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <div class="benefit-mini">
+
+                <div class="benefit-mini-icon">
+                  📲
+                </div>
+
+                <div>
+
+                  <strong>
+                    WhatsApp
+                  </strong>
+
+                  <span>
+                    Finalização direta
+                  </span>
+
+                </div>
+
+              </div>
+
+
+            </div>
+
+
           </div>
+
+
         </div>
+
+
+        <!-- TRUST -->
+
+        <div class="trust-bar">
+
+
+          <div class="trust-item">
+
+            <div class="trust-icon">
+              ⚡
+            </div>
+
+            <div>
+
+              <strong>
+                Catálogo atualizado
+              </strong>
+
+              <span>
+                Produtos em tempo real
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="trust-item">
+
+            <div class="trust-icon">
+              👤
+            </div>
+
+            <div>
+
+              <strong>
+                Área do cliente
+              </strong>
+
+              <span>
+                Dados e pedidos
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="trust-item">
+
+            <div class="trust-icon">
+              ❤️
+            </div>
+
+            <div>
+
+              <strong>
+                Favoritos
+              </strong>
+
+              <span>
+                Salve seus produtos
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="trust-item">
+
+            <div class="trust-icon">
+              📦
+            </div>
+
+            <div>
+
+              <strong>
+                Estoque integrado
+              </strong>
+
+              <span>
+                Disponibilidade atualizada
+              </span>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+
       </div>
+
     </section>
 
-    <section class="section" id="produtos">
+
+    <!-- =====================================================
+         PRODUCTS
+    ====================================================== -->
+
+    <section
+      class="section"
+      id="produtos"
+    >
+
       <div class="container">
-        <div class="section-head">
+
+
+        <div class="section-heading">
+
+
           <div>
-            <span class="section-kicker">Catálogo</span>
-            <h2 class="section-title">Produtos Crazy Chicken</h2>
+
+            <div class="section-kicker">
+              Catálogo
+            </div>
+
+            <h2 class="section-title">
+              Produtos Crazy Chicken
+            </h2>
+
           </div>
-          <p class="section-sub">Os produtos abaixo vêm diretamente do banco de dados. Quando o administrador altera preço, estoque, foto ou disponibilidade, a loja atualiza sem editar HTML.</p>
+
+
+          <p class="section-description">
+
+            Pesquise pelo nome, filtre pelas categorias
+            e encontre rapidamente o que procura.
+
+          </p>
+
+
         </div>
 
-        <div class="store-toolbar">
-          <label class="search-box">
-            <span class="search-icon">⌕</span>
-            <span class="sr-only">Pesquisar produtos</span>
-            <input id="searchInput" type="search" placeholder="Pesquisar por nome, categoria..." autocomplete="off" />
-          </label>
-          <select class="sort-select" id="sortSelect" aria-label="Ordenar produtos">
-            <option value="featured">Destaques</option>
-            <option value="newest">Mais recentes</option>
-            <option value="price-asc">Menor preço</option>
-            <option value="price-desc">Maior preço</option>
-            <option value="name">Nome A-Z</option>
+
+        <!-- SEARCH + ORDER -->
+
+        <div class="catalog-controls">
+
+
+          <div class="search-wrapper">
+
+            <span class="search-icon">
+              ⌕
+            </span>
+
+            <input
+              id="searchInput"
+              type="search"
+              placeholder="Pesquisar por nome, categoria..."
+              autocomplete="off"
+            >
+
+          </div>
+
+
+          <select
+            id="sortSelect"
+            aria-label="Ordenar produtos"
+          >
+
+            <option value="featured">
+              Destaques
+            </option>
+
+            <option value="price-asc">
+              Menor preço
+            </option>
+
+            <option value="price-desc">
+              Maior preço
+            </option>
+
+            <option value="name">
+              Nome A-Z
+            </option>
+
           </select>
+
+
         </div>
 
-        <div class="category-row" id="categoryRow">
-          <button class="category-chip active" type="button" data-category="all">Todos</button>
+
+        <!-- CATEGORIES -->
+
+        <div
+          class="categories"
+          id="categoryRow"
+        >
+
+          <!-- Categorias criadas pelo store.js -->
+
         </div>
 
-        <div id="productGrid" class="product-grid" aria-live="polite">
-          <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
-        </div>
-      </div>
-    </section>
 
-    <section class="section" id="vantagens">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <span class="section-kicker">Experiência</span>
-            <h2 class="section-title">Uma loja pronta para crescer</h2>
+        <!-- PRODUCTS -->
+
+        <div
+          class="product-grid"
+          id="productGrid"
+        >
+
+          <div class="empty">
+
+            <div>
+
+              <strong>
+                Carregando produtos...
+              </strong>
+
+              <span>
+                Aguarde alguns segundos.
+              </span>
+
+            </div>
+
           </div>
+
         </div>
-        <div class="feature-strip">
-          <article class="feature-card"><span>👤</span><strong>Conta do cliente</strong><p>Cadastro seguro, endereço salvo, favoritos e histórico de pedidos.</p></article>
-          <article class="feature-card"><span>🛒</span><strong>Carrinho persistente</strong><p>Os itens continuam no carrinho mesmo após atualizar a página.</p></article>
-          <article class="feature-card"><span>🔒</span><strong>Login seguro</strong><p>Autenticação e regras de acesso ficam no Supabase, não escondidas no HTML.</p></article>
-          <article class="feature-card"><span>📲</span><strong>Pedido pelo WhatsApp</strong><p>O sistema registra o pedido e monta a mensagem automaticamente.</p></article>
-        </div>
+
+
       </div>
+
     </section>
+
+
+    <!-- =====================================================
+         EXPERIENCE
+    ====================================================== -->
+
+    <section
+      class="experience"
+      id="como-funciona"
+    >
+
+      <div class="container">
+
+
+        <div class="experience-box">
+
+
+          <div class="experience-intro">
+
+            <div class="section-kicker">
+              Experiência
+            </div>
+
+            <h2>
+              Uma loja simples para comprar.
+            </h2>
+
+            <p>
+
+              A Crazy Chicken reúne catálogo,
+              carrinho, conta de cliente e atendimento
+              em uma experiência rápida e organizada.
+
+            </p>
+
+          </div>
+
+
+          <div class="experience-grid">
+
+
+            <div class="experience-item">
+
+              <div class="experience-icon">
+                01
+              </div>
+
+              <strong>
+                Escolha seus produtos
+              </strong>
+
+              <p>
+                Pesquise, filtre por categoria
+                e adicione os produtos ao carrinho.
+              </p>
+
+            </div>
+
+
+            <div class="experience-item">
+
+              <div class="experience-icon">
+                02
+              </div>
+
+              <strong>
+                Entre na sua conta
+              </strong>
+
+              <p>
+                Seus dados ficam organizados
+                para facilitar novos pedidos.
+              </p>
+
+            </div>
+
+
+            <div class="experience-item">
+
+              <div class="experience-icon">
+                03
+              </div>
+
+              <strong>
+                Revise o carrinho
+              </strong>
+
+              <p>
+                Confira quantidade,
+                valores e produtos selecionados.
+              </p>
+
+            </div>
+
+
+            <div class="experience-item">
+
+              <div class="experience-icon">
+                04
+              </div>
+
+              <strong>
+                Finalize pelo WhatsApp
+              </strong>
+
+              <p>
+                O sistema monta automaticamente
+                as informações do pedido.
+              </p>
+
+            </div>
+
+
+          </div>
+
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
   </main>
 
-  <footer class="site-footer">
-    <div class="container footer-grid">
-      <div>
-        <a class="brand" href="/"><span class="brand-mark">🐔</span><span>Crazy Chicken<small>catálogo online</small></span></a>
-        <p>Catálogo digital com atendimento direto e uma experiência simples para encontrar seus produtos favoritos.</p>
+
+  <!-- =====================================================
+       FOOTER
+  ====================================================== -->
+
+  <footer class="footer">
+
+
+    <div class="container footer-main">
+
+
+      <div class="footer-brand">
+
+
+        <a
+          class="brand"
+          href="/index.html"
+        >
+
+          <span class="brand-logo">
+            🐔
+          </span>
+
+          <span class="brand-name">
+
+            Crazy Chicken
+
+            <small>
+              catálogo online
+            </small>
+
+          </span>
+
+        </a>
+
+
+        <p>
+
+          Catálogo digital com atendimento direto
+          e uma experiência simples para encontrar
+          seus produtos favoritos.
+
+        </p>
+
+
       </div>
-      <div><h4>Navegação</h4><a href="#produtos">Produtos</a><br><a href="/conta">Minha conta</a><br><a href="/login">Entrar</a></div>
-      <div><h4>Atendimento</h4><a id="footerWhatsapp" href="#" target="_blank" rel="noopener">WhatsApp</a><br><a id="footerInstagram" href="#" target="_blank" rel="noopener">Instagram</a></div>
+
+
+      <div class="footer-column">
+
+        <strong>
+          Navegação
+        </strong>
+
+        <a href="#produtos">
+          Produtos
+        </a>
+
+        <a href="/account.html">
+          Minha conta
+        </a>
+
+        <a href="/login.html">
+          Entrar
+        </a>
+
+      </div>
+
+
+      <div class="footer-column">
+
+        <strong>
+          Atendimento
+        </strong>
+
+        <a
+          id="footerWhatsapp"
+          target="_blank"
+          rel="noopener"
+        >
+          WhatsApp
+        </a>
+
+        <a
+          id="footerInstagram"
+          target="_blank"
+          rel="noopener"
+        >
+          Instagram
+        </a>
+
+      </div>
+
+
     </div>
-    <div class="container footer-bottom"><span>© <span id="year"></span> Crazy Chicken.</span><span>Pedidos sujeitos à confirmação de estoque e entrega.</span></div>
+
+
+    <div class="container footer-bottom">
+
+      <div>
+        ©
+        <span id="year"></span>
+        Crazy Chicken.
+      </div>
+
+      <div>
+        Pedidos sujeitos à confirmação
+        de estoque e entrega.
+      </div>
+
+    </div>
+
+
   </footer>
 
-  <div class="drawer-backdrop" id="cartBackdrop"></div>
-  <aside class="cart-drawer" id="cartDrawer" aria-label="Carrinho de compras">
-    <div class="drawer-head"><h3>Seu carrinho</h3><button class="icon-btn" id="closeCart" type="button" aria-label="Fechar carrinho">×</button></div>
-    <div class="cart-items" id="cartItems"></div>
-    <div class="cart-summary">
-      <div class="summary-row"><span>Itens</span><strong id="cartItemsTotal">0</strong></div>
-      <div class="summary-row total"><span>Subtotal</span><strong id="cartSubtotal">R$ 0,00</strong></div>
-      <p class="summary-note">O valor da entrega é confirmado de acordo com o CEP. Para finalizar, você precisa estar conectado à sua conta e com os dados de entrega preenchidos.</p>
-      <button class="btn btn-primary btn-block" id="checkoutButton" type="button">Finalizar pelo WhatsApp</button>
+
+  <!-- =====================================================
+       CART
+  ====================================================== -->
+
+  <div
+    class="cart-backdrop"
+    id="cartBackdrop"
+  ></div>
+
+
+  <aside
+    class="cart-drawer"
+    id="cartDrawer"
+    aria-label="Carrinho"
+  >
+
+
+    <div class="drawer-header">
+
+
+      <div>
+
+        <strong>
+          Seu carrinho
+        </strong>
+
+        <span>
+          Revise os itens antes de finalizar
+        </span>
+
+      </div>
+
+
+      <button
+        class="drawer-close"
+        id="closeCart"
+        type="button"
+        aria-label="Fechar carrinho"
+      >
+        ×
+      </button>
+
+
     </div>
+
+
+    <div
+      class="cart-items"
+      id="cartItems"
+    >
+
+      <div class="empty">
+
+        <div>
+
+          <strong>
+            Seu carrinho está vazio.
+          </strong>
+
+          <span>
+            Adicione produtos para continuar.
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="drawer-footer">
+
+
+      <div class="drawer-summary">
+
+        <span>
+          Subtotal
+        </span>
+
+        <strong id="cartSubtotal">
+          R$ 0,00
+        </strong>
+
+      </div>
+
+
+      <p class="drawer-note">
+
+        O valor da entrega é confirmado de acordo
+        com o CEP. Para finalizar o pedido, você
+        precisa estar conectado à sua conta e com
+        os dados de entrega preenchidos.
+
+      </p>
+
+
+      <button
+        class="btn primary"
+        id="checkoutButton"
+        type="button"
+      >
+        📲 Finalizar pelo WhatsApp
+      </button>
+
+
+    </div>
+
+
   </aside>
 
-  <div id="toastRoot" class="toast-root"></div>
-  <script type="module" src="./js/store.js"></script>
+
+  <!-- TOAST -->
+
+  <div
+    class="toast-root"
+    id="toastRoot"
+  ></div>
+
+
+  <!-- =====================================================
+       LOJA / SUPABASE
+       NÃO REMOVER
+  ====================================================== -->
+
+  <script
+    type="module"
+    src="/js/store.js"
+  ></script>
+
+
 </body>
+
 </html>
