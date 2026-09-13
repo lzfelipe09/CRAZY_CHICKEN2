@@ -10,8 +10,8 @@
 // - NUNCA coloque a service_role key neste arquivo.
 // - Nenhum e-mail ou senha de administrador fica salvo no código.
 
-export const SUPABASE_URL = "COLE_AQUI_SUA_SUPABASE_URL";
-export const SUPABASE_PUBLISHABLE_KEY = "COLE_AQUI_SUA_PUBLISHABLE_KEY";
+export const SUPABASE_URL = "https://cteaxcbshdihxhmfxmdr.supabase.co";
+export const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_ivCgM3WgvstgJooPi-bbWQ_wq5N4tx9 ";
 
 // Dados públicos da loja
 export const STORE_NAME = "Crazy Chicken";
