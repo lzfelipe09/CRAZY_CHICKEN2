@@ -1,59 +1,1024 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#090909" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Entrar | Crazy Chicken</title>
-  <link rel="stylesheet" href="./css/styles.css" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #090909;
+      --panel: #121212;
+      --panel-2: #181818;
+      --border: #2a2a2a;
+      --text: #ffffff;
+      --muted: #989898;
+      --red: #ff2f37;
+      --red-dark: #d91f27;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(255, 47, 55, 0.09), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(255, 47, 55, 0.05), transparent 30%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+
+    /* =========================
+       LADO ESQUERDO
+    ========================= */
+
+    .hero {
+      padding: 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-right: 1px solid var(--border);
+      min-height: 100vh;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      font-size: 22px;
+      width: fit-content;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: #181818;
+      border: 1px solid var(--border);
+      font-size: 24px;
+    }
+
+    .brand small {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    .hero-content {
+      max-width: 640px;
+      padding: 80px 0;
+    }
+
+    .kicker {
+      color: var(--red);
+      text-transform: uppercase;
+      letter-spacing: 2.4px;
+      font-size: 12px;
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      font-size: clamp(48px, 7vw, 88px);
+      line-height: 0.95;
+      letter-spacing: -4px;
+      margin-bottom: 26px;
+    }
+
+    .hero h1 span {
+      color: var(--red);
+    }
+
+    .hero p {
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 560px;
+      font-size: 16px;
+    }
+
+    .feature-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 32px;
+      max-width: 500px;
+    }
+
+    .feature {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      color: #d8d8d8;
+      font-size: 14px;
+    }
+
+    .feature-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: #181818;
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .hero-footer {
+      color: #666;
+      font-size: 12px;
+    }
+
+    /* =========================
+       ÁREA DO FORMULÁRIO
+    ========================= */
+
+    .auth-side {
+      display: grid;
+      place-items: center;
+      padding: 40px;
+      min-height: 100vh;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 480px;
+      background: linear-gradient(145deg, #151515, #101010);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3);
+    }
+
+    .auth-top {
+      margin-bottom: 24px;
+    }
+
+    .auth-top h2 {
+      font-size: 30px;
+      letter-spacing: -1px;
+      margin-bottom: 9px;
+    }
+
+    .auth-top p {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    /* =========================
+       ABAS
+    ========================= */
+
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      padding: 5px;
+      background: #0b0b0b;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 22px;
+    }
+
+    .auth-tab {
+      border: none;
+      border-radius: 9px;
+      min-height: 42px;
+      background: transparent;
+      color: #888;
+      font-weight: 800;
+      transition: .2s;
+    }
+
+    .auth-tab:hover {
+      color: white;
+      background: #151515;
+    }
+
+    .auth-tab.active {
+      background: var(--red);
+      color: white;
+    }
+
+    /* =========================
+       FORM
+    ========================= */
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field label {
+      color: #d4d4d4;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 14px;
+      border-radius: 11px;
+      background: #0a0a0a;
+      border: 1px solid #303030;
+      color: white;
+      outline: none;
+      transition: .2s;
+    }
+
+    .input:focus {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(255, 47, 55, 0.09);
+    }
+
+    .input::placeholder {
+      color: #5f5f5f;
+    }
+
+    .password-input {
+      padding-right: 90px;
+    }
+
+    .show-password {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: transparent;
+      color: #999;
+      padding: 8px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .show-password:hover {
+      color: white;
+    }
+
+    .btn {
+      border: none;
+      min-height: 48px;
+      border-radius: 11px;
+      font-weight: 900;
+      transition: .2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--red);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--red-dark);
+    }
+
+    .btn-secondary {
+      background: #1a1a1a;
+      color: white;
+      border: 1px solid #303030;
+    }
+
+    .btn-secondary:hover {
+      background: #232323;
+    }
+
+    .auth-links {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: 5px;
+      flex-wrap: wrap;
+    }
+
+    .auth-links button,
+    .auth-links a {
+      border: none;
+      background: transparent;
+      color: #999;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .auth-links button:hover,
+    .auth-links a:hover {
+      color: white;
+    }
+
+    .back-store {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 22px;
+      color: #aaa;
+      font-size: 13px;
+    }
+
+    .back-store:hover {
+      color: white;
+    }
+
+    /* =========================
+       MENSAGENS
+    ========================= */
+
+    .message {
+      display: none;
+      margin-bottom: 16px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.error {
+      background: rgba(255, 61, 61, 0.1);
+      border: 1px solid rgba(255, 61, 61, 0.3);
+      color: #ff9797;
+    }
+
+    .message.success {
+      background: rgba(70, 209, 127, 0.1);
+      border: 1px solid rgba(70, 209, 127, 0.3);
+      color: #83e5a7;
+    }
+
+    /* =========================
+       RESPONSIVO
+    ========================= */
+
+    @media (max-width: 950px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+        padding: 30px 22px;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .hero-content {
+        padding: 55px 0 25px;
+      }
+
+      .hero h1 {
+        font-size: clamp(48px, 13vw, 70px);
+      }
+
+      .feature-list,
+      .hero-footer {
+        display: none;
+      }
+
+      .auth-side {
+        min-height: auto;
+        padding: 30px 18px 60px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .auth-card {
+        padding: 22px 17px;
+      }
+
+      .auth-top h2 {
+        font-size: 26px;
+      }
+
+      .hero {
+        padding-top: 22px;
+      }
+
+      .hero-content {
+        padding-top: 42px;
+      }
+
+      .hero h1 {
+        letter-spacing: -2px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <main class="auth-page">
-    <section class="auth-visual">
-      <a class="brand" href="/"><span class="brand-mark">🐔</span><span>Crazy Chicken<small>área do cliente</small></span></a>
-      <div class="auth-copy"><span class="eyebrow">Conta segura</span><h1>Entre. Escolha.<br><span class="text-red">Peça.</span></h1><p>Seu cadastro mantém endereço, favoritos e histórico de pedidos organizados. Sua senha é tratada pelo sistema de autenticação e não fica escrita no código da loja.</p></div>
-      <span class="muted">Crazy Chicken Ecommerce</span>
-    </section>
 
-    <section class="auth-panel-wrap">
-      <div class="auth-panel">
-        <a class="brand" href="/" style="margin-bottom:28px"><span class="brand-mark">🐔</span><span>Crazy Chicken<small>voltar à loja</small></span></a>
-        <h2 id="authTitle">Bem-vindo</h2>
-        <p id="authSubtitle">Entre na sua conta ou crie seu cadastro.</p>
+  <div class="page">
 
-        <div class="auth-tabs" id="authTabs">
-          <button class="auth-tab active" type="button" data-tab="login">Entrar</button>
-          <button class="auth-tab" type="button" data-tab="signup">Criar conta</button>
+    <!-- =========================
+         APRESENTAÇÃO
+    ========================== -->
+
+    <section class="hero">
+
+      <a href="/" class="brand">
+
+        <div class="brand-icon">
+          🐔
         </div>
 
-        <form class="auth-form" id="loginForm">
-          <div class="form-group"><label for="loginEmail">E-mail</label><input class="input" id="loginEmail" type="email" autocomplete="email" required placeholder="seu@email.com"></div>
-          <div class="form-group"><label for="loginPassword">Senha</label><input class="input" id="loginPassword" type="password" autocomplete="current-password" required minlength="8" placeholder="Sua senha"></div>
-          <button class="btn btn-primary btn-block" id="loginButton" type="submit">Entrar</button>
-          <button class="form-link" id="forgotButton" type="button">Esqueci minha senha</button>
-        </form>
+        <div>
+          Crazy Chicken
+          <small>Área do cliente</small>
+        </div>
 
-        <form class="auth-form" id="signupForm" hidden>
-          <div class="form-group"><label for="signupName">Nome completo</label><input class="input" id="signupName" required maxlength="120" autocomplete="name" placeholder="Seu nome"></div>
-          <div class="form-group"><label for="signupEmail">E-mail</label><input class="input" id="signupEmail" type="email" autocomplete="email" required placeholder="seu@email.com"></div>
-          <div class="form-group"><label for="signupPassword">Crie uma senha</label><input class="input" id="signupPassword" type="password" autocomplete="new-password" required minlength="8" placeholder="Mínimo de 8 caracteres"><span class="form-help">Use uma senha exclusiva, longa e difícil de adivinhar.</span></div>
-          <button class="btn btn-primary btn-block" id="signupButton" type="submit">Criar minha conta</button>
-        </form>
+      </a>
 
-        <form class="auth-form" id="resetRequestForm" hidden>
-          <div class="form-group"><label for="resetEmail">E-mail da conta</label><input class="input" id="resetEmail" type="email" required placeholder="seu@email.com"></div>
-          <button class="btn btn-primary btn-block" id="resetRequestButton" type="submit">Enviar link de recuperação</button>
-          <button class="form-link" type="button" data-back-login>Voltar para o login</button>
-        </form>
 
-        <form class="auth-form" id="newPasswordForm" hidden>
-          <div class="form-group"><label for="newPassword">Nova senha</label><input class="input" id="newPassword" type="password" minlength="8" required autocomplete="new-password" placeholder="Nova senha"></div>
-          <button class="btn btn-primary btn-block" id="newPasswordButton" type="submit">Salvar nova senha</button>
-        </form>
+      <div class="hero-content">
+
+        <div class="kicker">
+          Conta segura
+        </div>
+
+        <h1>
+          Entre.<br>
+          Escolha.<br>
+          <span>Peça.</span>
+        </h1>
+
+        <p>
+          Crie sua conta para salvar seus dados,
+          endereço, favoritos e acompanhar seus pedidos
+          na Crazy Chicken.
+        </p>
+
+
+        <div class="feature-list">
+
+          <div class="feature">
+
+            <div class="feature-icon">
+              🔒
+            </div>
+
+            <div>
+              <strong>Login seguro</strong><br>
+              <span style="color:#777;">
+                Autenticação protegida pelo Supabase.
+              </span>
+            </div>
+
+          </div>
+
+
+          <div class="feature">
+
+            <div class="feature-icon">
+              📍
+            </div>
+
+            <div>
+              <strong>Endereço salvo</strong><br>
+              <span style="color:#777;">
+                Mais rapidez na hora de fazer o pedido.
+              </span>
+            </div>
+
+          </div>
+
+
+          <div class="feature">
+
+            <div class="feature-icon">
+              🛒
+            </div>
+
+            <div>
+              <strong>Pedidos organizados</strong><br>
+              <span style="color:#777;">
+                Histórico e informações em um só lugar.
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
+
+
+      <div class="hero-footer">
+        Crazy Chicken Ecommerce
+      </div>
+
     </section>
-  </main>
-  <div id="toastRoot" class="toast-root"></div>
-  <script type="module" src="./js/auth.js"></script>
+
+
+    <!-- =========================
+         LOGIN / CADASTRO
+    ========================== -->
+
+    <section class="auth-side">
+
+      <div class="auth-card">
+
+        <div class="auth-top">
+
+          <h2 id="authTitle">
+            Bem-vindo
+          </h2>
+
+          <p id="authSubtitle">
+            Entre na sua conta ou crie seu cadastro.
+          </p>
+
+        </div>
+
+
+        <div
+          id="authMessage"
+          class="message"
+        ></div>
+
+
+        <div class="auth-tabs">
+
+          <button
+            class="auth-tab active"
+            id="loginTab"
+            type="button"
+          >
+            Entrar
+          </button>
+
+          <button
+            class="auth-tab"
+            id="registerTab"
+            type="button"
+          >
+            Criar conta
+          </button>
+
+        </div>
+
+
+        <!-- LOGIN -->
+
+        <form
+          id="loginForm"
+          class="auth-form"
+        >
+
+          <div class="field">
+
+            <label for="loginEmail">
+              E-mail
+            </label>
+
+            <input
+              class="input"
+              id="loginEmail"
+              type="email"
+              autocomplete="email"
+              placeholder="seuemail@email.com"
+              required
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label for="loginPassword">
+              Senha
+            </label>
+
+            <div class="input-wrap">
+
+              <input
+                class="input password-input"
+                id="loginPassword"
+                type="password"
+                autocomplete="current-password"
+                placeholder="Sua senha"
+                required
+              >
+
+              <button
+                type="button"
+                class="show-password"
+                data-toggle-password="loginPassword"
+              >
+                Mostrar
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            id="loginButton"
+          >
+            Entrar
+          </button>
+
+
+          <div class="auth-links">
+
+            <button
+              type="button"
+              id="forgotPasswordButton"
+            >
+              Esqueci minha senha
+            </button>
+
+            <a href="/">
+              Voltar para a loja
+            </a>
+
+          </div>
+
+        </form>
+
+
+        <!-- CADASTRO -->
+
+        <form
+          id="registerForm"
+          class="auth-form"
+          hidden
+        >
+
+          <div class="field">
+
+            <label for="registerName">
+              Nome
+            </label>
+
+            <input
+              class="input"
+              id="registerName"
+              type="text"
+              autocomplete="name"
+              placeholder="Seu nome"
+              required
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label for="registerEmail">
+              E-mail
+            </label>
+
+            <input
+              class="input"
+              id="registerEmail"
+              type="email"
+              autocomplete="email"
+              placeholder="seuemail@email.com"
+              required
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label for="registerPassword">
+              Senha
+            </label>
+
+            <div class="input-wrap">
+
+              <input
+                class="input password-input"
+                id="registerPassword"
+                type="password"
+                autocomplete="new-password"
+                minlength="6"
+                placeholder="Crie uma senha"
+                required
+              >
+
+              <button
+                type="button"
+                class="show-password"
+                data-toggle-password="registerPassword"
+              >
+                Mostrar
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <div class="field">
+
+            <label for="registerPasswordConfirm">
+              Confirmar senha
+            </label>
+
+            <div class="input-wrap">
+
+              <input
+                class="input password-input"
+                id="registerPasswordConfirm"
+                type="password"
+                autocomplete="new-password"
+                minlength="6"
+                placeholder="Digite novamente"
+                required
+              >
+
+              <button
+                type="button"
+                class="show-password"
+                data-toggle-password="registerPasswordConfirm"
+              >
+                Mostrar
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            id="registerButton"
+          >
+            Criar minha conta
+          </button>
+
+
+          <a
+            href="/"
+            class="back-store"
+          >
+            ← Voltar para a loja
+          </a>
+
+        </form>
+
+
+        <!-- RECUPERAÇÃO -->
+
+        <form
+          id="resetForm"
+          class="auth-form"
+          hidden
+        >
+
+          <div class="field">
+
+            <label for="resetEmail">
+              E-mail
+            </label>
+
+            <input
+              class="input"
+              id="resetEmail"
+              type="email"
+              autocomplete="email"
+              placeholder="seuemail@email.com"
+              required
+            >
+
+          </div>
+
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            id="resetButton"
+          >
+            Enviar recuperação
+          </button>
+
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            id="backLoginButton"
+          >
+            Voltar para o login
+          </button>
+
+        </form>
+
+      </div>
+
+    </section>
+
+  </div>
+
+
+  <!-- =========================
+       INTERAÇÃO VISUAL
+  ========================== -->
+
+  <script>
+    const loginTab =
+      document.getElementById("loginTab");
+
+    const registerTab =
+      document.getElementById("registerTab");
+
+    const loginForm =
+      document.getElementById("loginForm");
+
+    const registerForm =
+      document.getElementById("registerForm");
+
+    const resetForm =
+      document.getElementById("resetForm");
+
+    const forgotPasswordButton =
+      document.getElementById("forgotPasswordButton");
+
+    const backLoginButton =
+      document.getElementById("backLoginButton");
+
+    const title =
+      document.getElementById("authTitle");
+
+    const subtitle =
+      document.getElementById("authSubtitle");
+
+
+    function showLogin() {
+      loginForm.hidden = false;
+      registerForm.hidden = true;
+      resetForm.hidden = true;
+
+      loginTab.classList.add("active");
+      registerTab.classList.remove("active");
+
+      title.textContent = "Bem-vindo";
+
+      subtitle.textContent =
+        "Entre na sua conta ou crie seu cadastro.";
+    }
+
+
+    function showRegister() {
+      loginForm.hidden = true;
+      registerForm.hidden = false;
+      resetForm.hidden = true;
+
+      registerTab.classList.add("active");
+      loginTab.classList.remove("active");
+
+      title.textContent =
+        "Criar conta";
+
+      subtitle.textContent =
+        "Faça seu cadastro para salvar seus dados e pedidos.";
+    }
+
+
+    function showReset() {
+      loginForm.hidden = true;
+      registerForm.hidden = true;
+      resetForm.hidden = false;
+
+      loginTab.classList.remove("active");
+      registerTab.classList.remove("active");
+
+      title.textContent =
+        "Recuperar senha";
+
+      subtitle.textContent =
+        "Informe seu e-mail para receber as instruções.";
+    }
+
+
+    loginTab.addEventListener(
+      "click",
+      showLogin
+    );
+
+
+    registerTab.addEventListener(
+      "click",
+      showRegister
+    );
+
+
+    forgotPasswordButton.addEventListener(
+      "click",
+      showReset
+    );
+
+
+    backLoginButton.addEventListener(
+      "click",
+      showLogin
+    );
+
+
+    document
+      .querySelectorAll("[data-toggle-password]")
+      .forEach((button) => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            const input =
+              document.getElementById(
+                button.dataset.togglePassword
+              );
+
+            if (!input) return;
+
+            if (input.type === "password") {
+              input.type = "text";
+              button.textContent = "Ocultar";
+            } else {
+              input.type = "password";
+              button.textContent = "Mostrar";
+            }
+
+          }
+        );
+
+      });
+  </script>
+
+
+  <!--
+    IMPORTANTE:
+    Esse JS faz o login real no Supabase.
+    Não remova.
+  -->
+
+  <script
+    type="module"
+    src="./js/auth.js"
+  ></script>
+
 </body>
+
 </html>
