@@ -5,17 +5,30 @@
 
   <meta charset="utf-8">
 
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  >
 
-  <meta name="theme-color" content="#090909">
+  <meta
+    name="theme-color"
+    content="#090909"
+  >
 
   <title>
     Entrar | Crazy Chicken
   </title>
 
-  <link rel="icon" type="image/png" href="crazy-chicken-icon.png">
+  <link
+    rel="icon"
+    type="image/png"
+    href="/assets/crazy-chicken-icon.png"
+  >
 
-  <link rel="apple-touch-icon" href="crazy-chicken-icon.png">
+  <link
+    rel="apple-touch-icon"
+    href="/assets/crazy-chicken-icon.png"
+  >
 
   <style>
     * {
@@ -53,9 +66,11 @@
 
     body {
       background:
-        radial-gradient(circle at 10% 0,
-          rgba(239, 43, 45, .14),
-          transparent 28rem),
+        radial-gradient(
+          circle at 10% 0,
+          rgba(239,43,45,.14),
+          transparent 28rem
+        ),
         #090909;
     }
 
@@ -65,7 +80,8 @@
       display: grid;
 
       grid-template-columns:
-        1.05fr 0.95fr;
+        1.05fr
+        0.95fr;
     }
 
     .hero {
@@ -78,7 +94,8 @@
       justify-content: space-between;
 
       border-right:
-        1px solid #282828;
+        1px solid
+        #282828;
     }
 
     .brand {
@@ -104,7 +121,8 @@
       display: block;
 
       box-shadow:
-        0 12px 30px rgba(239, 43, 45, .25);
+        0 12px 30px
+        rgba(239,43,45,.25);
     }
 
     .logo img {
@@ -150,9 +168,11 @@
 
     .hero h1 {
       font-size:
-        clamp(50px,
+        clamp(
+          50px,
           7vw,
-          90px);
+          90px
+        );
 
       line-height: .92;
 
@@ -189,23 +209,29 @@
 
     .card {
       width:
-        min(480px,
-          100%);
+        min(
+          480px,
+          100%
+        );
 
       background:
-        linear-gradient(145deg,
+        linear-gradient(
+          145deg,
           #151515,
-          #101010);
+          #101010
+        );
 
       border:
-        1px solid #292929;
+        1px solid
+        #292929;
 
       border-radius: 24px;
 
       padding: 30px;
 
       box-shadow:
-        0 28px 80px rgba(0, 0, 0, .35);
+        0 28px 80px
+        rgba(0,0,0,.35);
     }
 
     .card h2 {
@@ -231,7 +257,8 @@
       background: #0b0b0b;
 
       border:
-        1px solid #292929;
+        1px solid
+        #292929;
 
       border-radius: 13px;
 
@@ -296,7 +323,8 @@
       padding: 12px 14px;
 
       border:
-        1px solid #303030;
+        1px solid
+        #303030;
 
       border-radius: 11px;
 
@@ -311,7 +339,8 @@
       border-color: #ef2b2d;
 
       box-shadow:
-        0 0 0 3px rgba(239, 43, 45, .1);
+        0 0 0 3px
+        rgba(239,43,45,.1);
     }
 
     .with-action {
@@ -353,9 +382,11 @@
 
     .btn.primary {
       background:
-        linear-gradient(145deg,
+        linear-gradient(
+          145deg,
           #ef2b2d,
-          #b9191c);
+          #b9191c
+        );
 
       color: #fff;
     }
@@ -366,7 +397,8 @@
       color: #fff;
 
       border:
-        1px solid #303030;
+        1px solid
+        #303030;
     }
 
     .links {
@@ -444,7 +476,8 @@
       background: #191919;
 
       border:
-        1px solid #333;
+        1px solid
+        #333;
 
       color: #fff;
 
@@ -488,7 +521,8 @@
         border-right: 0;
 
         border-bottom:
-          1px solid #282828;
+          1px solid
+          #282828;
 
         padding: 24px;
       }
@@ -522,11 +556,17 @@
 
     <section class="hero">
 
-      <a class="brand" href="/index.html">
+      <a
+        class="brand"
+        href="/index.html"
+      >
 
         <span class="logo">
 
-          <img src="/assets/crazy-chicken-icon.png" alt="Crazy Chicken">
+          <img
+            src="/assets/crazy-chicken-icon.png"
+            alt="Crazy Chicken"
+          >
 
         </span>
 
@@ -589,25 +629,42 @@
           Bem-vindo
         </h2>
 
-        <p class="sub" id="authSubtitle">
+        <p
+          class="sub"
+          id="authSubtitle"
+        >
           Entre na sua conta para continuar.
         </p>
 
 
-        <div class="tabs" id="authTabs">
+        <div
+          class="tabs"
+          id="authTabs"
+        >
 
-          <button class="auth-tab active" type="button" data-tab="login">
+          <button
+            class="auth-tab active"
+            type="button"
+            data-tab="login"
+          >
             Entrar
           </button>
 
-          <button class="auth-tab" type="button" data-tab="signup">
+          <button
+            class="auth-tab"
+            type="button"
+            data-tab="signup"
+          >
             Criar conta
           </button>
 
         </div>
 
 
-        <form class="form" id="loginForm">
+        <form
+          class="form"
+          id="loginForm"
+        >
 
           <div class="field">
 
@@ -615,7 +672,13 @@
               E-mail
             </label>
 
-            <input class="input" id="loginEmail" type="email" autocomplete="email" required>
+            <input
+              class="input"
+              id="loginEmail"
+              type="email"
+              autocomplete="email"
+              required
+            >
 
           </div>
 
@@ -628,10 +691,19 @@
 
             <div class="input-wrap">
 
-              <input class="input with-action" id="loginPassword" type="password" autocomplete="current-password"
-                required>
+              <input
+                class="input with-action"
+                id="loginPassword"
+                type="password"
+                autocomplete="current-password"
+                required
+              >
 
-              <button class="toggle" type="button" data-toggle-password="loginPassword">
+              <button
+                class="toggle"
+                type="button"
+                data-toggle-password="loginPassword"
+              >
                 Mostrar
               </button>
 
@@ -640,18 +712,29 @@
           </div>
 
 
-          <button class="btn primary" id="loginButton" type="submit">
+          <button
+            class="btn primary"
+            id="loginButton"
+            type="submit"
+          >
             Entrar
           </button>
 
 
           <div class="links">
 
-            <button class="link-btn" id="forgotButton" type="button">
+            <button
+              class="link-btn"
+              id="forgotButton"
+              type="button"
+            >
               Esqueci minha senha
             </button>
 
-            <a class="link-btn" href="/index.html">
+            <a
+              class="link-btn"
+              href="/index.html"
+            >
               Voltar à loja
             </a>
 
@@ -660,7 +743,11 @@
         </form>
 
 
-        <form class="form" id="signupForm" hidden>
+        <form
+          class="form"
+          id="signupForm"
+          hidden
+        >
 
           <div class="field">
 
@@ -668,7 +755,13 @@
               Nome
             </label>
 
-            <input class="input" id="signupName" type="text" autocomplete="name" required>
+            <input
+              class="input"
+              id="signupName"
+              type="text"
+              autocomplete="name"
+              required
+            >
 
           </div>
 
@@ -679,7 +772,13 @@
               E-mail
             </label>
 
-            <input class="input" id="signupEmail" type="email" autocomplete="email" required>
+            <input
+              class="input"
+              id="signupEmail"
+              type="email"
+              autocomplete="email"
+              required
+            >
 
           </div>
 
@@ -692,10 +791,20 @@
 
             <div class="input-wrap">
 
-              <input class="input with-action" id="signupPassword" type="password" minlength="8"
-                autocomplete="new-password" required>
+              <input
+                class="input with-action"
+                id="signupPassword"
+                type="password"
+                minlength="8"
+                autocomplete="new-password"
+                required
+              >
 
-              <button class="toggle" type="button" data-toggle-password="signupPassword">
+              <button
+                class="toggle"
+                type="button"
+                data-toggle-password="signupPassword"
+              >
                 Mostrar
               </button>
 
@@ -712,10 +821,20 @@
 
             <div class="input-wrap">
 
-              <input class="input with-action" id="signupPasswordConfirm" type="password" minlength="8"
-                autocomplete="new-password" required>
+              <input
+                class="input with-action"
+                id="signupPasswordConfirm"
+                type="password"
+                minlength="8"
+                autocomplete="new-password"
+                required
+              >
 
-              <button class="toggle" type="button" data-toggle-password="signupPasswordConfirm">
+              <button
+                class="toggle"
+                type="button"
+                data-toggle-password="signupPasswordConfirm"
+              >
                 Mostrar
               </button>
 
@@ -724,19 +843,31 @@
           </div>
 
 
-          <button class="btn primary" id="signupButton" type="submit">
+          <button
+            class="btn primary"
+            id="signupButton"
+            type="submit"
+          >
             Criar minha conta
           </button>
 
 
-          <button class="link-btn" type="button" data-back-login>
+          <button
+            class="link-btn"
+            type="button"
+            data-back-login
+          >
             Já tenho conta
           </button>
 
         </form>
 
 
-        <form class="form" id="resetForm" hidden>
+        <form
+          class="form"
+          id="resetForm"
+          hidden
+        >
 
           <div class="field">
 
@@ -744,24 +875,41 @@
               E-mail
             </label>
 
-            <input class="input" id="resetEmail" type="email" required>
+            <input
+              class="input"
+              id="resetEmail"
+              type="email"
+              required
+            >
 
           </div>
 
 
-          <button class="btn primary" id="resetButton" type="submit">
+          <button
+            class="btn primary"
+            id="resetButton"
+            type="submit"
+          >
             Enviar recuperação
           </button>
 
 
-          <button class="btn secondary" type="button" data-back-login>
+          <button
+            class="btn secondary"
+            type="button"
+            data-back-login
+          >
             Voltar ao login
           </button>
 
         </form>
 
 
-        <form class="form" id="newPasswordForm" hidden>
+        <form
+          class="form"
+          id="newPasswordForm"
+          hidden
+        >
 
           <div class="field">
 
@@ -769,19 +917,32 @@
               Nova senha
             </label>
 
-            <input class="input" id="newPassword" type="password" minlength="8" required>
+            <input
+              class="input"
+              id="newPassword"
+              type="password"
+              minlength="8"
+              required
+            >
 
           </div>
 
 
-          <button class="btn primary" id="newPasswordButton" type="submit">
+          <button
+            class="btn primary"
+            id="newPasswordButton"
+            type="submit"
+          >
             Salvar nova senha
           </button>
 
         </form>
 
 
-        <a class="back" href="/index.html">
+        <a
+          class="back"
+          href="/index.html"
+        >
           ← Voltar para a loja
         </a>
 
@@ -792,11 +953,16 @@
   </main>
 
 
-  <div id="toastRoot" class="toast-root"></div>
+  <div
+    id="toastRoot"
+    class="toast-root"
+  ></div>
 
 
-  <script type="module" src="/js/auth.js"></script>
+  <script
+    type="module"
+    src="/js/auth.js"
+  ></script>
 
 </body>
-
 </html>
