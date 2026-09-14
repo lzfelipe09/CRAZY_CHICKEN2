@@ -1,28 +1,23 @@
 <!doctype html>
-
 <html lang="pt-BR">
 
 <head>
 
   <meta charset="utf-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width,initial-scale=1"
-  >
+  <meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <meta
-    name="theme-color"
-    content="#090909"
-  >
+  <meta name="theme-color" content="#090909">
 
   <title>
     Entrar | Crazy Chicken
   </title>
 
+  <link rel="icon" type="image/png" href="/assets/crazy-chicken-icon.png">
+
+  <link rel="apple-touch-icon" href="/assets/crazy-chicken-icon.png">
 
   <style>
-
     * {
       box-sizing: border-box;
     }
@@ -31,8 +26,14 @@
     body {
       margin: 0;
       min-height: 100%;
-      font-family: Inter, Arial, sans-serif;
+
+      font-family:
+        Inter,
+        Arial,
+        sans-serif;
+
       background: #090909;
+
       color: #fff;
     }
 
@@ -52,87 +53,111 @@
 
     body {
       background:
-        radial-gradient(
-          circle at 10% 0,
-          rgba(239,43,45,.14),
-          transparent 28rem
-        ),
+        radial-gradient(circle at 10% 0,
+          rgba(239, 43, 45, .14),
+          transparent 28rem),
         #090909;
     }
 
     .page {
       min-height: 100vh;
+
       display: grid;
+
       grid-template-columns:
-        1.05fr .95fr;
+        1.05fr 0.95fr;
     }
 
     .hero {
       padding: 44px;
+
       display: flex;
+
       flex-direction: column;
+
       justify-content: space-between;
+
       border-right:
         1px solid #282828;
     }
 
     .brand {
       display: flex;
+
       align-items: center;
+
       gap: 12px;
+
       font-size: 21px;
+
       font-weight: 900;
     }
 
     .logo {
       width: 44px;
       height: 44px;
+
       border-radius: 13px;
-      background:
-        linear-gradient(
-          145deg,
-          #ef2b2d,
-          #8b1012
-        );
-      display: grid;
-      place-items: center;
+
+      overflow: hidden;
+
+      display: block;
+
       box-shadow:
-        0 12px 30px
-        rgba(239,43,45,.25);
+        0 12px 30px rgba(239, 43, 45, .25);
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
     }
 
     .brand small {
       display: block;
+
       font-size: 9px;
+
       color: #8f8f8f;
+
       text-transform: uppercase;
+
       letter-spacing: .18em;
+
       margin-top: 3px;
+
+      font-weight: 600;
     }
 
     .hero-copy {
       max-width: 680px;
+
       padding: 70px 0;
     }
 
     .kicker {
       color: #ff7678;
+
       font-size: 12px;
+
       text-transform: uppercase;
+
       letter-spacing: .18em;
+
       font-weight: 800;
     }
 
     .hero h1 {
       font-size:
-        clamp(
-          50px,
+        clamp(50px,
           7vw,
-          90px
-        );
+          90px);
 
       line-height: .92;
+
       letter-spacing: -.07em;
+
       margin: 16px 0 22px;
     }
 
@@ -142,59 +167,64 @@
 
     .hero p {
       color: #aaa;
+
       line-height: 1.7;
+
       max-width: 580px;
     }
 
     .hero-foot {
       color: #666;
+
       font-size: 12px;
     }
 
     .auth-side {
       display: grid;
+
       place-items: center;
+
       padding: 32px;
     }
 
     .card {
       width:
-        min(
-          480px,
-          100%
-        );
+        min(480px,
+          100%);
 
       background:
-        linear-gradient(
-          145deg,
+        linear-gradient(145deg,
           #151515,
-          #101010
-        );
+          #101010);
 
       border:
         1px solid #292929;
 
       border-radius: 24px;
+
       padding: 30px;
 
       box-shadow:
-        0 28px 80px
-        rgba(0,0,0,.35);
+        0 28px 80px rgba(0, 0, 0, .35);
     }
 
     .card h2 {
       font-size: 32px;
+
       margin: 0 0 8px;
     }
 
     .sub {
       color: #999;
+
       line-height: 1.6;
+
       margin: 0 0 22px;
     }
 
     .tabs {
       display: grid;
+
       grid-template-columns:
         1fr 1fr;
 
@@ -206,6 +236,7 @@
       border-radius: 13px;
 
       padding: 5px;
+
       gap: 6px;
 
       margin-bottom: 22px;
@@ -213,12 +244,15 @@
 
     .auth-tab {
       border: 0;
+
       background: transparent;
+
       color: #888;
 
       padding: 12px;
 
       border-radius: 9px;
+
       font-weight: 800;
 
       cursor: pointer;
@@ -226,22 +260,27 @@
 
     .auth-tab.active {
       background: #ef2b2d;
+
       color: #fff;
     }
 
     .form {
       display: grid;
+
       gap: 14px;
     }
 
     .field {
       display: grid;
+
       gap: 7px;
     }
 
     .field label {
       font-size: 13px;
+
       color: #d8d8d8;
+
       font-weight: 700;
     }
 
@@ -251,10 +290,10 @@
 
     .input {
       width: 100%;
+
       min-height: 48px;
 
-      padding:
-        12px 14px;
+      padding: 12px 14px;
 
       border:
         1px solid #303030;
@@ -262,6 +301,7 @@
       border-radius: 11px;
 
       background: #090909;
+
       color: #fff;
 
       outline: 0;
@@ -271,8 +311,7 @@
       border-color: #ef2b2d;
 
       box-shadow:
-        0 0 0 3px
-        rgba(239,43,45,.1);
+        0 0 0 3px rgba(239, 43, 45, .1);
     }
 
     .with-action {
@@ -283,15 +322,18 @@
       position: absolute;
 
       right: 8px;
+
       top: 50%;
 
       transform:
         translateY(-50%);
 
       border: 0;
+
       background: transparent;
 
       color: #999;
+
       font-size: 12px;
 
       cursor: pointer;
@@ -301,6 +343,7 @@
       min-height: 48px;
 
       border: 0;
+
       border-radius: 11px;
 
       font-weight: 850;
@@ -310,17 +353,16 @@
 
     .btn.primary {
       background:
-        linear-gradient(
-          145deg,
+        linear-gradient(145deg,
           #ef2b2d,
-          #b9191c
-        );
+          #b9191c);
 
       color: #fff;
     }
 
     .btn.secondary {
       background: #1b1b1b;
+
       color: #fff;
 
       border:
@@ -342,6 +384,7 @@
 
     .link-btn {
       border: 0;
+
       background: transparent;
 
       color: #999;
@@ -359,6 +402,7 @@
       margin-top: 20px;
 
       color: #aaa;
+
       font-size: 13px;
     }
 
@@ -366,7 +410,9 @@
       position: fixed;
 
       top: 0;
+
       left: 0;
+
       right: 0;
 
       z-index: 999;
@@ -374,6 +420,7 @@
       padding: 10px;
 
       background: #ffe38a;
+
       color: #241d00;
 
       text-align: center;
@@ -383,11 +430,13 @@
       position: fixed;
 
       right: 18px;
+
       bottom: 18px;
 
       z-index: 1000;
 
       display: grid;
+
       gap: 10px;
     }
 
@@ -396,6 +445,8 @@
 
       border:
         1px solid #333;
+
+      color: #fff;
 
       padding: 13px 16px;
 
@@ -413,6 +464,7 @@
 
     .toast.show {
       opacity: 1;
+
       transform: none;
     }
 
@@ -424,13 +476,10 @@
       border-color: #76282c;
     }
 
-    @media(
-      max-width: 900px
-    ) {
+    @media(max-width:900px) {
 
       .page {
-        grid-template-columns:
-          1fr;
+        grid-template-columns: 1fr;
       }
 
       .hero {
@@ -445,8 +494,7 @@
       }
 
       .hero-copy {
-        padding:
-          44px 0 20px;
+        padding: 44px 0 20px;
       }
 
       .hero-foot {
@@ -462,7 +510,6 @@
         font-size: 56px;
       }
     }
-
   </style>
 
 </head>
@@ -470,28 +517,27 @@
 
 <body>
 
-
   <main class="page">
 
 
     <section class="hero">
 
-
-      <a
-        class="brand"
-        href="/index.html"
-      >
+      <a class="brand" href="/index.html">
 
         <span class="logo">
-          🐔
+
+          <img src="/assets/crazy-chicken-icon.png" alt="Crazy Chicken">
+
         </span>
 
         <span>
+
           Crazy Chicken
 
           <small>
             área do cliente
           </small>
+
         </span>
 
       </a>
@@ -504,6 +550,7 @@
         </div>
 
         <h1>
+
           Entre.
           <br>
 
@@ -513,13 +560,15 @@
           <span>
             Peça.
           </span>
+
         </h1>
 
         <p>
-          Faça login para salvar seus
-          dados, acompanhar pedidos e
-          finalizar compras com mais
-          rapidez.
+
+          Faça login para salvar seus dados,
+          acompanhar pedidos e finalizar compras
+          com mais rapidez.
+
         </p>
 
       </div>
@@ -529,58 +578,36 @@
         Crazy Chicken Ecommerce
       </div>
 
-
     </section>
 
 
     <section class="auth-side">
 
-
       <div class="card">
-
 
         <h2 id="authTitle">
           Bem-vindo
         </h2>
 
-
-        <p
-          class="sub"
-          id="authSubtitle"
-        >
+        <p class="sub" id="authSubtitle">
           Entre na sua conta para continuar.
         </p>
 
 
-        <div
-          class="tabs"
-          id="authTabs"
-        >
+        <div class="tabs" id="authTabs">
 
-          <button
-            class="auth-tab active"
-            type="button"
-            data-tab="login"
-          >
+          <button class="auth-tab active" type="button" data-tab="login">
             Entrar
           </button>
 
-          <button
-            class="auth-tab"
-            type="button"
-            data-tab="signup"
-          >
+          <button class="auth-tab" type="button" data-tab="signup">
             Criar conta
           </button>
 
         </div>
 
 
-        <form
-          class="form"
-          id="loginForm"
-        >
-
+        <form class="form" id="loginForm">
 
           <div class="field">
 
@@ -588,13 +615,7 @@
               E-mail
             </label>
 
-            <input
-              class="input"
-              id="loginEmail"
-              type="email"
-              autocomplete="email"
-              required
-            >
+            <input class="input" id="loginEmail" type="email" autocomplete="email" required>
 
           </div>
 
@@ -605,23 +626,12 @@
               Senha
             </label>
 
-
             <div class="input-wrap">
 
-              <input
-                class="input with-action"
-                id="loginPassword"
-                type="password"
-                autocomplete="current-password"
-                required
-              >
+              <input class="input with-action" id="loginPassword" type="password" autocomplete="current-password"
+                required>
 
-
-              <button
-                class="toggle"
-                type="button"
-                data-toggle-password="loginPassword"
-              >
+              <button class="toggle" type="button" data-toggle-password="loginPassword">
                 Mostrar
               </button>
 
@@ -630,45 +640,27 @@
           </div>
 
 
-          <button
-            class="btn primary"
-            id="loginButton"
-            type="submit"
-          >
+          <button class="btn primary" id="loginButton" type="submit">
             Entrar
           </button>
 
 
           <div class="links">
 
-            <button
-              class="link-btn"
-              id="forgotButton"
-              type="button"
-            >
+            <button class="link-btn" id="forgotButton" type="button">
               Esqueci minha senha
             </button>
 
-
-            <a
-              class="link-btn"
-              href="/index.html"
-            >
+            <a class="link-btn" href="/index.html">
               Voltar à loja
             </a>
 
           </div>
 
-
         </form>
 
 
-        <form
-          class="form"
-          id="signupForm"
-          hidden
-        >
-
+        <form class="form" id="signupForm" hidden>
 
           <div class="field">
 
@@ -676,13 +668,7 @@
               Nome
             </label>
 
-            <input
-              class="input"
-              id="signupName"
-              type="text"
-              autocomplete="name"
-              required
-            >
+            <input class="input" id="signupName" type="text" autocomplete="name" required>
 
           </div>
 
@@ -693,13 +679,7 @@
               E-mail
             </label>
 
-            <input
-              class="input"
-              id="signupEmail"
-              type="email"
-              autocomplete="email"
-              required
-            >
+            <input class="input" id="signupEmail" type="email" autocomplete="email" required>
 
           </div>
 
@@ -710,24 +690,12 @@
               Senha
             </label>
 
-
             <div class="input-wrap">
 
-              <input
-                class="input with-action"
-                id="signupPassword"
-                type="password"
-                minlength="8"
-                autocomplete="new-password"
-                required
-              >
+              <input class="input with-action" id="signupPassword" type="password" minlength="8"
+                autocomplete="new-password" required>
 
-
-              <button
-                class="toggle"
-                type="button"
-                data-toggle-password="signupPassword"
-              >
+              <button class="toggle" type="button" data-toggle-password="signupPassword">
                 Mostrar
               </button>
 
@@ -742,24 +710,12 @@
               Confirmar senha
             </label>
 
-
             <div class="input-wrap">
 
-              <input
-                class="input with-action"
-                id="signupPasswordConfirm"
-                type="password"
-                minlength="8"
-                autocomplete="new-password"
-                required
-              >
+              <input class="input with-action" id="signupPasswordConfirm" type="password" minlength="8"
+                autocomplete="new-password" required>
 
-
-              <button
-                class="toggle"
-                type="button"
-                data-toggle-password="signupPasswordConfirm"
-              >
+              <button class="toggle" type="button" data-toggle-password="signupPasswordConfirm">
                 Mostrar
               </button>
 
@@ -768,33 +724,19 @@
           </div>
 
 
-          <button
-            class="btn primary"
-            id="signupButton"
-            type="submit"
-          >
+          <button class="btn primary" id="signupButton" type="submit">
             Criar minha conta
           </button>
 
 
-          <button
-            class="link-btn"
-            type="button"
-            data-back-login
-          >
+          <button class="link-btn" type="button" data-back-login>
             Já tenho conta
           </button>
-
 
         </form>
 
 
-        <form
-          class="form"
-          id="resetForm"
-          hidden
-        >
-
+        <form class="form" id="resetForm" hidden>
 
           <div class="field">
 
@@ -802,43 +744,24 @@
               E-mail
             </label>
 
-            <input
-              class="input"
-              id="resetEmail"
-              type="email"
-              required
-            >
+            <input class="input" id="resetEmail" type="email" required>
 
           </div>
 
 
-          <button
-            class="btn primary"
-            id="resetButton"
-            type="submit"
-          >
+          <button class="btn primary" id="resetButton" type="submit">
             Enviar recuperação
           </button>
 
 
-          <button
-            class="btn secondary"
-            type="button"
-            data-back-login
-          >
+          <button class="btn secondary" type="button" data-back-login>
             Voltar ao login
           </button>
-
 
         </form>
 
 
-        <form
-          class="form"
-          id="newPasswordForm"
-          hidden
-        >
-
+        <form class="form" id="newPasswordForm" hidden>
 
           <div class="field">
 
@@ -846,57 +769,33 @@
               Nova senha
             </label>
 
-            <input
-              class="input"
-              id="newPassword"
-              type="password"
-              minlength="8"
-              required
-            >
+            <input class="input" id="newPassword" type="password" minlength="8" required>
 
           </div>
 
 
-          <button
-            class="btn primary"
-            id="newPasswordButton"
-            type="submit"
-          >
+          <button class="btn primary" id="newPasswordButton" type="submit">
             Salvar nova senha
           </button>
-
 
         </form>
 
 
-        <a
-          class="back"
-          href="/index.html"
-        >
+        <a class="back" href="/index.html">
           ← Voltar para a loja
         </a>
 
-
       </div>
 
-
     </section>
-
 
   </main>
 
 
-  <div
-    id="toastRoot"
-    class="toast-root"
-  ></div>
+  <div id="toastRoot" class="toast-root"></div>
 
 
-  <script
-    type="module"
-    src="/js/auth.js"
-  ></script>
-
+  <script type="module" src="/js/auth.js"></script>
 
 </body>
 
