@@ -1,170 +1,1056 @@
-import { supabase, isConfigured } from "./supabaseClient.js";
 import {
-  $, $$, formatBRL, escapeHTML, formatCEP, showToast, setButtonLoading,
-  requireAuth, getProfile, hydrateHeaderAuth, showSetupWarning
-} from "./common.js";
+  supabase,
+  isConfigured
+} from "/js/supabaseClient.js";
+
+import {
+  $,
+  formatCEP,
+  escapeHTML,
+  formatBRL,
+  showToast,
+  setButtonLoading,
+  requireAuth,
+  getProfile,
+  showSetupWarning
+} from "/js/common.js";
+
+
+/* =========================================================
+   ESTADO
+========================================================= */
 
 let session = null;
 let profile = null;
 
-function setSection(name) {
-  $$('[data-account-section]').forEach((section) => section.hidden = section.dataset.accountSection !== name);
-  $$('#accountNav [data-section]').forEach((button) => button.classList.toggle("active", button.dataset.section === name));
-  if (name === "orders") loadOrders();
-  if (name === "favorites") loadFavorites();
-}
 
-function fillProfile(data) {
-  $("#fullName").value = data?.full_name || "";
-  $("#phone").value = data?.phone || "";
-  $("#postalCode").value = data?.postal_code || "";
-  $("#street").value = data?.street || "";
-  $("#number").value = data?.number || "";
-  $("#complement").value = data?.complement || "";
-  $("#city").value = data?.city || "";
-  $("#state").value = (data?.state || "").toUpperCase();
-}
+const STATUS_LABELS = {
+  pending_whatsapp: "Aguardando confirmação",
+  confirmed: "Confirmado",
+  preparing: "Em preparação",
+  ready: "Pronto",
+  delivered: "Entregue",
+  cancelled: "Cancelado"
+};
 
-function statusLabel(status) {
-  return ({
-    pending_whatsapp: "Aguardando confirmação",
-    confirmed: "Confirmado",
-    preparing: "Em preparação",
-    ready: "Pronto",
-    delivered: "Entregue",
-    cancelled: "Cancelado",
-  })[status] || status;
-}
 
-async function loadOrders() {
-  const root = $("#ordersList");
-  root.innerHTML = `<div class="empty-state"><strong>Carregando...</strong></div>`;
-  try {
-    const { data, error } = await supabase
-      .from("orders")
-      .select("id, order_number, status, subtotal, shipping_cost, total, created_at, order_items(name_snapshot, unit_price, quantity, line_total)")
-      .order("created_at", { ascending: false });
-    if (error) throw error;
+/* =========================================================
+   LOADING / APP
+========================================================= */
 
-    if (!data?.length) {
-      root.innerHTML = `<div class="empty-state"><strong>Nenhum pedido ainda</strong>Quando você finalizar um pedido, ele aparecerá aqui.</div>`;
-      return;
-    }
+function showAccount() {
 
-    root.innerHTML = data.map((order) => `
-      <article class="order-card">
-        <div class="order-head">
-          <div><strong>Pedido #${order.order_number}</strong><div class="order-meta">${new Date(order.created_at).toLocaleString("pt-BR")}</div></div>
-          <span class="status-pill status-${escapeHTML(order.status)}">${escapeHTML(statusLabel(order.status))}</span>
-        </div>
-        <div class="order-items">
-          ${(order.order_items || []).map((item) => `<div class="order-item-line"><span>${item.quantity}x ${escapeHTML(item.name_snapshot)}</span><strong>${formatBRL(item.line_total)}</strong></div>`).join("")}
-        </div>
-        <div class="order-total">
-          <div><span>Subtotal</span><strong>${formatBRL(order.subtotal)}</strong></div>
-          <div><span>Frete</span><strong>${order.shipping_cost == null ? "A confirmar" : formatBRL(order.shipping_cost)}</strong></div>
-          <div><span>Total</span><strong>${formatBRL(order.total)}</strong></div>
-        </div>
-      </article>`).join("");
-  } catch (error) {
-    root.innerHTML = `<div class="empty-state"><strong>Erro ao carregar pedidos</strong>${escapeHTML(error.message)}</div>`;
+  const loading =
+    $("#authLoading");
+
+  const app =
+    $("#accountApp");
+
+
+  if (loading) {
+    loading.hidden = true;
   }
-}
 
-async function loadFavorites() {
-  const root = $("#favoritesGrid");
-  root.innerHTML = `<div class="empty-state"><strong>Carregando...</strong></div>`;
-  try {
-    const { data, error } = await supabase
-      .from("favorites")
-      .select("product_id, products(id,name,description,price,compare_at_price,category,image_url,stock,active)")
-      .order("created_at", { ascending: false });
-    if (error) throw error;
-    const products = (data || []).map((row) => row.products).filter((product) => product?.active);
-    if (!products.length) {
-      root.innerHTML = `<div class="empty-state"><strong>Você ainda não favoritou produtos</strong>Use o coração nos produtos da loja para salvá-los aqui.</div>`;
-      return;
-    }
-    root.innerHTML = products.map((product) => `
-      <article class="product-card">
-        <div class="product-media">${product.image_url ? `<img src="${escapeHTML(product.image_url)}" alt="${escapeHTML(product.name)}">` : `<div class="product-placeholder">🐔</div>`}</div>
-        <div class="product-body">
-          <div class="product-category">${escapeHTML(product.category || "Produto")}</div>
-          <h3 class="product-name">${escapeHTML(product.name)}</h3>
-          <p class="product-desc">${escapeHTML(product.description || "")}</p>
-          <div class="product-price-row"><div class="price-group"><strong>${formatBRL(product.price)}</strong></div></div>
-          <div class="product-actions"><a class="btn btn-primary" href="/#produtos">Ver na loja</a><button class="btn btn-ghost" type="button" data-remove-favorite="${product.id}">Remover</button></div>
-        </div>
-      </article>`).join("");
-  } catch (error) {
-    root.innerHTML = `<div class="empty-state"><strong>Erro ao carregar favoritos</strong>${escapeHTML(error.message)}</div>`;
+
+  if (app) {
+    app.hidden = false;
   }
+
 }
 
-async function init() {
-  if (!isConfigured) {
-    showSetupWarning();
+
+function hideLoading() {
+
+  const loading =
+    $("#authLoading");
+
+
+  if (loading) {
+    loading.hidden = true;
+  }
+
+}
+
+
+/* =========================================================
+   PERFIL
+========================================================= */
+
+function fillProfile() {
+
+  if (!profile || !session) {
     return;
   }
 
-  session = await requireAuth();
-  if (!session) return;
-  $("#accountEmail").textContent = session.user.email || "";
-  profile = await getProfile(session.user.id);
-  fillProfile(profile);
-  hydrateHeaderAuth();
 
-  const params = new URLSearchParams(location.search);
-  if (params.get("checkout") === "1") {
-    showToast("Complete seus dados de entrega para finalizar o pedido.");
+  const name =
+    $("#profileName");
+
+  const email =
+    $("#profileEmail");
+
+  const phone =
+    $("#profilePhone");
+
+  const cep =
+    $("#profileCEP");
+
+  const street =
+    $("#profileStreet");
+
+  const number =
+    $("#profileNumber");
+
+  const complement =
+    $("#profileComplement");
+
+  const city =
+    $("#profileCity");
+
+  const state =
+    $("#profileState");
+
+  const welcomeName =
+    $("#welcomeName");
+
+  const adminLink =
+    $("#adminLink");
+
+
+  if (name) {
+    name.value =
+      profile.full_name || "";
   }
 
-  $$('#accountNav [data-section]').forEach((button) => button.addEventListener("click", () => setSection(button.dataset.section)));
-  $("#postalCode")?.addEventListener("input", (event) => event.target.value = formatCEP(event.target.value));
-  $("#state")?.addEventListener("input", (event) => event.target.value = event.target.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 2));
 
-  $("#profileForm")?.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const button = $("#saveProfileButton");
-    setButtonLoading(button, true, "Salvando...");
-    try {
-      const payload = {
-        full_name: $("#fullName").value.trim(),
-        phone: $("#phone").value.trim(),
-        postal_code: formatCEP($("#postalCode").value),
-        street: $("#street").value.trim(),
-        number: $("#number").value.trim(),
-        complement: $("#complement").value.trim() || null,
-        city: $("#city").value.trim(),
-        state: $("#state").value.trim().toUpperCase(),
-      };
-      const { data, error } = await supabase.from("profiles").update(payload).eq("id", session.user.id).select().single();
-      if (error) throw error;
-      profile = data;
-      showToast("Dados atualizados com sucesso.", "success");
-      if (params.get("checkout") === "1") {
-        setTimeout(() => location.href = "/?checkout=1", 600);
-      }
-    } catch (error) {
-      showToast(error.message, "error");
-    } finally {
-      setButtonLoading(button, false);
-    }
-  });
+  if (email) {
+    email.value =
+      session.user.email || "";
+  }
 
-  $("#favoritesGrid")?.addEventListener("click", async (event) => {
-    const button = event.target.closest("[data-remove-favorite]");
-    if (!button) return;
-    const { error } = await supabase.from("favorites").delete().eq("user_id", session.user.id).eq("product_id", button.dataset.removeFavorite);
-    if (error) return showToast(error.message, "error");
-    showToast("Favorito removido.");
-    loadFavorites();
-  });
 
-  $("#logoutButton")?.addEventListener("click", async () => {
-    await supabase.auth.signOut();
-    location.href = "/";
-  });
+  if (phone) {
+    phone.value =
+      profile.phone || "";
+  }
+
+
+  if (cep) {
+    cep.value =
+      profile.postal_code || "";
+  }
+
+
+  if (street) {
+    street.value =
+      profile.street || "";
+  }
+
+
+  if (number) {
+    number.value =
+      profile.number || "";
+  }
+
+
+  if (complement) {
+    complement.value =
+      profile.complement || "";
+  }
+
+
+  if (city) {
+    city.value =
+      profile.city || "";
+  }
+
+
+  if (state) {
+    state.value =
+      (
+        profile.state || ""
+      ).toUpperCase();
+  }
+
+
+  if (welcomeName) {
+
+    const firstName =
+      (
+        profile.full_name ||
+        session.user.email ||
+        "Cliente"
+      )
+      .split(" ")[0];
+
+
+    welcomeName.textContent =
+      firstName;
+
+  }
+
+
+  if (
+    adminLink &&
+    profile.role === "admin"
+  ) {
+
+    adminLink.hidden =
+      false;
+
+  }
+
 }
 
-init().catch((error) => showToast(error.message, "error"));
+
+/* =========================================================
+   PEDIDOS
+========================================================= */
+
+function renderEmptyOrders() {
+
+  const root =
+    $("#ordersList");
+
+
+  if (!root) {
+    return;
+  }
+
+
+  root.innerHTML = `
+    <div class="empty">
+
+      <div>
+
+        <div class="empty-icon">
+          📦
+        </div>
+
+        <strong>
+          Nenhum pedido ainda
+        </strong>
+
+        <span>
+          Quando você finalizar uma compra,
+          ela aparecerá aqui.
+        </span>
+
+        <a href="/index.html#produtos">
+          Ver produtos
+        </a>
+
+      </div>
+
+    </div>
+  `;
+
+}
+
+
+function renderOrderError(
+  message
+) {
+
+  const root =
+    $("#ordersList");
+
+
+  if (!root) {
+    return;
+  }
+
+
+  root.innerHTML = `
+    <div class="empty">
+
+      <div>
+
+        <div class="empty-icon">
+          ⚠️
+        </div>
+
+        <strong>
+          Não foi possível carregar os pedidos
+        </strong>
+
+        <span>
+          ${escapeHTML(
+            message ||
+            "Tente atualizar a página."
+          )}
+        </span>
+
+      </div>
+
+    </div>
+  `;
+
+}
+
+
+async function loadOrders() {
+
+  const root =
+    $("#ordersList");
+
+
+  if (!root) {
+    return;
+  }
+
+
+  root.innerHTML = `
+    <div class="empty">
+
+      <div>
+
+        <div class="empty-icon">
+          📦
+        </div>
+
+        <strong>
+          Carregando pedidos...
+        </strong>
+
+        <span>
+          Aguarde alguns segundos.
+        </span>
+
+      </div>
+
+    </div>
+  `;
+
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabase
+
+        .from(
+          "orders"
+        )
+
+        .select(`
+          id,
+          order_number,
+          status,
+          subtotal,
+          shipping_cost,
+          total,
+          created_at,
+          order_items(
+            name_snapshot,
+            quantity,
+            line_total
+          )
+        `)
+
+        .eq(
+          "user_id",
+          session.user.id
+        )
+
+        .order(
+          "created_at",
+          {
+            ascending: false
+          }
+        );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    if (
+      !data ||
+      !data.length
+    ) {
+
+      renderEmptyOrders();
+
+      return;
+
+    }
+
+
+    root.innerHTML =
+      data
+        .map(
+          order => {
+
+            const statusLabel =
+              STATUS_LABELS[
+                order.status
+              ] ||
+              order.status;
+
+
+            const date =
+              new Date(
+                order.created_at
+              )
+              .toLocaleString(
+                "pt-BR"
+              );
+
+
+            const items =
+              (
+                order.order_items ||
+                []
+              )
+              .map(
+                item => `
+                  <div>
+
+                    <span>
+                      ${
+                        item.quantity
+                      }x
+                      ${
+                        escapeHTML(
+                          item.name_snapshot
+                        )
+                      }
+                    </span>
+
+                    <strong>
+                      ${
+                        formatBRL(
+                          item.line_total
+                        )
+                      }
+                    </strong>
+
+                  </div>
+                `
+              )
+              .join("");
+
+
+            return `
+              <article class="order-card">
+
+                <div class="order-head">
+
+                  <div>
+
+                    <strong>
+                      Pedido #${
+                        escapeHTML(
+                          order.order_number
+                        )
+                      }
+                    </strong>
+
+                    <small>
+                      ${date}
+                    </small>
+
+                  </div>
+
+
+                  <span class="status">
+                    ${
+                      escapeHTML(
+                        statusLabel
+                      )
+                    }
+                  </span>
+
+                </div>
+
+
+                <div class="order-items">
+
+                  ${
+                    items ||
+                    `
+                      <div>
+                        <span>
+                          Pedido sem itens disponíveis.
+                        </span>
+                      </div>
+                    `
+                  }
+
+                </div>
+
+
+                <div class="order-total">
+
+                  Total:
+
+                  <strong>
+                    ${
+                      formatBRL(
+                        order.total
+                      )
+                    }
+                  </strong>
+
+                </div>
+
+              </article>
+            `;
+
+          }
+        )
+        .join("");
+
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao carregar pedidos:",
+      error
+    );
+
+
+    renderOrderError(
+      error?.message
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   SALVAR PERFIL
+========================================================= */
+
+async function saveProfile(
+  event
+) {
+
+  event.preventDefault();
+
+
+  const button =
+    $("#saveProfileButton");
+
+
+  setButtonLoading(
+    button,
+    true,
+    "Salvando..."
+  );
+
+
+  try {
+
+    const fullName =
+      $("#profileName")
+        ?.value
+        .trim() || "";
+
+
+    const phone =
+      $("#profilePhone")
+        ?.value
+        .trim() || "";
+
+
+    const postalCode =
+      formatCEP(
+        $("#profileCEP")
+          ?.value || ""
+      );
+
+
+    const street =
+      $("#profileStreet")
+        ?.value
+        .trim() || "";
+
+
+    const number =
+      $("#profileNumber")
+        ?.value
+        .trim() || "";
+
+
+    const complement =
+      $("#profileComplement")
+        ?.value
+        .trim() || null;
+
+
+    const city =
+      $("#profileCity")
+        ?.value
+        .trim() || "";
+
+
+    const state =
+      $("#profileState")
+        ?.value
+        .trim()
+        .toUpperCase()
+        .replace(
+          /[^A-Z]/g,
+          ""
+        )
+        .slice(
+          0,
+          2
+        ) || "";
+
+
+    if (!fullName) {
+      throw new Error(
+        "Informe seu nome completo."
+      );
+    }
+
+
+    if (!phone) {
+      throw new Error(
+        "Informe seu telefone."
+      );
+    }
+
+
+    if (
+      postalCode
+        .replace(/\D/g, "")
+        .length !== 8
+    ) {
+
+      throw new Error(
+        "Informe um CEP válido."
+      );
+
+    }
+
+
+    if (!street) {
+      throw new Error(
+        "Informe sua rua ou avenida."
+      );
+    }
+
+
+    if (!number) {
+      throw new Error(
+        "Informe o número do endereço."
+      );
+    }
+
+
+    if (!city) {
+      throw new Error(
+        "Informe sua cidade."
+      );
+    }
+
+
+    if (
+      state.length !== 2
+    ) {
+
+      throw new Error(
+        "Informe a sigla do estado."
+      );
+
+    }
+
+
+    const payload = {
+
+      full_name:
+        fullName,
+
+      phone:
+        phone,
+
+      postal_code:
+        postalCode,
+
+      street:
+        street,
+
+      number:
+        number,
+
+      complement:
+        complement,
+
+      city:
+        city,
+
+      state:
+        state
+
+    };
+
+
+    const {
+      data,
+      error
+    } =
+      await supabase
+
+        .from(
+          "profiles"
+        )
+
+        .update(
+          payload
+        )
+
+        .eq(
+          "id",
+          session.user.id
+        )
+
+        .select()
+        .single();
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    profile =
+      data || {
+        ...profile,
+        ...payload
+      };
+
+
+    fillProfile();
+
+
+    showToast(
+      "Dados salvos com sucesso.",
+      "success"
+    );
+
+
+    /*
+      Se o cliente veio do carrinho,
+      volta automaticamente para finalizar.
+    */
+
+    const params =
+      new URLSearchParams(
+        location.search
+      );
+
+
+    if (
+      params.get(
+        "checkout"
+      ) === "1"
+    ) {
+
+      showToast(
+        "Voltando para seu carrinho...",
+        "success"
+      );
+
+
+      setTimeout(
+        () => {
+
+          location.replace(
+            "/index.html?checkout=1"
+          );
+
+        },
+        700
+      );
+
+    }
+
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao salvar perfil:",
+      error
+    );
+
+
+    showToast(
+      error?.message ||
+      "Não foi possível salvar seus dados.",
+      "error"
+    );
+
+
+  } finally {
+
+    setButtonLoading(
+      button,
+      false
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+async function logout() {
+
+  try {
+
+    await supabase.auth
+      .signOut();
+
+
+    location.replace(
+      "/login.html"
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao sair:",
+      error
+    );
+
+
+    showToast(
+      "Não foi possível sair da conta.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   EVENTOS
+========================================================= */
+
+function bindEvents() {
+
+  const cep =
+    $("#profileCEP");
+
+
+  cep?.addEventListener(
+    "input",
+    event => {
+
+      event.target.value =
+        formatCEP(
+          event.target.value
+        );
+
+    }
+  );
+
+
+  const stateInput =
+    $("#profileState");
+
+
+  stateInput?.addEventListener(
+    "input",
+    event => {
+
+      event.target.value =
+        event.target.value
+
+          .toUpperCase()
+
+          .replace(
+            /[^A-Z]/g,
+            ""
+          )
+
+          .slice(
+            0,
+            2
+          );
+
+    }
+  );
+
+
+  $("#profileForm")
+    ?.addEventListener(
+      "submit",
+      saveProfile
+    );
+
+
+  $("#logoutButton")
+    ?.addEventListener(
+      "click",
+      logout
+    );
+
+}
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
+async function init() {
+
+  console.log(
+    "[Crazy Chicken] account.js carregado."
+  );
+
+
+  /*
+    1. Verifica configuração Supabase
+  */
+
+  if (
+    !isConfigured ||
+    !supabase
+  ) {
+
+    hideLoading();
+
+    showSetupWarning();
+
+    showToast(
+      "Supabase não configurado.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  /*
+    2. Verifica login
+  */
+
+  session =
+    await requireAuth();
+
+
+  if (!session) {
+
+    /*
+      requireAuth já fará
+      o redirecionamento.
+    */
+
+    return;
+
+  }
+
+
+  /*
+    3. Busca perfil
+  */
+
+  try {
+
+    profile =
+      await getProfile(
+        session.user.id
+      );
+
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao buscar perfil:",
+      error
+    );
+
+
+    hideLoading();
+
+
+    showToast(
+      "Não foi possível carregar seu perfil.",
+      "error"
+    );
+
+
+    return;
+
+  }
+
+
+  /*
+    4. Preenche os dados
+  */
+
+  fillProfile();
+
+
+  /*
+    IMPORTANTE:
+    Mostra a página ANTES de buscar os pedidos.
+
+    Assim, se os pedidos derem erro,
+    a conta ainda abre normalmente.
+  */
+
+  showAccount();
+
+
+  /*
+    5. Eventos
+  */
+
+  bindEvents();
+
+
+  /*
+    6. Carrega pedidos
+  */
+
+  await loadOrders();
+
+
+  console.log(
+    "[Crazy Chicken] Conta carregada."
+  );
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+init()
+  .catch(
+    error => {
+
+      console.error(
+        "Erro geral da conta:",
+        error
+      );
+
+
+      hideLoading();
+
+
+      showToast(
+        error?.message ||
+        "Erro ao carregar sua conta.",
+        "error"
+      );
+
+    }
+  );
