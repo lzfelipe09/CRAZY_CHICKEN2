@@ -1,35 +1,34 @@
 <!doctype html>
-
 <html lang="pt-BR">
 
 <head>
-
   <meta charset="utf-8">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <meta name="theme-color" content="#090909">
 
-  <title>
-    Entrar | Crazy Chicken
-  </title>
+  <title>Entrar | Crazy Chicken</title>
 
+  <link
+    rel="icon"
+    type="image/png"
+    href="/assets/crazy-chicken-icon.png"
+  >
 
-  <link rel="icon" type="image/png" href="/assets/crazy-chicken-icon.png">
-
-  <link rel="apple-touch-icon" href="/assets/crazy-chicken-icon.png">
-
+  <link
+    rel="apple-touch-icon"
+    href="/assets/crazy-chicken-icon.png"
+  >
 
   <style>
     * {
       box-sizing: border-box;
     }
 
-
     html,
     body {
       margin: 0;
-
       min-height: 100%;
 
       font-family:
@@ -38,36 +37,32 @@
         sans-serif;
 
       background: #090909;
-
       color: #fff;
     }
-
 
     a {
       color: inherit;
       text-decoration: none;
     }
 
-
     button,
     input {
       font: inherit;
     }
 
-
     [hidden] {
       display: none !important;
     }
 
-
     body {
       background:
-        radial-gradient(circle at 10% 0,
+        radial-gradient(
+          circle at 10% 0,
           rgba(239, 43, 45, .14),
-          transparent 28rem),
+          transparent 28rem
+        ),
         #090909;
     }
-
 
     .page {
       min-height: 100vh;
@@ -78,6 +73,9 @@
         1.05fr 0.95fr;
     }
 
+    /* ==========================
+       HERO
+    ========================== */
 
     .hero {
       padding: 44px;
@@ -92,7 +90,6 @@
         1px solid #282828;
     }
 
-
     .brand {
       display: flex;
 
@@ -105,7 +102,6 @@
       font-weight: 900;
     }
 
-
     .logo {
       width: 44px;
       height: 44px;
@@ -115,9 +111,9 @@
       overflow: hidden;
 
       box-shadow:
-        0 12px 30px rgba(239, 43, 45, .25);
+        0 12px 30px
+        rgba(239, 43, 45, .25);
     }
-
 
     .logo img {
       width: 100%;
@@ -125,7 +121,6 @@
 
       object-fit: cover;
     }
-
 
     .brand small {
       display: block;
@@ -143,14 +138,12 @@
       font-weight: 600;
     }
 
-
     .hero-copy {
       max-width: 680px;
 
       padding:
         70px 0;
     }
-
 
     .kicker {
       color: #ff7678;
@@ -164,12 +157,13 @@
       font-weight: 800;
     }
 
-
     .hero h1 {
       font-size:
-        clamp(50px,
+        clamp(
+          50px,
           7vw,
-          90px);
+          90px
+        );
 
       line-height: .92;
 
@@ -179,11 +173,9 @@
         16px 0 22px;
     }
 
-
     .hero h1 span {
       color: #ef2b2d;
     }
-
 
     .hero p {
       color: #aaa;
@@ -193,13 +185,15 @@
       max-width: 580px;
     }
 
-
     .hero-foot {
       color: #666;
 
       font-size: 12px;
     }
 
+    /* ==========================
+       AUTENTICAÇÃO
+    ========================== */
 
     .auth-side {
       display: grid;
@@ -209,25 +203,27 @@
       padding: 32px;
     }
 
-
     .auth-side-inner {
       width:
-        min(480px,
-          100%);
+        min(
+          480px,
+          100%
+        );
 
       display: grid;
 
       gap: 18px;
     }
 
-
     .card {
       width: 100%;
 
       background:
-        linear-gradient(145deg,
+        linear-gradient(
+          145deg,
           #151515,
-          #101010);
+          #101010
+        );
 
       border:
         1px solid #292929;
@@ -237,9 +233,9 @@
       padding: 30px;
 
       box-shadow:
-        0 28px 80px rgba(0, 0, 0, .35);
+        0 28px 80px
+        rgba(0, 0, 0, .35);
     }
-
 
     .card h2 {
       font-size: 32px;
@@ -247,7 +243,6 @@
       margin:
         0 0 8px;
     }
-
 
     .sub {
       color: #999;
@@ -258,6 +253,31 @@
         0 0 22px;
     }
 
+    /*
+      Informação adicional para deixar claro
+      que a autenticação pertence à Crazy Chicken.
+    */
+
+    .security-note {
+      margin:
+        -8px 0 20px;
+
+      padding:
+        12px 14px;
+
+      background: #0d0d0d;
+
+      border:
+        1px solid #292929;
+
+      border-radius: 10px;
+
+      color: #8f8f8f;
+
+      font-size: 12px;
+
+      line-height: 1.55;
+    }
 
     .tabs {
       display: grid;
@@ -279,7 +299,6 @@
       margin-bottom: 22px;
     }
 
-
     .auth-tab {
       border: 0;
 
@@ -296,13 +315,11 @@
       cursor: pointer;
     }
 
-
     .auth-tab.active {
       background: #ef2b2d;
 
       color: #fff;
     }
-
 
     .form {
       display: grid;
@@ -310,13 +327,11 @@
       gap: 14px;
     }
 
-
     .field {
       display: grid;
 
       gap: 7px;
     }
-
 
     .field label {
       font-size: 13px;
@@ -326,11 +341,9 @@
       font-weight: 700;
     }
 
-
     .input-wrap {
       position: relative;
     }
-
 
     .input {
       width: 100%;
@@ -352,19 +365,17 @@
       outline: 0;
     }
 
-
     .input:focus {
       border-color: #ef2b2d;
 
       box-shadow:
-        0 0 0 3px rgba(239, 43, 45, .1);
+        0 0 0 3px
+        rgba(239, 43, 45, .1);
     }
-
 
     .with-action {
       padding-right: 86px;
     }
-
 
     .toggle {
       position: absolute;
@@ -387,7 +398,6 @@
       cursor: pointer;
     }
 
-
     .btn {
       min-height: 48px;
 
@@ -400,16 +410,16 @@
       cursor: pointer;
     }
 
-
     .btn.primary {
       background:
-        linear-gradient(145deg,
+        linear-gradient(
+          145deg,
           #ef2b2d,
-          #b9191c);
+          #b9191c
+        );
 
       color: #fff;
     }
-
 
     .btn.secondary {
       background: #1b1b1b;
@@ -419,7 +429,6 @@
       border:
         1px solid #303030;
     }
-
 
     .links {
       display: flex;
@@ -433,7 +442,6 @@
 
       margin-top: 4px;
     }
-
 
     .link-btn {
       border: 0;
@@ -449,7 +457,6 @@
       font-size: 12px;
     }
 
-
     .back {
       display: inline-block;
 
@@ -459,7 +466,6 @@
 
       font-size: 13px;
     }
-
 
     /* ==========================
        REDES
@@ -488,13 +494,11 @@
         rgba(20, 20, 20, .7);
     }
 
-
     .login-socials span {
       color: #666;
 
       font-size: 11px;
     }
-
 
     .social-link {
       display: inline-flex;
@@ -514,14 +518,12 @@
         transform .2s;
     }
 
-
     .social-link:hover {
       color: #fff;
 
       transform:
         translateY(-1px);
     }
-
 
     /* ==========================
        WHATSAPP
@@ -540,35 +542,40 @@
       height: 60px;
 
       display: flex;
+
       align-items: center;
+
       justify-content: center;
 
       border-radius: 50%;
 
       background:
-        linear-gradient(145deg,
+        linear-gradient(
+          145deg,
           #2ee66f,
-          #1fb958);
+          #1fb958
+        );
 
       color: #fff;
 
       box-shadow:
-        0 15px 40px rgba(37, 211, 102, .28);
+        0 15px 40px
+        rgba(37, 211, 102, .28);
 
       transition:
         transform .2s,
         box-shadow .2s;
     }
 
-
     .whatsapp-float:hover {
       transform:
-        translateY(-4px) scale(1.05);
+        translateY(-4px)
+        scale(1.05);
 
       box-shadow:
-        0 20px 48px rgba(37, 211, 102, .38);
+        0 20px 48px
+        rgba(37, 211, 102, .38);
     }
-
 
     .whatsapp-float svg {
       width: 31px;
@@ -576,7 +583,6 @@
 
       fill: currentColor;
     }
-
 
     .whatsapp-float::before {
       content:
@@ -611,13 +617,15 @@
       transition: .2s;
     }
 
-
     .whatsapp-float:hover::before {
       opacity: 1;
 
       visibility: visible;
     }
 
+    /* ==========================
+       SISTEMA
+    ========================== */
 
     .setup-warning {
       position: fixed;
@@ -637,7 +645,6 @@
       text-align: center;
     }
 
-
     .toast-root {
       position: fixed;
 
@@ -651,7 +658,6 @@
 
       gap: 10px;
     }
-
 
     .toast {
       background: #191919;
@@ -676,25 +682,25 @@
       max-width: 360px;
     }
 
-
     .toast.show {
       opacity: 1;
 
       transform: none;
     }
 
-
     .toast-success {
       border-color: #23663e;
     }
-
 
     .toast-error {
       border-color: #76282c;
     }
 
+    /* ==========================
+       RESPONSIVO
+    ========================== */
 
-    @media(max-width:900px) {
+    @media(max-width: 900px) {
 
       .page {
         grid-template-columns: 1fr;
@@ -728,11 +734,9 @@
       .hero h1 {
         font-size: 56px;
       }
-
     }
 
-
-    @media(max-width:600px) {
+    @media(max-width: 600px) {
 
       .whatsapp-float {
         width: 55px;
@@ -745,30 +749,33 @@
       .whatsapp-float::before {
         display: none;
       }
-
     }
   </style>
-
 </head>
-
 
 <body>
 
-
   <main class="page">
 
+    <!-- ==========================
+         IDENTIDADE CRAZY CHICKEN
+    =========================== -->
 
     <section class="hero">
 
-
-      <a class="brand" href="/index.html">
+      <a
+        class="brand"
+        href="/index.html"
+      >
 
         <span class="logo">
 
-          <img src="/assets/crazy-chicken-icon.png" alt="Crazy Chicken">
+          <img
+            src="/assets/crazy-chicken-icon.png"
+            alt="Crazy Chicken"
+          >
 
         </span>
-
 
         <span>
 
@@ -782,13 +789,11 @@
 
       </a>
 
-
       <div class="hero-copy">
 
         <div class="kicker">
-          Conta segura
+          Área do cliente Crazy Chicken
         </div>
-
 
         <h1>
 
@@ -804,60 +809,81 @@
 
         </h1>
 
-
         <p>
-
-          Faça login para salvar seus dados,
+          Acesse somente a conta que você criou
+          na Crazy Chicken para salvar seus dados,
           acompanhar pedidos e finalizar compras
           com mais rapidez.
-
         </p>
 
       </div>
-
 
       <div class="hero-foot">
         Crazy Chicken Ecommerce
       </div>
 
-
     </section>
 
+    <!-- ==========================
+         LOGIN / CADASTRO
+    =========================== -->
 
     <section class="auth-side">
 
       <div class="auth-side-inner">
 
-
         <div class="card">
-
 
           <h2 id="authTitle">
             Bem-vindo
           </h2>
 
-
-          <p class="sub" id="authSubtitle">
-            Entre na sua conta para continuar.
+          <p
+            class="sub"
+            id="authSubtitle"
+          >
+            Entre na sua conta Crazy Chicken para continuar.
           </p>
 
+          <p class="security-note">
+            Sua senha é utilizada somente para autenticação
+            da sua conta. A Crazy Chicken nunca solicitará
+            sua senha pelo WhatsApp, Instagram ou atendimento.
+          </p>
 
-          <div class="tabs" id="authTabs">
+          <!-- ABAS -->
 
-            <button class="auth-tab active" type="button" data-tab="login">
+          <div
+            class="tabs"
+            id="authTabs"
+          >
+
+            <button
+              class="auth-tab active"
+              type="button"
+              data-tab="login"
+            >
               Entrar
             </button>
 
-
-            <button class="auth-tab" type="button" data-tab="signup">
+            <button
+              class="auth-tab"
+              type="button"
+              data-tab="signup"
+            >
               Criar conta
             </button>
 
           </div>
 
+          <!-- ==========================
+               LOGIN
+          =========================== -->
 
-          <form class="form" id="loginForm">
-
+          <form
+            class="form"
+            id="loginForm"
+          >
 
             <div class="field">
 
@@ -865,10 +891,15 @@
                 E-mail
               </label>
 
-              <input class="input" id="loginEmail" type="email" autocomplete="email" required>
+              <input
+                class="input"
+                id="loginEmail"
+                type="email"
+                autocomplete="email"
+                required
+              >
 
             </div>
-
 
             <div class="field">
 
@@ -878,10 +909,19 @@
 
               <div class="input-wrap">
 
-                <input class="input with-action" id="loginPassword" type="password" autocomplete="current-password"
-                  required>
+                <input
+                  class="input with-action"
+                  id="loginPassword"
+                  type="password"
+                  autocomplete="current-password"
+                  required
+                >
 
-                <button class="toggle" type="button" data-toggle-password="loginPassword">
+                <button
+                  class="toggle"
+                  type="button"
+                  data-toggle-password="loginPassword"
+                >
                   Mostrar
                 </button>
 
@@ -889,30 +929,44 @@
 
             </div>
 
-
-            <button class="btn primary" id="loginButton" type="submit">
+            <button
+              class="btn primary"
+              id="loginButton"
+              type="submit"
+            >
               Entrar
             </button>
 
-
             <div class="links">
 
-              <button class="link-btn" id="forgotButton" type="button">
+              <button
+                class="link-btn"
+                id="forgotButton"
+                type="button"
+              >
                 Esqueci minha senha
               </button>
 
-              <a class="link-btn" href="/index.html">
+              <a
+                class="link-btn"
+                href="/index.html"
+              >
                 Voltar à loja
               </a>
 
             </div>
 
-
           </form>
 
+          <!-- ==========================
+               CADASTRO
+          =========================== -->
 
-          <form class="form" id="signupForm" hidden>
-
+          <form
+            class="form"
+            id="signupForm"
+            hidden
+          >
 
             <div class="field">
 
@@ -920,10 +974,15 @@
                 Nome
               </label>
 
-              <input class="input" id="signupName" type="text" autocomplete="name" required>
+              <input
+                class="input"
+                id="signupName"
+                type="text"
+                autocomplete="name"
+                required
+              >
 
             </div>
-
 
             <div class="field">
 
@@ -931,10 +990,15 @@
                 E-mail
               </label>
 
-              <input class="input" id="signupEmail" type="email" autocomplete="email" required>
+              <input
+                class="input"
+                id="signupEmail"
+                type="email"
+                autocomplete="email"
+                required
+              >
 
             </div>
-
 
             <div class="field">
 
@@ -944,17 +1008,26 @@
 
               <div class="input-wrap">
 
-                <input class="input with-action" id="signupPassword" type="password" minlength="8"
-                  autocomplete="new-password" required>
+                <input
+                  class="input with-action"
+                  id="signupPassword"
+                  type="password"
+                  minlength="8"
+                  autocomplete="new-password"
+                  required
+                >
 
-                <button class="toggle" type="button" data-toggle-password="signupPassword">
+                <button
+                  class="toggle"
+                  type="button"
+                  data-toggle-password="signupPassword"
+                >
                   Mostrar
                 </button>
 
               </div>
 
             </div>
-
 
             <div class="field">
 
@@ -964,10 +1037,20 @@
 
               <div class="input-wrap">
 
-                <input class="input with-action" id="signupPasswordConfirm" type="password" minlength="8"
-                  autocomplete="new-password" required>
+                <input
+                  class="input with-action"
+                  id="signupPasswordConfirm"
+                  type="password"
+                  minlength="8"
+                  autocomplete="new-password"
+                  required
+                >
 
-                <button class="toggle" type="button" data-toggle-password="signupPasswordConfirm">
+                <button
+                  class="toggle"
+                  type="button"
+                  data-toggle-password="signupPasswordConfirm"
+                >
                   Mostrar
                 </button>
 
@@ -975,21 +1058,33 @@
 
             </div>
 
-
-            <button class="btn primary" id="signupButton" type="submit">
+            <button
+              class="btn primary"
+              id="signupButton"
+              type="submit"
+            >
               Criar minha conta
             </button>
 
-
-            <button class="link-btn" type="button" data-back-login>
+            <button
+              class="link-btn"
+              type="button"
+              data-back-login
+            >
               Já tenho conta
             </button>
 
-
           </form>
 
+          <!-- ==========================
+               RECUPERAÇÃO DE SENHA
+          =========================== -->
 
-          <form class="form" id="resetForm" hidden>
+          <form
+            class="form"
+            id="resetForm"
+            hidden
+          >
 
             <div class="field">
 
@@ -997,24 +1092,43 @@
                 E-mail
               </label>
 
-              <input class="input" id="resetEmail" type="email" required>
+              <input
+                class="input"
+                id="resetEmail"
+                type="email"
+                autocomplete="email"
+                required
+              >
 
             </div>
 
-
-            <button class="btn primary" id="resetButton" type="submit">
+            <button
+              class="btn primary"
+              id="resetButton"
+              type="submit"
+            >
               Enviar recuperação
             </button>
 
-
-            <button class="btn secondary" type="button" data-back-login>
+            <button
+              class="btn secondary"
+              type="button"
+              data-back-login
+            >
               Voltar ao login
             </button>
 
           </form>
 
+          <!-- ==========================
+               NOVA SENHA
+          =========================== -->
 
-          <form class="form" id="newPasswordForm" hidden>
+          <form
+            class="form"
+            id="newPasswordForm"
+            hidden
+          >
 
             <div class="field">
 
@@ -1022,77 +1136,115 @@
                 Nova senha
               </label>
 
-              <input class="input" id="newPassword" type="password" minlength="8" required>
+              <input
+                class="input"
+                id="newPassword"
+                type="password"
+                minlength="8"
+                autocomplete="new-password"
+                required
+              >
 
             </div>
 
-
-            <button class="btn primary" id="newPasswordButton" type="submit">
+            <button
+              class="btn primary"
+              id="newPasswordButton"
+              type="submit"
+            >
               Salvar nova senha
             </button>
 
           </form>
 
-
-          <a class="back" href="/index.html">
+          <a
+            class="back"
+            href="/index.html"
+          >
             ← Voltar para a loja
           </a>
 
-
         </div>
 
+        <!-- ==========================
+             CONTATOS OFICIAIS
+        =========================== -->
 
         <div class="login-socials">
 
           <span>
-            Siga e fale com a gente:
+            Canais oficiais:
           </span>
 
-
-          <a class="social-link" href="https://www.instagram.com/crazy_chickenlb/" target="_blank" rel="noopener">
+          <a
+            class="social-link"
+            href="https://www.instagram.com/crazy_chickenlb/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             📸 Instagram
           </a>
 
-
-          <a class="social-link" href="https://wa.me/5544997664122" target="_blank" rel="noopener">
+          <a
+            class="social-link"
+            href="https://wa.me/5544997664122"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             💬 WhatsApp
           </a>
 
         </div>
 
-
       </div>
 
     </section>
 
-
   </main>
 
+  <!-- ==========================
+       WHATSAPP FLUTUANTE
+  =========================== -->
 
-  <a class="whatsapp-float"
-    href="https://wa.me/5544997664122?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20Crazy%20Chicken%20e%20gostaria%20de%20atendimento."
-    target="_blank" rel="noopener" aria-label="Falar com a Crazy Chicken pelo WhatsApp"
-    title="Fale conosco pelo WhatsApp">
+  <a
+    class="whatsapp-float"
+    href="https://wa.me/5544997664122?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20Crazy%20Chicken%20e%20gostaria%20de%20atendimento"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Falar com a Crazy Chicken pelo WhatsApp"
+    title="Fale conosco pelo WhatsApp"
+  >
 
-    <svg viewBox="0 0 32 32" aria-hidden="true">
+    <svg
+      viewBox="0 0 32 32"
+      aria-hidden="true"
+    >
 
       <path
-        d="M19.11 17.29c-.26-.13-1.54-.76-1.78-.85-.24-.09-.41-.13-.59.13-.17.26-.67.85-.82 1.02-.15.17-.3.2-.56.07-.26-.13-1.1-.41-2.1-1.3-.78-.69-1.3-1.54-1.45-1.8-.15-.26-.02-.4.11-.53.12-.12.26-.3.39-.46.13-.15.17-.26.26-.43.09-.17.04-.33-.02-.46-.07-.13-.59-1.41-.8-1.93-.21-.51-.43-.44-.59-.45h-.5c-.17 0-.46.07-.69.33-.24.26-.91.89-.91 2.17 0 1.28.93 2.52 1.06 2.69.13.17 1.83 2.8 4.44 3.93.62.27 1.1.43 1.48.55.62.2 1.19.17 1.64.1.5-.07 1.54-.63 1.76-1.24.22-.61.22-1.13.15-1.24-.06-.11-.23-.17-.49-.3z" />
+        d="M19.11 17.29c-.26-.13-1.54-.76-1.78-.85-.24-.09-.41-.13-.59.13-.17.26-.67.85-.82 1.02-.15.17-.3.2-.56.07-.26-.13-1.1-.41-2.1-1.3-.78-.69-1.3-1.54-1.45-1.8-.15-.26-.02-.4.11-.53.12-.12.26-.3.39-.46.13-.15.17-.26.26-.43.09-.17.04-.33-.02-.46-.07-.13-.59-1.41-.8-1.93-.21-.51-.43-.44-.59-.45h-.5c-.17 0-.46.07-.69.33-.24.26-.91.89-.91 2.17 0 1.28.93 2.52 1.06 2.69.13.17 1.83 2.8 4.44 3.93.62.27 1.1.43 1.48.55.62.2 1.19.17 1.64.1.5-.07 1.54-.63 1.76-1.24.22-.61.22-1.13.15-1.24-.06-.11-.23-.17-.49-.3z"
+      />
 
       <path
-        d="M16.04 3.2c-7.07 0-12.82 5.75-12.82 12.82 0 2.26.59 4.47 1.71 6.41L3.1 29.12l6.84-1.79a12.78 12.78 0 0 0 6.09 1.55h.01c7.07 0 12.82-5.75 12.82-12.82 0-3.43-1.34-6.65-3.76-9.07A12.73 12.73 0 0 0 16.04 3.2zm0 23.52h-.01a10.64 10.64 0 0 1-5.43-1.49l-.39-.23-4.06 1.07 1.08-3.96-.25-.41a10.63 10.63 0 0 1-1.63-5.68c0-5.88 4.79-10.67 10.68-10.67 2.85 0 5.53 1.11 7.55 3.13a10.61 10.61 0 0 1 3.13 7.55c0 5.89-4.79 10.68-10.67 10.68z" />
+        d="M16.04 3.2c-7.07 0-12.82 5.75-12.82 12.82 0 2.26.59 4.47 1.71 6.41L3.1 29.12l6.84-1.79a12.78 12.78 0 0 0 6.09 1.55h.01c7.07 0 12.82-5.75 12.82-12.82 0-3.43-1.34-6.65-3.76-9.07A12.73 12.73 0 0 0 16.04 3.2zm0 23.52h-.01a10.64 10.64 0 0 1-5.43-1.49l-.39-.23-4.06 1.07 1.08-3.96-.25-.41a10.63 10.63 0 0 1-1.63-5.68c0-5.88 4.79-10.67 10.68-10.67 2.85 0 5.53 1.11 7.55 3.13a10.61 10.61 0 0 1 3.13 7.55c0 5.89-4.79 10.68-10.67 10.68z"
+      />
 
     </svg>
 
   </a>
 
+  <!-- TOASTS -->
 
-  <div id="toastRoot" class="toast-root"></div>
+  <div
+    id="toastRoot"
+    class="toast-root"
+  ></div>
 
+  <!-- AUTENTICAÇÃO -->
 
-  <script type="module" src="/js/auth.js"></script>
-
+  <script
+    type="module"
+    src="/js/auth.js"
+  ></script>
 
 </body>
-
 </html>
