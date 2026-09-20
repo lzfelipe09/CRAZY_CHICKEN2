@@ -579,7 +579,7 @@ signupForm
                   },
 
                   emailRedirectTo:
-                    `${location.origin}/login.html`
+                  `${location.origin}/confirmado.html`
                 }
               }
             );

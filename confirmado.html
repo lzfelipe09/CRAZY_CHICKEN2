@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <meta
+    name="theme-color"
+    content="#090909"
+  >
+
+  <title>E-mail confirmado | Crazy Chicken</title>
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="/assets/crazy-chicken-icon.png"
+  >
+
+  <link
+    rel="apple-touch-icon"
+    href="/assets/crazy-chicken-icon.png"
+  >
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Inter, Arial, sans-serif;
+      background: #090909;
+      color: #fff;
+    }
+
+    body {
+      min-height: 100vh;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 24px;
+
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(239, 43, 45, 0.18),
+          transparent 32rem
+        ),
+        #090909;
+    }
+
+    .card {
+      width: min(480px, 100%);
+
+      padding: 40px 30px;
+
+      text-align: center;
+
+      background:
+        linear-gradient(
+          145deg,
+          #151515,
+          #101010
+        );
+
+      border: 1px solid #292929;
+      border-radius: 24px;
+
+      box-shadow:
+        0 28px 80px
+        rgba(0, 0, 0, 0.4);
+    }
+
+    .logo {
+      width: 72px;
+      height: 72px;
+
+      margin: 0 auto 24px;
+
+      border-radius: 20px;
+
+      overflow: hidden;
+
+      box-shadow:
+        0 12px 35px
+        rgba(239, 43, 45, 0.25);
+    }
+
+    .logo img {
+      display: block;
+
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
+    }
+
+    .success-icon {
+      width: 64px;
+      height: 64px;
+
+      margin: 0 auto 20px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 50%;
+
+      background:
+        rgba(52, 199, 89, 0.12);
+
+      border:
+        1px solid
+        rgba(52, 199, 89, 0.35);
+
+      color: #58d879;
+
+      font-size: 30px;
+      font-weight: 900;
+    }
+
+    .brand {
+      margin-bottom: 9px;
+
+      color: #ef2b2d;
+
+      font-size: 12px;
+      font-weight: 800;
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.16em;
+    }
+
+    h1 {
+      margin: 0 0 15px;
+
+      font-size:
+        clamp(29px, 7vw, 39px);
+
+      line-height: 1.1;
+
+      letter-spacing: -0.04em;
+    }
+
+    .description {
+      max-width: 380px;
+
+      margin: 0 auto 28px;
+
+      color: #aaa;
+
+      font-size: 14px;
+
+      line-height: 1.65;
+    }
+
+    .button {
+      width: 100%;
+
+      min-height: 52px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 12px 20px;
+
+      border-radius: 12px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #ef2b2d,
+          #b9191c
+        );
+
+      color: #fff;
+
+      font-weight: 800;
+
+      text-decoration: none;
+
+      transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+
+      box-shadow:
+        0 10px 30px
+        rgba(239, 43, 45, 0.2);
+    }
+
+    .store-link {
+      display: inline-block;
+
+      margin-top: 20px;
+
+      color: #777;
+
+      font-size: 12px;
+
+      text-decoration: none;
+
+      transition: color 0.2s;
+    }
+
+    .store-link:hover {
+      color: #fff;
+    }
+
+    .security {
+      margin-top: 28px;
+
+      padding-top: 20px;
+
+      border-top:
+        1px solid #262626;
+
+      color: #666;
+
+      font-size: 11px;
+
+      line-height: 1.6;
+    }
+
+    @media (max-width: 520px) {
+      body {
+        padding: 16px;
+      }
+
+      .card {
+        padding: 32px 22px;
+
+        border-radius: 20px;
+      }
+
+      .logo {
+        width: 64px;
+        height: 64px;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <main class="card">
+
+    <div class="logo">
+      <img
+        src="/assets/crazy-chicken-icon.png"
+        alt="Crazy Chicken"
+      >
+    </div>
+
+    <div class="success-icon">
+      ✓
+    </div>
+
+    <div class="brand">
+      Crazy Chicken
+    </div>
+
+    <h1>
+      E-mail confirmado!
+    </h1>
+
+    <p class="description">
+      Seu cadastro na Crazy Chicken foi confirmado
+      com sucesso. Agora você pode entrar na sua conta
+      usando seu e-mail e sua senha.
+    </p>
+
+    <a
+      class="button"
+      href="/login.html"
+    >
+      Entrar na minha conta
+    </a>
+
+    <a
+      class="store-link"
+      href="/index.html"
+    >
+      ← Voltar para a loja
+    </a>
+
+    <div class="security">
+      Sua senha é utilizada apenas para autenticação
+      segura da sua conta.
+    </div>
+
+  </main>
+
+</body>
+
+</html>
