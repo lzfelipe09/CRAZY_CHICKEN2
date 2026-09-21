@@ -240,6 +240,8 @@ async function loadProduct() {
 
     renderProduct();
 
+    await loadRelatedProducts();
+
 
   } catch (error) {
 
@@ -252,6 +254,7 @@ async function loadProduct() {
     root.innerHTML = `
       <div class="error-box">
         <div>
+
           <strong>
             Produto não encontrado.
           </strong>
@@ -260,6 +263,7 @@ async function loadProduct() {
             Ele pode ter sido removido
             ou estar indisponível.
           </p>
+
         </div>
       </div>
     `;
@@ -352,6 +356,7 @@ function renderProduct() {
           >
 
         </div>
+
 
         <div class="image-tip">
           Toque na imagem para ampliar
@@ -482,6 +487,331 @@ function renderProduct() {
 }
 
 
+/* =========================
+   PRODUTOS RELACIONADOS
+========================= */
+
+async function loadRelatedProducts() {
+
+  const section =
+    element("relatedSection");
+
+  const root =
+    element("relatedProducts");
+
+
+  if (
+    !section ||
+    !root ||
+    !product ||
+    !supabase
+  ) {
+    return;
+  }
+
+
+  /*
+    A seção começa escondida.
+
+    Ela só aparece caso realmente
+    existam outros produtos da mesma
+    categoria.
+  */
+
+  section.hidden = true;
+
+  root.innerHTML = "";
+
+
+  const category =
+    String(
+      product.category || ""
+    ).trim();
+
+
+  if (!category) {
+    return;
+  }
+
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabase
+
+        .from("products")
+
+        .select(`
+          id,
+          name,
+          category,
+          price,
+          compare_at_price,
+          stock,
+          image_url,
+          is_new,
+          featured,
+          active
+        `)
+
+        /*
+          Apenas produtos ativos.
+        */
+
+        .eq(
+          "active",
+          true
+        )
+
+        /*
+          Apenas produtos da mesma
+          categoria do produto atual.
+        */
+
+        .eq(
+          "category",
+          category
+        )
+
+        /*
+          Não mostra o próprio produto
+          que o cliente já está vendo.
+        */
+
+        .neq(
+          "id",
+          product.id
+        )
+
+        /*
+          Produtos destacados aparecem
+          primeiro.
+        */
+
+        .order(
+          "featured",
+          {
+            ascending: false
+          }
+        )
+
+        /*
+          No máximo quatro produtos.
+        */
+
+        .limit(4);
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    const related =
+      Array.isArray(data)
+        ? data
+        : [];
+
+
+    /*
+      Se não houver nenhum produto
+      relacionado, a seção continua
+      escondida.
+    */
+
+    if (!related.length) {
+      return;
+    }
+
+
+    root.innerHTML =
+      related
+        .map(
+          relatedProduct => {
+
+            const price =
+              Number(
+                relatedProduct.price ||
+                0
+              );
+
+
+            const comparePrice =
+              Number(
+                relatedProduct
+                  .compare_at_price ||
+                0
+              );
+
+
+            const hasCompare =
+              comparePrice > price;
+
+
+            const stock =
+              Number(
+                relatedProduct.stock ||
+                0
+              );
+
+
+            const image =
+              relatedProduct.image_url ||
+              BRAND_ICON;
+
+
+            return `
+
+              <a
+                class="related-card"
+                href="/produto.html?id=${
+                  encodeURIComponent(
+                    relatedProduct.id
+                  )
+                }"
+              >
+
+
+                <div class="related-image">
+
+                  <img
+                    src="${escapeHTML(image)}"
+                    alt="${
+                      escapeHTML(
+                        relatedProduct.name ||
+                        "Produto"
+                      )
+                    }"
+                    loading="lazy"
+                    onerror="
+                      this.onerror=null;
+                      this.src='${BRAND_ICON}'
+                    "
+                  >
+
+
+                  ${
+                    relatedProduct.is_new
+                      ? `
+                        <span class="related-new">
+                          Novidade
+                        </span>
+                      `
+                      : ""
+                  }
+
+                </div>
+
+
+                <div class="related-info">
+
+
+                  <span class="related-category">
+
+                    ${
+                      escapeHTML(
+                        relatedProduct.category ||
+                        "Produtos"
+                      )
+                    }
+
+                  </span>
+
+
+                  <h3 class="related-name">
+
+                    ${
+                      escapeHTML(
+                        relatedProduct.name ||
+                        "Produto"
+                      )
+                    }
+
+                  </h3>
+
+
+                  <span class="related-old-price">
+
+                    ${
+                      hasCompare
+                        ? formatBRL(
+                            comparePrice
+                          )
+                        : "&nbsp;"
+                    }
+
+                  </span>
+
+
+                  <strong class="related-price">
+
+                    ${
+                      formatBRL(
+                        price
+                      )
+                    }
+
+                  </strong>
+
+
+                  <span class="related-stock">
+
+                    ${
+                      stock > 0
+                        ? `${stock} em estoque`
+                        : "Indisponível"
+                    }
+
+                  </span>
+
+
+                </div>
+
+              </a>
+
+            `;
+
+          }
+        )
+        .join("");
+
+
+    /*
+      Agora que existem produtos,
+      mostramos a seção.
+    */
+
+    section.hidden =
+      false;
+
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao carregar produtos relacionados:",
+      error
+    );
+
+
+    section.hidden =
+      true;
+
+
+    root.innerHTML =
+      "";
+
+  }
+
+}
+
+
+/* =========================
+   ADICIONAR PRODUTO
+========================= */
+
 function addCurrentProduct() {
 
   if (!product) {
@@ -521,8 +851,9 @@ function addCurrentProduct() {
   if (item) {
 
     if (
-      Number(item.quantity) >=
-      stock
+      Number(
+        item.quantity
+      ) >= stock
     ) {
 
       showToast(
@@ -543,11 +874,13 @@ function addCurrentProduct() {
   } else {
 
     cart.push({
+
       product_id:
         product.id,
 
       quantity:
         1
+
     });
 
   }
@@ -555,10 +888,15 @@ function addCurrentProduct() {
 
   saveCart();
 
+
   return true;
 
 }
 
+
+/* =========================
+   ADICIONAR AO CARRINHO
+========================= */
 
 function addToCart() {
 
@@ -581,6 +919,10 @@ function addToCart() {
 }
 
 
+/* =========================
+   COMPRAR AGORA
+========================= */
+
 function buyNow() {
 
   const added =
@@ -593,10 +935,11 @@ function buyNow() {
 
 
   /*
-    Volta para o index com checkout=1.
+    Volta para o index com
+    checkout=1.
 
-    Seu store.js atual já reconhece
-    checkout=1 e abre o carrinho.
+    O store.js reconhece esse
+    parâmetro e abre o carrinho.
   */
 
   location.href =
@@ -604,6 +947,10 @@ function buyNow() {
 
 }
 
+
+/* =========================
+   ANIMAÇÃO DO CARRINHO
+========================= */
 
 function animateCartButton() {
 
@@ -621,31 +968,44 @@ function animateCartButton() {
 
   button.animate(
     [
+
       {
         transform:
           "scale(1)"
       },
+
       {
         transform:
           "scale(1.12)"
       },
+
       {
         transform:
           "scale(.96)"
       },
+
       {
         transform:
           "scale(1)"
       }
+
     ],
+
     {
       duration: 350,
-      easing: "ease-out"
+
+      easing:
+        "ease-out"
     }
+
   );
 
 }
 
+
+/* =========================
+   CARRINHO
+========================= */
 
 function renderCart() {
 
@@ -670,23 +1030,19 @@ function renderCart() {
   }
 
 
-  /*
-    Na página individual nós conhecemos
-    completamente o produto aberto.
-
-    Para outros itens que já estavam
-    no carrinho, buscamos os dados
-    no Supabase abaixo.
-  */
-
   const totalQuantity =
     cart.reduce(
+
       (total, item) =>
+
         total +
+
         Number(
           item.quantity || 0
         ),
+
       0
+
     );
 
 
@@ -698,6 +1054,10 @@ function renderCart() {
 
 }
 
+
+/* =========================
+   PRODUTOS DO CARRINHO
+========================= */
 
 async function renderCartProducts() {
 
@@ -725,8 +1085,10 @@ async function renderCartProducts() {
       </div>
     `;
 
+
     subtotalRoot.textContent =
       formatBRL(0);
+
 
     return;
 
@@ -742,12 +1104,18 @@ async function renderCartProducts() {
 
     const ids =
       [
+
         ...new Set(
+
           cart.map(
+
             item =>
               item.product_id
+
           )
+
         )
+
       ];
 
 
@@ -789,18 +1157,24 @@ async function renderCartProducts() {
 
     const rows =
       cart
+
         .map(
+
           item => {
 
             const cartProduct =
               products.find(
+
                 entry =>
+
                   String(
                     entry.id
                   ) ===
+
                   String(
                     item.product_id
                   )
+
               );
 
 
@@ -816,15 +1190,20 @@ async function renderCartProducts() {
 
 
             subtotal +=
+
               Number(
                 cartProduct.price || 0
               )
+
               *
+
               quantity;
 
 
             return `
+
               <div class="cart-item">
+
 
                 <img
                   src="${
@@ -833,12 +1212,14 @@ async function renderCartProducts() {
                       BRAND_ICON
                     )
                   }"
+
                   alt="${
                     escapeHTML(
                       cartProduct.name ||
                       "Produto"
                     )
                   }"
+
                   onerror="
                     this.onerror=null;
                     this.src='${BRAND_ICON}'
@@ -848,23 +1229,31 @@ async function renderCartProducts() {
 
                 <div class="cart-item-info">
 
+
                   <strong>
+
                     ${
                       escapeHTML(
                         cartProduct.name ||
                         "Produto"
                       )
                     }
+
                   </strong>
 
+
                   <span>
+
                     ${quantity}x
+
                     ${
                       formatBRL(
                         cartProduct.price
                       )
                     }
+
                   </span>
+
 
                 </div>
 
@@ -872,24 +1261,33 @@ async function renderCartProducts() {
                 <button
                   class="cart-item-remove"
                   type="button"
+
                   data-remove="${
                     cartProduct.id
                   }"
+
                   aria-label="Remover produto"
                 >
+
                   ×
+
                 </button>
 
+
               </div>
+
             `;
 
           }
+
         )
+
         .join("");
 
 
     root.innerHTML =
       rows ||
+
       `
         <div class="cart-empty">
           Seu carrinho está vazio.
@@ -915,15 +1313,23 @@ async function renderCartProducts() {
 }
 
 
+/* =========================
+   REMOVER DO CARRINHO
+========================= */
+
 function removeFromCart(id) {
 
   cart =
     cart.filter(
+
       item =>
+
         String(
           item.product_id
         ) !==
+
         String(id)
+
     );
 
 
@@ -931,6 +1337,10 @@ function removeFromCart(id) {
 
 }
 
+
+/* =========================
+   ABRIR CARRINHO
+========================= */
 
 function openCart() {
 
@@ -954,6 +1364,10 @@ function openCart() {
 }
 
 
+/* =========================
+   FECHAR CARRINHO
+========================= */
+
 function closeCart() {
 
   element("cartDrawer")
@@ -975,6 +1389,10 @@ function closeCart() {
 
 }
 
+
+/* =========================
+   ABRIR IMAGEM
+========================= */
 
 function openImage() {
 
@@ -1010,6 +1428,10 @@ function openImage() {
 }
 
 
+/* =========================
+   FECHAR IMAGEM
+========================= */
+
 function closeImage() {
 
   element("imageModal")
@@ -1019,6 +1441,10 @@ function closeImage() {
 
 }
 
+
+/* =========================
+   EVENTOS DO PRODUTO
+========================= */
 
 function bindProductEvents() {
 
@@ -1051,12 +1477,15 @@ function bindProductEvents() {
 
   mainImage
     ?.addEventListener(
+
       "keydown",
+
       event => {
 
         if (
           event.key ===
             "Enter" ||
+
           event.key ===
             " "
         ) {
@@ -1068,10 +1497,15 @@ function bindProductEvents() {
         }
 
       }
+
     );
 
 }
 
+
+/* =========================
+   EVENTOS GLOBAIS
+========================= */
 
 function bindGlobalEvents() {
 
@@ -1105,7 +1539,9 @@ function bindGlobalEvents() {
 
   element("imageModal")
     ?.addEventListener(
+
       "click",
+
       event => {
 
         if (
@@ -1118,12 +1554,15 @@ function bindGlobalEvents() {
         }
 
       }
+
     );
 
 
   element("cartItems")
     ?.addEventListener(
+
       "click",
+
       event => {
 
         const remove =
@@ -1142,11 +1581,14 @@ function bindGlobalEvents() {
         );
 
       }
+
     );
 
 
   document.addEventListener(
+
     "keydown",
+
     event => {
 
       if (
@@ -1161,10 +1603,15 @@ function bindGlobalEvents() {
       }
 
     }
+
   );
 
 }
 
+
+/* =========================
+   INICIALIZAÇÃO
+========================= */
 
 async function init() {
 
