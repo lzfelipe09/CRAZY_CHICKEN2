@@ -2009,6 +2009,38 @@
       .whatsapp-float::before {
         display: none;
       }
+
+      /* =========================================
+   CORREÇÃO CARRINHO NO CELULAR
+   */
+
+      @media (max-width: 768px) {
+
+        .cart-drawer {
+          height: 100dvh;
+          max-height: 100dvh;
+          overflow: hidden;
+        }
+
+        .cart-items {
+          overflow-y: auto;
+          min-height: 0;
+          padding-bottom: 24px;
+          overscroll-behavior: contain;
+        }
+
+        .cart-footer {
+          flex-shrink: 0;
+
+          padding-bottom: max(32px,
+              calc(20px + env(safe-area-inset-bottom)));
+        }
+
+        #checkoutButton {
+          margin-bottom: 0;
+        }
+
+      }
     }
   </style>
 
