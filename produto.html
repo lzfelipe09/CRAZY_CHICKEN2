@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="theme-color"
+    content="#080808"
+  >
+
+  <title>Produto | Crazy Chicken</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(
+          circle at top,
+          #1a0707 0,
+          #080808 420px
+        );
+      color: #fff;
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+    }
+
+    body.no-scroll {
+      overflow: hidden;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color:
+        transparent;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: auto;
+    }
+
+    /* HEADER */
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5,5,5,.94);
+      backdrop-filter: blur(15px);
+      border-bottom:
+        1px solid rgba(255,255,255,.08);
+    }
+
+    .header-inner {
+      min-height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: white;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 20px;
+    }
+
+    .brand img {
+      width: 54px;
+      height: 54px;
+      object-fit: cover;
+      border-radius: 15px;
+    }
+
+    .cart-button {
+      position: relative;
+      border: 0;
+      min-width: 105px;
+      height: 54px;
+      border-radius: 17px;
+      background:
+        linear-gradient(
+          135deg,
+          #ff3030,
+          #d80e16
+        );
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .cart-count {
+      display: inline-grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      margin-left: 7px;
+      border-radius: 50%;
+      background: white;
+      color: #111;
+    }
+
+    /* BREADCRUMB */
+
+    .back-row {
+      padding: 24px 0 12px;
+    }
+
+    .back-link {
+      color: #bbb;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .back-link:hover {
+      color: #fff;
+    }
+
+    /* PRODUCT */
+
+    .product-shell {
+      padding-bottom: 70px;
+    }
+
+    .loading,
+    .error-box {
+      min-height: 400px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: #aaa;
+    }
+
+    .product-layout {
+      display: grid;
+      grid-template-columns:
+        minmax(0, 1.05fr)
+        minmax(360px, .95fr);
+      gap: 50px;
+      align-items: start;
+    }
+
+    /* IMAGE */
+
+    .gallery {
+      position: sticky;
+      top: 110px;
+    }
+
+    .main-image {
+      overflow: hidden;
+      background: #fff;
+      border-radius: 24px;
+      border:
+        1px solid rgba(255,255,255,.1);
+      cursor: zoom-in;
+    }
+
+    .main-image img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: contain;
+    }
+
+    .image-tip {
+      margin-top: 12px;
+      color: #777;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    /* DETAILS */
+
+    .details {
+      padding: 10px 0;
+    }
+
+    .category {
+      display: inline-block;
+      margin-bottom: 13px;
+      color: #ff3b42;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .title {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 43px);
+      line-height: 1.08;
+    }
+
+    .stock {
+      display: inline-flex;
+      margin-top: 14px;
+      padding: 7px 11px;
+      border-radius: 100px;
+      background: rgba(255,255,255,.06);
+      color: #aaa;
+      font-size: 12px;
+    }
+
+    .price-box {
+      margin-top: 28px;
+      padding: 24px;
+      border-radius: 20px;
+      background: #101010;
+      border:
+        1px solid rgba(255,255,255,.08);
+    }
+
+    .old-price {
+      display: block;
+      margin-bottom: 5px;
+      color: #777;
+      font-size: 14px;
+      text-decoration: line-through;
+    }
+
+    .price {
+      display: block;
+      font-size: 38px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .payment-note {
+      display: block;
+      margin-top: 10px;
+      color: #aaa;
+      font-size: 13px;
+    }
+
+    .actions {
+      display: grid;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .btn {
+      width: 100%;
+      min-height: 55px;
+      border-radius: 14px;
+      border: 0;
+      cursor: pointer;
+      font-weight: 900;
+      font-size: 15px;
+    }
+
+    .btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .buy-now {
+      background:
+        linear-gradient(
+          135deg,
+          #ff3030,
+          #db1018
+        );
+      color: #fff;
+    }
+
+    .add-cart {
+      background: #171717;
+      border:
+        1px solid rgba(255,255,255,.13);
+      color: #fff;
+    }
+
+    /* DESCRIPTION */
+
+    .description {
+      margin-top: 35px;
+      padding-top: 30px;
+      border-top:
+        1px solid rgba(255,255,255,.1);
+    }
+
+    .description h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+    }
+
+    .description p {
+      margin: 0;
+      color: #aaa;
+      font-size: 15px;
+      line-height: 1.7;
+      white-space: pre-line;
+    }
+
+    /* TOAST */
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom:
+        max(
+          25px,
+          calc(
+            15px +
+            env(safe-area-inset-bottom)
+          )
+        );
+      z-index: 10000;
+
+      max-width:
+        calc(100% - 32px);
+
+      padding:
+        13px 18px;
+
+      border-radius: 12px;
+
+      background: #fff;
+      color: #111;
+
+      font-weight: 800;
+      font-size: 13px;
+
+      transform:
+        translate(-50%, 30px);
+
+      opacity: 0;
+      pointer-events: none;
+
+      transition:
+        .25s ease;
+    }
+
+    .toast.show {
+      transform:
+        translate(-50%, 0);
+      opacity: 1;
+    }
+
+    /* CART DRAWER */
+
+    .cart-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 9997;
+      background:
+        rgba(0,0,0,.7);
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s;
+    }
+
+    .cart-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .cart-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      z-index: 9998;
+
+      width: min(430px, 100%);
+      height: 100dvh;
+
+      display: flex;
+      flex-direction: column;
+
+      background: #0b0b0b;
+
+      border-left:
+        1px solid rgba(255,255,255,.1);
+
+      transform:
+        translateX(100%);
+
+      transition:
+        transform .3s ease;
+    }
+
+    .cart-drawer.open {
+      transform:
+        translateX(0);
+    }
+
+    .drawer-header {
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      border-bottom:
+        1px solid rgba(255,255,255,.08);
+    }
+
+    .drawer-header h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .close-cart {
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 50%;
+      background: #171717;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .cart-items {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 15px;
+    }
+
+    .cart-empty {
+      padding: 60px 20px;
+      color: #888;
+      text-align: center;
+    }
+
+    .cart-item {
+      display: grid;
+      grid-template-columns:
+        72px 1fr auto;
+      gap: 12px;
+      align-items: center;
+
+      padding: 12px 0;
+
+      border-bottom:
+        1px solid rgba(255,255,255,.08);
+    }
+
+    .cart-item img {
+      width: 72px;
+      height: 72px;
+      object-fit: cover;
+      border-radius: 10px;
+      background: white;
+    }
+
+    .cart-item-info {
+      min-width: 0;
+    }
+
+    .cart-item-info strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 13px;
+    }
+
+    .cart-item-info span {
+      color: #aaa;
+      font-size: 12px;
+    }
+
+    .cart-item-remove {
+      border: 0;
+      background: transparent;
+      color: #ff4545;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .drawer-footer {
+      flex-shrink: 0;
+      padding:
+        18px
+        18px
+        max(
+          28px,
+          calc(
+            18px +
+            env(safe-area-inset-bottom)
+          )
+        );
+
+      background: #0b0b0b;
+
+      border-top:
+        1px solid rgba(255,255,255,.08);
+    }
+
+    .subtotal {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .subtotal span {
+      color: #aaa;
+    }
+
+    .subtotal strong {
+      font-size: 20px;
+    }
+
+    .go-cart {
+      display: grid;
+      place-items: center;
+
+      width: 100%;
+      min-height: 52px;
+
+      border-radius: 13px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #ff3030,
+          #d90f17
+        );
+
+      color: #fff;
+      text-decoration: none;
+      font-weight: 900;
+    }
+
+    /* IMAGE MODAL */
+
+    .image-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 11000;
+
+      display: grid;
+      place-items: center;
+
+      padding: 20px;
+
+      background:
+        rgba(0,0,0,.94);
+
+      opacity: 0;
+      pointer-events: none;
+
+      transition: .2s;
+    }
+
+    .image-modal.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .image-modal img {
+      max-width: 95vw;
+      max-height: 88dvh;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+
+    .image-modal button {
+      position: absolute;
+      top:
+        max(
+          20px,
+          env(safe-area-inset-top)
+        );
+      right: 20px;
+
+      width: 46px;
+      height: 46px;
+
+      border: 0;
+      border-radius: 50%;
+
+      background: rgba(255,255,255,.13);
+      color: white;
+
+      font-size: 26px;
+      cursor: pointer;
+    }
+
+    /* MOBILE */
+
+    @media (
+      max-width: 760px
+    ) {
+
+      .container {
+        width:
+          min(
+            100% - 28px,
+            600px
+          );
+      }
+
+      .header-inner {
+        min-height: 72px;
+      }
+
+      .brand {
+        font-size: 17px;
+      }
+
+      .brand img {
+        width: 45px;
+        height: 45px;
+      }
+
+      .cart-button {
+        min-width: 90px;
+        height: 48px;
+      }
+
+      .product-layout {
+        display: block;
+      }
+
+      .gallery {
+        position: static;
+      }
+
+      .main-image {
+        border-radius: 18px;
+      }
+
+      .details {
+        padding-top: 25px;
+      }
+
+      .title {
+        font-size: 27px;
+      }
+
+      .price-box {
+        margin-top: 22px;
+        padding: 20px;
+      }
+
+      .price {
+        font-size: 34px;
+      }
+
+      .description {
+        margin-top: 30px;
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="header">
+
+    <div
+      class="container header-inner"
+    >
+
+      <a
+        href="/index.html"
+        class="brand"
+      >
+        <img
+          src="/assets/crazy-chicken-icon.png"
+          alt="Crazy Chicken"
+        >
+
+        <span>
+          Crazy Chicken
+        </span>
+      </a>
+
+      <button
+        id="openCart"
+        class="cart-button"
+        type="button"
+      >
+        🛒
+        <span
+          id="cartCount"
+          class="cart-count"
+        >
+          0
+        </span>
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <main class="product-shell">
+
+    <div class="container">
+
+      <div class="back-row">
+
+        <a
+          class="back-link"
+          href="/index.html"
+        >
+          ← Voltar para produtos
+        </a>
+
+      </div>
+
+
+      <div id="productRoot">
+
+        <div class="loading">
+          Carregando produto...
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <div
+    id="cartBackdrop"
+    class="cart-backdrop"
+  ></div>
+
+
+  <aside
+    id="cartDrawer"
+    class="cart-drawer"
+  >
+
+    <div class="drawer-header">
+
+      <h2>
+        Seu carrinho
+      </h2>
+
+      <button
+        id="closeCart"
+        class="close-cart"
+        type="button"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div
+      id="cartItems"
+      class="cart-items"
+    ></div>
+
+
+    <div class="drawer-footer">
+
+      <div class="subtotal">
+
+        <span>
+          Subtotal
+        </span>
+
+        <strong
+          id="cartSubtotal"
+        >
+          R$ 0,00
+        </strong>
+
+      </div>
+
+      <a
+        href="/index.html?checkout=1"
+        class="go-cart"
+      >
+        Continuar para finalizar
+      </a>
+
+    </div>
+
+  </aside>
+
+
+  <div
+    id="imageModal"
+    class="image-modal"
+  >
+
+    <button
+      id="closeImage"
+      type="button"
+    >
+      ×
+    </button>
+
+    <img
+      id="expandedImage"
+      src=""
+      alt="Produto ampliado"
+    >
+
+  </div>
+
+
+  <div
+    id="toast"
+    class="toast"
+  ></div>
+
+
+  <script
+    type="module"
+    src="/js/produto.js"
+  ></script>
+
+</body>
+</html>

@@ -358,7 +358,11 @@ function productCard(
       data-product-id="${product.id}"
     >
 
-      <div class="product-media">
+        <div
+       class="product-media"
+       data-open-product="${product.id}"
+       style="cursor:pointer;"
+        >
 
         <img
           src="${escapeHTML(imageSrc)}"
@@ -433,7 +437,10 @@ function productCard(
         </small>
 
 
-        <h3>
+          <h3
+          data-open-product="${product.id}"
+          style="cursor:pointer;"
+        >
           ${
             escapeHTML(
               product.name ||
@@ -2237,44 +2244,63 @@ function bindEvents() {
 
 
   element(
-    "productGrid"
-  )
-    ?.addEventListener(
-      "click",
-      event => {
+  "productGrid"
+)
+  ?.addEventListener(
+    "click",
+    event => {
 
-        const add =
-          event.target.closest(
-            "[data-add]"
-          );
+      const add =
+        event.target.closest(
+          "[data-add]"
+        );
 
+      const favorite =
+        event.target.closest(
+          "[data-favorite]"
+        );
 
-        const favorite =
-          event.target.closest(
-            "[data-favorite]"
-          );
-
-
-        if (add) {
-
-          addToCart(
-            add.dataset.add
-          );
-
-        }
+      const openProduct =
+        event.target.closest(
+          "[data-open-product]"
+        );
 
 
-        if (favorite) {
+      if (add) {
 
-          toggleFavorite(
-            favorite.dataset.favorite
-          );
+        addToCart(
+          add.dataset.add
+        );
 
-        }
+        return;
 
       }
-    );
 
+
+      if (favorite) {
+
+        toggleFavorite(
+          favorite.dataset.favorite
+        );
+
+        return;
+
+      }
+
+
+      if (openProduct) {
+
+        location.href =
+          `/produto.html?id=${
+            encodeURIComponent(
+              openProduct.dataset.openProduct
+            )
+          }`;
+
+      }
+
+    }
+  );
 
   element(
     "cartItems"
