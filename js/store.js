@@ -939,6 +939,160 @@ function normalizeCart() {
 
 }
 
+function animateProductToCart(productId) {
+
+  const productCard =
+    document.querySelector(
+      `[data-product-id="${productId}"]`
+    );
+
+  const productImage =
+    productCard?.querySelector(
+      ".product-media img"
+    );
+
+  const cartButton =
+    element("openCart");
+
+  if (
+    !productImage ||
+    !cartButton
+  ) {
+    return;
+  }
+
+
+  const imageRect =
+    productImage.getBoundingClientRect();
+
+  const cartRect =
+    cartButton.getBoundingClientRect();
+
+
+  const flyingImage =
+    productImage.cloneNode(true);
+
+
+  flyingImage.style.position =
+    "fixed";
+
+  flyingImage.style.left =
+    `${imageRect.left}px`;
+
+  flyingImage.style.top =
+    `${imageRect.top}px`;
+
+  flyingImage.style.width =
+    `${imageRect.width}px`;
+
+  flyingImage.style.height =
+    `${imageRect.height}px`;
+
+  flyingImage.style.objectFit =
+    "cover";
+
+  flyingImage.style.borderRadius =
+    "16px";
+
+  flyingImage.style.zIndex =
+    "999999";
+
+  flyingImage.style.pointerEvents =
+    "none";
+
+  flyingImage.style.opacity =
+    "0.95";
+
+  flyingImage.style.boxShadow =
+    "0 12px 35px rgba(0,0,0,.45)";
+
+  flyingImage.style.transition =
+    [
+      "left .7s cubic-bezier(.22,.61,.36,1)",
+      "top .7s cubic-bezier(.22,.61,.36,1)",
+      "width .7s ease",
+      "height .7s ease",
+      "opacity .7s ease",
+      "transform .7s ease"
+    ].join(", ");
+
+
+  document.body.appendChild(
+    flyingImage
+  );
+
+
+  requestAnimationFrame(() => {
+
+    requestAnimationFrame(() => {
+
+      flyingImage.style.left =
+        `${
+          cartRect.left +
+          cartRect.width / 2 -
+          15
+        }px`;
+
+      flyingImage.style.top =
+        `${
+          cartRect.top +
+          cartRect.height / 2 -
+          15
+        }px`;
+
+      flyingImage.style.width =
+        "30px";
+
+      flyingImage.style.height =
+        "30px";
+
+      flyingImage.style.opacity =
+        "0.25";
+
+      flyingImage.style.transform =
+        "rotate(8deg) scale(.5)";
+
+    });
+
+  });
+
+
+  setTimeout(() => {
+
+    flyingImage.remove();
+
+
+    cartButton.animate(
+      [
+        {
+          transform:
+            "scale(1)"
+        },
+
+        {
+          transform:
+            "scale(1.18)"
+        },
+
+        {
+          transform:
+            "scale(.95)"
+        },
+
+        {
+          transform:
+            "scale(1)"
+        }
+      ],
+      {
+        duration: 350,
+        easing: "ease-out"
+      }
+    );
+
+  }, 700);
+
+}
 
 function addToCart(id) {
 
@@ -1029,10 +1183,28 @@ function addToCart(id) {
   }
 
 
+  /*
+  Salva o produto normalmente
+  no carrinho
+  */
+
   saveCart();
 
-  openCart();
 
+  /*
+  Faz a imagem do produto
+  voar até o carrinho
+  */
+
+  animateProductToCart(
+    product.id
+  );
+
+
+  /*
+  Confirma para o cliente
+  sem abrir o carrinho
+  */
 
   showToast(
     "Produto adicionado ao carrinho.",
