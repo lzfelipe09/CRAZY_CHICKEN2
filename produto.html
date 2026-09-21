@@ -17,6 +17,7 @@
   <title>Produto | Crazy Chicken</title>
 
   <style>
+
     * {
       box-sizing: border-box;
     }
@@ -299,14 +300,21 @@
       line-height: 1.08;
     }
 
+
+    /* =========================
+       STOCK
+    ========================= */
+
     .stock {
       display: inline-flex;
 
       align-items: center;
 
+      gap: 7px;
+
       margin-top: 14px;
 
-      padding: 7px 11px;
+      padding: 8px 12px;
 
       border-radius: 100px;
 
@@ -316,7 +324,62 @@
       color: #aaa;
 
       font-size: 12px;
+      font-weight: 800;
     }
+
+    .stock.available {
+      color: #72d694;
+
+      background:
+        rgba(55,190,105,.10);
+
+      border:
+        1px solid
+        rgba(55,190,105,.18);
+    }
+
+    .stock.low-stock {
+      color: #ffc766;
+
+      background:
+        rgba(255,174,44,.10);
+
+      border:
+        1px solid
+        rgba(255,174,44,.18);
+    }
+
+    .stock.unavailable {
+      color: #ff7070;
+
+      background:
+        rgba(255,55,55,.10);
+
+      border:
+        1px solid
+        rgba(255,55,55,.18);
+    }
+
+    .stock-dot {
+      width: 7px;
+      height: 7px;
+
+      flex-shrink: 0;
+
+      border-radius: 50%;
+
+      background:
+        currentColor;
+
+      box-shadow:
+        0 0 8px
+        currentColor;
+    }
+
+
+    /* =========================
+       PRICE
+    ========================= */
 
     .price-box {
       margin-top: 28px;
@@ -341,7 +404,8 @@
 
       font-size: 14px;
 
-      text-decoration: line-through;
+      text-decoration:
+        line-through;
     }
 
     .price {
@@ -361,6 +425,92 @@
       color: #aaa;
 
       font-size: 13px;
+    }
+
+
+    /* =========================
+       PURCHASE INFORMATION
+    ========================= */
+
+    .purchase-info {
+      margin-top: 18px;
+
+      overflow: hidden;
+
+      border:
+        1px solid
+        rgba(255,255,255,.08);
+
+      border-radius: 17px;
+
+      background:
+        rgba(255,255,255,.025);
+    }
+
+    .purchase-info-item {
+      display: grid;
+
+      grid-template-columns:
+        42px 1fr;
+
+      gap: 12px;
+
+      align-items: center;
+
+      padding:
+        15px 16px;
+    }
+
+    .purchase-info-item +
+    .purchase-info-item {
+      border-top:
+        1px solid
+        rgba(255,255,255,.07);
+    }
+
+    .purchase-info-icon {
+      width: 42px;
+      height: 42px;
+
+      display: grid;
+
+      place-items: center;
+
+      border-radius: 12px;
+
+      background:
+        rgba(255,255,255,.055);
+
+      font-size: 18px;
+    }
+
+    .purchase-info-text {
+      min-width: 0;
+    }
+
+    .purchase-info-text strong {
+      display: block;
+
+      margin-bottom: 3px;
+
+      color: #f5f5f5;
+
+      font-size: 12px;
+      font-weight: 900;
+
+      text-transform: uppercase;
+
+      letter-spacing: .05em;
+    }
+
+    .purchase-info-text span {
+      display: block;
+
+      color: #969696;
+
+      font-size: 12px;
+
+      line-height: 1.45;
     }
 
 
@@ -389,6 +539,16 @@
 
       font-weight: 900;
       font-size: 15px;
+
+      transition:
+        transform .15s ease,
+        filter .15s ease,
+        border-color .15s ease;
+    }
+
+    .btn:not(:disabled):active {
+      transform:
+        scale(.985);
     }
 
     .btn:disabled {
@@ -406,6 +566,15 @@
         );
 
       color: #fff;
+
+      box-shadow:
+        0 12px 30px
+        rgba(215,20,30,.16);
+    }
+
+    .buy-now:hover:not(:disabled) {
+      filter:
+        brightness(1.07);
     }
 
     .add-cart {
@@ -416,6 +585,11 @@
         rgba(255,255,255,.13);
 
       color: #fff;
+    }
+
+    .add-cart:hover:not(:disabled) {
+      border-color:
+        rgba(255,255,255,.25);
     }
 
 
@@ -472,7 +646,8 @@
 
       align-items: flex-end;
 
-      justify-content: space-between;
+      justify-content:
+        space-between;
 
       gap: 20px;
 
@@ -732,7 +907,6 @@
       color: #111;
 
       font-weight: 800;
-
       font-size: 13px;
 
       transform:
@@ -1144,6 +1318,23 @@
 
       .price {
         font-size: 34px;
+      }
+
+      .purchase-info-item {
+        grid-template-columns:
+          38px 1fr;
+
+        padding:
+          14px;
+      }
+
+      .purchase-info-icon {
+        width: 38px;
+        height: 38px;
+
+        border-radius: 10px;
+
+        font-size: 16px;
       }
 
       .description {

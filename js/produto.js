@@ -18,6 +18,10 @@ let cart =
   loadCart();
 
 
+/* =========================
+   ELEMENTO
+========================= */
+
 function element(id) {
 
   return document
@@ -25,6 +29,10 @@ function element(id) {
 
 }
 
+
+/* =========================
+   SEGURANÇA HTML
+========================= */
 
 function escapeHTML(value) {
 
@@ -37,6 +45,10 @@ function escapeHTML(value) {
 
 }
 
+
+/* =========================
+   FORMATAR PREÇO
+========================= */
 
 function formatBRL(value) {
 
@@ -52,6 +64,10 @@ function formatBRL(value) {
 
 }
 
+
+/* =========================
+   CARREGAR CARRINHO
+========================= */
 
 function loadCart() {
 
@@ -79,6 +95,10 @@ function loadCart() {
 }
 
 
+/* =========================
+   SALVAR CARRINHO
+========================= */
+
 function saveCart() {
 
   localStorage.setItem(
@@ -90,6 +110,10 @@ function saveCart() {
 
 }
 
+
+/* =========================
+   TOAST
+========================= */
 
 function showToast(message) {
 
@@ -131,6 +155,10 @@ function showToast(message) {
 }
 
 
+/* =========================
+   ID DO PRODUTO
+========================= */
+
 function getProductId() {
 
   const params =
@@ -143,6 +171,10 @@ function getProductId() {
 
 }
 
+
+/* =========================
+   CARREGAR PRODUTO
+========================= */
 
 async function loadProduct() {
 
@@ -240,6 +272,7 @@ async function loadProduct() {
 
     renderProduct();
 
+
     await loadRelatedProducts();
 
 
@@ -272,6 +305,10 @@ async function loadProduct() {
 
 }
 
+
+/* =========================
+   RENDERIZAR PRODUTO
+========================= */
 
 function renderProduct() {
 
@@ -310,6 +347,11 @@ function renderProduct() {
     stock > 0;
 
 
+  const lowStock =
+    stock > 0 &&
+    stock <= 3;
+
+
   const hasCompare =
     comparePrice > price;
 
@@ -317,6 +359,50 @@ function renderProduct() {
   const image =
     product.image_url ||
     BRAND_ICON;
+
+
+  /*
+    Define o visual do estoque.
+
+    4 ou mais:
+    verde.
+
+    1 até 3:
+    amarelo.
+
+    0:
+    vermelho.
+  */
+
+  let stockClass =
+    "unavailable";
+
+
+  let stockText =
+    "Produto indisponível";
+
+
+  if (stock >= 4) {
+
+    stockClass =
+      "available";
+
+
+    stockText =
+      `${stock} unidades disponíveis`;
+
+  } else if (lowStock) {
+
+    stockClass =
+      "low-stock";
+
+
+    stockText =
+      stock === 1
+        ? "Última unidade disponível"
+        : `Últimas ${stock} unidades`;
+
+  }
 
 
   document.title =
@@ -329,6 +415,10 @@ function renderProduct() {
   root.innerHTML = `
 
     <div class="product-layout">
+
+      <!-- =========================
+           GALERIA
+      ========================== -->
 
       <section class="gallery">
 
@@ -365,6 +455,10 @@ function renderProduct() {
       </section>
 
 
+      <!-- =========================
+           DETALHES
+      ========================== -->
+
       <section class="details">
 
         <span class="category">
@@ -387,16 +481,27 @@ function renderProduct() {
         </h1>
 
 
-        <span class="stock">
+        <!-- =========================
+             ESTOQUE
+        ========================== -->
 
-          ${
-            available
-              ? `${stock} em estoque`
-              : "Produto indisponível"
-          }
+        <span
+          class="stock ${stockClass}"
+        >
+
+          <span
+            class="stock-dot"
+            aria-hidden="true"
+          ></span>
+
+          ${stockText}
 
         </span>
 
+
+        <!-- =========================
+             PREÇO
+        ========================== -->
 
         <div class="price-box">
 
@@ -417,11 +522,109 @@ function renderProduct() {
 
 
           <span class="payment-note">
-            Frete calculado conforme o CEP.
+            Valor do produto. Entrega calculada conforme o CEP.
           </span>
 
         </div>
 
+
+        <!-- =========================
+             INFORMAÇÕES DA COMPRA
+        ========================== -->
+
+        <div class="purchase-info">
+
+
+          <!-- ENTREGA -->
+
+          <div class="purchase-info-item">
+
+            <div
+              class="purchase-info-icon"
+              aria-hidden="true"
+            >
+              📍
+            </div>
+
+
+            <div class="purchase-info-text">
+
+              <strong>
+                Entrega
+              </strong>
+
+              <span>
+                Valor e disponibilidade da entrega
+                são calculados conforme o CEP.
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- WHATSAPP -->
+
+          <div class="purchase-info-item">
+
+            <div
+              class="purchase-info-icon"
+              aria-hidden="true"
+            >
+              💬
+            </div>
+
+
+            <div class="purchase-info-text">
+
+              <strong>
+                Atendimento direto
+              </strong>
+
+              <span>
+                O pedido é finalizado diretamente
+                pelo WhatsApp da Crazy Chicken.
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- CARRINHO -->
+
+          <div class="purchase-info-item">
+
+            <div
+              class="purchase-info-icon"
+              aria-hidden="true"
+            >
+              🛒
+            </div>
+
+
+            <div class="purchase-info-text">
+
+              <strong>
+                Carrinho
+              </strong>
+
+              <span>
+                Adicione outros produtos antes
+                de finalizar o seu pedido.
+              </span>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+
+        <!-- =========================
+             BOTÕES
+        ========================== -->
 
         <div class="actions">
 
@@ -435,11 +638,13 @@ function renderProduct() {
                 : "disabled"
             }
           >
+
             ${
               available
                 ? "Comprar agora"
-                : "Sem estoque"
+                : "Produto sem estoque"
             }
+
           </button>
 
 
@@ -453,17 +658,28 @@ function renderProduct() {
                 : "disabled"
             }
           >
-            Adicionar ao carrinho
+
+            ${
+              available
+                ? "Adicionar ao carrinho"
+                : "Indisponível"
+            }
+
           </button>
 
         </div>
 
+
+        <!-- =========================
+             DESCRIÇÃO
+        ========================== -->
 
         <div class="description">
 
           <h2>
             Descrição do produto
           </h2>
+
 
           <p>
             ${
@@ -518,9 +734,12 @@ async function loadRelatedProducts() {
     categoria.
   */
 
-  section.hidden = true;
+  section.hidden =
+    true;
 
-  root.innerHTML = "";
+
+  root.innerHTML =
+    "";
 
 
   const category =
@@ -557,6 +776,7 @@ async function loadRelatedProducts() {
           active
         `)
 
+
         /*
           Apenas produtos ativos.
         */
@@ -565,6 +785,7 @@ async function loadRelatedProducts() {
           "active",
           true
         )
+
 
         /*
           Apenas produtos da mesma
@@ -576,6 +797,7 @@ async function loadRelatedProducts() {
           category
         )
 
+
         /*
           Não mostra o próprio produto
           que o cliente já está vendo.
@@ -585,6 +807,7 @@ async function loadRelatedProducts() {
           "id",
           product.id
         )
+
 
         /*
           Produtos destacados aparecem
@@ -597,6 +820,7 @@ async function loadRelatedProducts() {
             ascending: false
           }
         )
+
 
         /*
           No máximo quatro produtos.
@@ -629,7 +853,9 @@ async function loadRelatedProducts() {
 
     root.innerHTML =
       related
+
         .map(
+
           relatedProduct => {
 
             const price =
@@ -775,7 +1001,9 @@ async function loadRelatedProducts() {
             `;
 
           }
+
         )
+
         .join("");
 
 
