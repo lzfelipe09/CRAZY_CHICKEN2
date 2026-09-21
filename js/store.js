@@ -1904,6 +1904,46 @@ async function checkout() {
 }
 
 
+/*
+================================
+BOTÃO DE CONTA DO HERO
+================================
+*/
+
+function hydrateHeroAuth() {
+
+  const button =
+    document.querySelector(
+      ".hero-actions .btn.secondary"
+    );
+
+
+  if (!button) {
+    return;
+  }
+
+
+  if (state.session?.user) {
+
+    button.href =
+      "/account.html";
+
+    button.textContent =
+      "👤 Minha conta";
+
+  } else {
+
+    button.href =
+      "/login.html";
+
+    button.textContent =
+      "👤 Entrar ou criar conta";
+
+  }
+
+}
+
+
 function bindEvents() {
 
   element(
@@ -2183,6 +2223,9 @@ async function init() {
         await getSession();
 
 
+      hydrateHeroAuth();
+
+
     } catch (error) {
 
       console.warn(
@@ -2190,7 +2233,28 @@ async function init() {
         error
       );
 
+
+      hydrateHeroAuth();
+
     }
+
+
+    supabase.auth.onAuthStateChange(
+      (_event, session) => {
+
+        state.session =
+          session;
+
+
+        hydrateHeroAuth();
+
+      }
+    );
+
+
+  } else {
+
+    hydrateHeroAuth();
 
   }
 
