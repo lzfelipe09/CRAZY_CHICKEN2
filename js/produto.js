@@ -14,6 +14,10 @@ const BRAND_ICON =
 
 let product = null;
 
+let productImages = [];
+
+let currentImageIndex = 0;
+
 let cart =
   loadCart();
 
@@ -173,6 +177,369 @@ function getProductId() {
 
 
 /* =========================
+   CARREGAR IMAGENS
+========================= */
+
+async function loadProductImages(
+  productId
+) {
+
+  productImages = [];
+
+  currentImageIndex = 0;
+
+
+  if (
+    !supabase ||
+    !productId
+  ) {
+    return;
+  }
+
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabase
+
+        .from("product_images")
+
+        .select(`
+          id,
+          product_id,
+          image_url,
+          image_path,
+          position,
+          created_at
+        `)
+
+        .eq(
+          "product_id",
+          productId
+        )
+
+        .order(
+          "position",
+          {
+            ascending: true
+          }
+        )
+
+        .order(
+          "created_at",
+          {
+            ascending: true
+          }
+        );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    const galleryImages =
+      Array.isArray(data)
+        ? data.filter(
+            image =>
+              image?.image_url
+          )
+        : [];
+
+
+    /*
+      Se existem imagens na nova
+      tabela, elas passam a ser
+      utilizadas pela galeria.
+    */
+
+    if (galleryImages.length) {
+
+      productImages =
+        galleryImages;
+
+      return;
+
+    }
+
+
+  } catch (error) {
+
+    /*
+      Não derrubamos a página se
+      ocorrer algum problema apenas
+      na galeria.
+
+      A imagem antiga do produto
+      continua funcionando.
+    */
+
+    console.error(
+      "Erro ao carregar galeria:",
+      error
+    );
+
+  }
+
+
+  /*
+    FALLBACK PARA PRODUTOS ANTIGOS
+
+    Produtos cadastrados antes da
+    criação da tabela product_images
+    continuam mostrando normalmente
+    products.image_url.
+  */
+
+  if (product?.image_url) {
+
+    productImages = [
+      {
+        id:
+          "legacy-main-image",
+
+        product_id:
+          product.id,
+
+        image_url:
+          product.image_url,
+
+        image_path:
+          product.image_path || null,
+
+        position:
+          0
+      }
+    ];
+
+  } else {
+
+    productImages = [
+      {
+        id:
+          "brand-fallback",
+
+        product_id:
+          product?.id || null,
+
+        image_url:
+          BRAND_ICON,
+
+        image_path:
+          null,
+
+        position:
+          0
+      }
+    ];
+
+  }
+
+}
+
+
+/* =========================
+   IMAGEM PRINCIPAL
+========================= */
+
+function getMainImage() {
+
+  const selected =
+    productImages[
+      currentImageIndex
+    ];
+
+
+  return (
+    selected?.image_url ||
+    product?.image_url ||
+    BRAND_ICON
+  );
+
+}
+
+
+/* =========================
+   TROCAR IMAGEM
+========================= */
+
+function selectProductImage(index) {
+
+  const parsedIndex =
+    Number(index);
+
+
+  if (
+    !Number.isInteger(
+      parsedIndex
+    ) ||
+    parsedIndex < 0 ||
+    parsedIndex >=
+      productImages.length
+  ) {
+    return;
+  }
+
+
+  currentImageIndex =
+    parsedIndex;
+
+
+  const image =
+    element(
+      "mainProductImage"
+    );
+
+
+  if (image) {
+
+    image.src =
+      getMainImage();
+
+  }
+
+
+  document
+    .querySelectorAll(
+      ".product-thumbnail"
+    )
+    .forEach(
+      (
+        thumbnail,
+        thumbnailIndex
+      ) => {
+
+        const active =
+          thumbnailIndex ===
+          currentImageIndex;
+
+
+        thumbnail
+          .classList
+          .toggle(
+            "active",
+            active
+          );
+
+
+        thumbnail.setAttribute(
+          "aria-pressed",
+          active
+            ? "true"
+            : "false"
+        );
+
+      }
+    );
+
+}
+
+
+/* =========================
+   HTML DAS MINIATURAS
+========================= */
+
+function renderProductThumbnails() {
+
+  /*
+    Com apenas uma imagem não há
+    necessidade de mostrar uma
+    miniatura embaixo dela.
+  */
+
+  if (
+    productImages.length <= 1
+  ) {
+    return "";
+  }
+
+
+  return `
+
+    <div
+      class="product-thumbnails"
+      id="productThumbnails"
+      aria-label="Outras imagens do produto"
+    >
+
+      ${
+        productImages
+
+          .map(
+            (
+              image,
+              index
+            ) => {
+
+              const imageUrl =
+                image.image_url ||
+                BRAND_ICON;
+
+
+              return `
+
+                <button
+                  class="product-thumbnail ${
+                    index === 0
+                      ? "active"
+                      : ""
+                  }"
+                  type="button"
+                  data-product-image="${index}"
+                  aria-label="Ver imagem ${
+                    index + 1
+                  }"
+                  aria-pressed="${
+                    index === 0
+                      ? "true"
+                      : "false"
+                  }"
+                >
+
+                  <img
+                    src="${
+                      escapeHTML(
+                        imageUrl
+                      )
+                    }"
+                    alt="${
+                      escapeHTML(
+                        `${
+                          product?.name ||
+                          "Produto"
+                        } - imagem ${
+                          index + 1
+                        }`
+                      )
+                    }"
+                    loading="lazy"
+                    onerror="
+                      this.onerror=null;
+                      this.src='${BRAND_ICON}'
+                    "
+                  >
+
+                </button>
+
+              `;
+
+            }
+          )
+
+          .join("")
+      }
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================
    CARREGAR PRODUTO
 ========================= */
 
@@ -270,6 +637,22 @@ async function loadProduct() {
       data;
 
 
+    /*
+      Depois de encontrar o produto,
+      buscamos todas as imagens dele.
+    */
+
+    await loadProductImages(
+      product.id
+    );
+
+
+    /*
+      Só renderizamos depois que
+      produto + imagens estiverem
+      carregados.
+    */
+
     renderProduct();
 
 
@@ -357,22 +740,8 @@ function renderProduct() {
 
 
   const image =
-    product.image_url ||
-    BRAND_ICON;
+    getMainImage();
 
-
-  /*
-    Define o visual do estoque.
-
-    4 ou mais:
-    verde.
-
-    1 até 3:
-    amarelo.
-
-    0:
-    vermelho.
-  */
 
   let stockClass =
     "unavailable";
@@ -448,8 +817,17 @@ function renderProduct() {
         </div>
 
 
+        ${renderProductThumbnails()}
+
+
         <div class="image-tip">
-          Toque na imagem para ampliar
+
+          ${
+            productImages.length > 1
+              ? "Selecione uma imagem ou toque na foto para ampliar"
+              : "Toque na imagem para ampliar"
+          }
+
         </div>
 
       </section>
@@ -481,9 +859,7 @@ function renderProduct() {
         </h1>
 
 
-        <!-- =========================
-             ESTOQUE
-        ========================== -->
+        <!-- ESTOQUE -->
 
         <span
           class="stock ${stockClass}"
@@ -499,9 +875,7 @@ function renderProduct() {
         </span>
 
 
-        <!-- =========================
-             PREÇO
-        ========================== -->
+        <!-- PREÇO -->
 
         <div class="price-box">
 
@@ -528,14 +902,10 @@ function renderProduct() {
         </div>
 
 
-        <!-- =========================
-             INFORMAÇÕES DA COMPRA
-        ========================== -->
+        <!-- INFORMAÇÕES DA COMPRA -->
 
         <div class="purchase-info">
 
-
-          <!-- ENTREGA -->
 
           <div class="purchase-info-item">
 
@@ -563,8 +933,6 @@ function renderProduct() {
           </div>
 
 
-          <!-- WHATSAPP -->
-
           <div class="purchase-info-item">
 
             <div
@@ -590,8 +958,6 @@ function renderProduct() {
 
           </div>
 
-
-          <!-- CARRINHO -->
 
           <div class="purchase-info-item">
 
@@ -622,9 +988,7 @@ function renderProduct() {
         </div>
 
 
-        <!-- =========================
-             BOTÕES
-        ========================== -->
+        <!-- BOTÕES -->
 
         <div class="actions">
 
@@ -670,9 +1034,7 @@ function renderProduct() {
         </div>
 
 
-        <!-- =========================
-             DESCRIÇÃO
-        ========================== -->
+        <!-- DESCRIÇÃO -->
 
         <div class="description">
 
@@ -726,14 +1088,6 @@ async function loadRelatedProducts() {
   }
 
 
-  /*
-    A seção começa escondida.
-
-    Ela só aparece caso realmente
-    existam outros produtos da mesma
-    categoria.
-  */
-
   section.hidden =
     true;
 
@@ -776,43 +1130,20 @@ async function loadRelatedProducts() {
           active
         `)
 
-
-        /*
-          Apenas produtos ativos.
-        */
-
         .eq(
           "active",
           true
         )
-
-
-        /*
-          Apenas produtos da mesma
-          categoria do produto atual.
-        */
 
         .eq(
           "category",
           category
         )
 
-
-        /*
-          Não mostra o próprio produto
-          que o cliente já está vendo.
-        */
-
         .neq(
           "id",
           product.id
         )
-
-
-        /*
-          Produtos destacados aparecem
-          primeiro.
-        */
 
         .order(
           "featured",
@@ -820,11 +1151,6 @@ async function loadRelatedProducts() {
             ascending: false
           }
         )
-
-
-        /*
-          No máximo quatro produtos.
-        */
 
         .limit(4);
 
@@ -839,12 +1165,6 @@ async function loadRelatedProducts() {
         ? data
         : [];
 
-
-    /*
-      Se não houver nenhum produto
-      relacionado, a seção continua
-      escondida.
-    */
 
     if (!related.length) {
       return;
@@ -1007,11 +1327,6 @@ async function loadRelatedProducts() {
         .join("");
 
 
-    /*
-      Agora que existem produtos,
-      mostramos a seção.
-    */
-
     section.hidden =
       false;
 
@@ -1161,14 +1476,6 @@ function buyNow() {
     return;
   }
 
-
-  /*
-    Volta para o index com
-    checkout=1.
-
-    O store.js reconhece esse
-    parâmetro e abre o carrinho.
-  */
 
   location.href =
     "/index.html?checkout=1";
@@ -1644,8 +1951,20 @@ function openImage() {
   }
 
 
+  /*
+    Abre exatamente a imagem
+    que estiver selecionada.
+  */
+
   expanded.src =
     image.src;
+
+
+  expanded.alt =
+    `${
+      product?.name ||
+      "Produto"
+    } ampliado`;
 
 
   element("imageModal")
@@ -1689,6 +2008,44 @@ function bindProductEvents() {
       buyNow
     );
 
+
+  /*
+    MINIATURAS
+  */
+
+  element("productThumbnails")
+    ?.addEventListener(
+
+      "click",
+
+      event => {
+
+        const button =
+          event.target.closest(
+            "[data-product-image]"
+          );
+
+
+        if (!button) {
+          return;
+        }
+
+
+        selectProductImage(
+          Number(
+            button.dataset
+              .productImage
+          )
+        );
+
+      }
+
+    );
+
+
+  /*
+    ZOOM DA IMAGEM PRINCIPAL
+  */
 
   const mainImage =
     element(
