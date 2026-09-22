@@ -26,9 +26,7 @@ import {
 ========================================================= */
 
 const CART_KEY = "crazy_chicken_cart_v4";
-
-const BRAND_ICON =
-  "/assets/crazy-chicken-icon.png";
+const BRAND_ICON = "/assets/crazy-chicken-icon.png";
 
 
 const state = {
@@ -39,7 +37,13 @@ const state = {
   session: null,
   category: "all",
   search: "",
-  sort: "featured"
+  sort: "featured",
+
+  /*
+    Quantidade selecionada nos cards
+    antes de adicionar ao carrinho.
+  */
+  productQuantities: new Map()
 };
 
 
@@ -106,15 +110,85 @@ function saveCart() {
 
 
 /* =========================================================
-   LOCALIZAR PRODUTO
+   PRODUTO PELO ID
 ========================================================= */
 
 function productById(id) {
 
   return state.products.find(
     product =>
-      String(product.id) ===
-      String(id)
+      String(product.id) === String(id)
+  );
+
+}
+
+
+/* =========================================================
+   QUANTIDADE SELECIONADA NO CARD
+========================================================= */
+
+function getSelectedQuantity(productId) {
+
+  const quantity =
+    Number(
+      state.productQuantities.get(
+        String(productId)
+      )
+    );
+
+  return Math.max(
+    1,
+    quantity || 1
+  );
+
+}
+
+
+function setSelectedQuantity(
+  productId,
+  quantity
+) {
+
+  const product =
+    productById(productId);
+
+  if (!product) {
+    return;
+  }
+
+
+  const stock =
+    Math.max(
+      0,
+      Number(product.stock || 0)
+    );
+
+
+  if (stock <= 0) {
+
+    state.productQuantities.set(
+      String(productId),
+      1
+    );
+
+    return;
+
+  }
+
+
+  const safeQuantity =
+    Math.min(
+      Math.max(
+        1,
+        Number(quantity) || 1
+      ),
+      stock
+    );
+
+
+  state.productQuantities.set(
+    String(productId),
+    safeQuantity
   );
 
 }
@@ -139,12 +213,15 @@ function normalizeCart() {
         return null;
       }
 
+
       const stock =
         Number(product.stock || 0);
+
 
       if (stock <= 0) {
         return null;
       }
+
 
       return {
         product_id: product.id,
@@ -189,6 +266,7 @@ async function loadProducts() {
 
   const grid =
     element("productGrid");
+
 
   if (!grid) {
     return;
@@ -286,21 +364,34 @@ async function loadProducts() {
         : [];
 
 
+    /*
+      Inicializa quantidade de cada produto.
+    */
+
+    state.products.forEach(product => {
+
+      const key =
+        String(product.id);
+
+      if (
+        !state.productQuantities.has(key)
+      ) {
+
+        state.productQuantities.set(
+          key,
+          1
+        );
+
+      }
+
+    });
+
+
     state.filtered =
       [...state.products];
 
 
-    /*
-      Corrige quantidades antigas caso
-      o estoque tenha sido alterado.
-    */
-
     normalizeCart();
-
-
-    /*
-      Monta catálogo.
-    */
 
     renderCategories();
 
@@ -308,10 +399,6 @@ async function loadProducts() {
 
     renderCart();
 
-
-    /*
-      Favoritos.
-    */
 
     try {
 
@@ -381,26 +468,45 @@ function productCard(product) {
   const stock =
     Number(product.stock || 0);
 
+
   const inStock =
     stock > 0;
+
 
   const favorite =
     state.favorites.has(product.id);
 
+
   const price =
     Number(product.price || 0);
+
 
   const comparePrice =
     Number(
       product.compare_at_price || 0
     );
 
+
   const hasCompare =
     comparePrice > price;
+
 
   const imageSrc =
     product.image_url ||
     BRAND_ICON;
+
+
+  const selectedQuantity =
+    Math.min(
+      getSelectedQuantity(
+        product.id
+      ),
+      Math.max(stock, 1)
+    );
+
+
+  const atMax =
+    selectedQuantity >= stock;
 
 
   return `
@@ -541,6 +647,112 @@ function productCard(product) {
         </div>
 
 
+        ${
+          inStock
+            ? `
+              <div
+                class="product-quantity-selector"
+                style="
+                  display:flex;
+                  align-items:center;
+                  justify-content:space-between;
+                  gap:12px;
+                  margin:12px 0;
+                  padding:8px 10px;
+                  border:1px solid #292929;
+                  border-radius:10px;
+                  background:#111;
+                "
+              >
+
+                <span
+                  style="
+                    font-size:11px;
+                    color:#999;
+                    font-weight:700;
+                  "
+                >
+                  Quantidade
+                </span>
+
+
+                <div
+                  style="
+                    display:flex;
+                    align-items:center;
+                    gap:10px;
+                  "
+                >
+
+                  <button
+                    type="button"
+                    data-product-qty="-1"
+                    data-id="${product.id}"
+                    aria-label="Diminuir quantidade"
+                    style="
+                      width:32px;
+                      height:32px;
+                      border:1px solid #333;
+                      border-radius:8px;
+                      background:#181818;
+                      color:#fff;
+                      font-size:18px;
+                      cursor:pointer;
+                    "
+                    ${
+                      selectedQuantity <= 1
+                        ? "disabled"
+                        : ""
+                    }
+                  >
+                    −
+                  </button>
+
+
+                  <strong
+                    data-product-qty-value="${product.id}"
+                    style="
+                      min-width:24px;
+                      text-align:center;
+                      font-size:14px;
+                    "
+                  >
+                    ${selectedQuantity}
+                  </strong>
+
+
+                  <button
+                    type="button"
+                    data-product-qty="1"
+                    data-id="${product.id}"
+                    aria-label="Aumentar quantidade"
+                    style="
+                      width:32px;
+                      height:32px;
+                      border:1px solid #333;
+                      border-radius:8px;
+                      background:#181818;
+                      color:#fff;
+                      font-size:18px;
+                      cursor:pointer;
+                    "
+                    ${
+                      atMax
+                        ? "disabled"
+                        : ""
+                    }
+                  >
+                    +
+                  </button>
+
+                </div>
+
+              </div>
+            `
+            : ""
+        }
+
+
         <button
           class="btn primary"
           type="button"
@@ -553,7 +765,7 @@ function productCard(product) {
         >
           ${
             inStock
-              ? "Adicionar ao carrinho"
+              ? `Adicionar ${selectedQuantity > 1 ? `${selectedQuantity} unidades` : "ao carrinho"}`
               : "Sem estoque"
           }
         </button>
@@ -574,6 +786,7 @@ function renderProducts() {
 
   const grid =
     element("productGrid");
+
 
   if (!grid) {
     return;
@@ -643,8 +856,7 @@ function applyFilters() {
           ${product.description || ""}
           ${product.category || ""}
           ${product.sku || ""}
-        `
-          .toLowerCase();
+        `.toLowerCase();
 
 
         const categoryMatches =
@@ -710,26 +922,14 @@ function applyFilters() {
     }
 
 
-    /*
-      Destaques primeiro.
-    */
-
     return (
-      Number(
-        Boolean(b.featured)
-      )
+      Number(Boolean(b.featured))
       -
-      Number(
-        Boolean(a.featured)
-      )
+      Number(Boolean(a.featured))
       ||
-      Number(
-        Boolean(b.is_new)
-      )
+      Number(Boolean(b.is_new))
       -
-      Number(
-        Boolean(a.is_new)
-      )
+      Number(Boolean(a.is_new))
       ||
       new Date(b.created_at)
       -
@@ -757,6 +957,7 @@ function renderCategories() {
   const row =
     element("categoryRow");
 
+
   if (!row) {
     return;
   }
@@ -773,14 +974,13 @@ function renderCategories() {
         )
         .filter(Boolean)
     )
-  ]
-    .sort(
-      (a, b) =>
-        a.localeCompare(
-          b,
-          "pt-BR"
-        )
-    );
+  ].sort(
+    (a, b) =>
+      a.localeCompare(
+        b,
+        "pt-BR"
+      )
+  );
 
 
   row.innerHTML = `
@@ -1004,9 +1204,92 @@ function animateProductToCart(
 
 
 /* =========================================================
-   ADICIONAR AO CARRINHO
+   ALTERAR QUANTIDADE DO CARD
+========================================================= */
 
-   NÃO ABRE O CARRINHO AUTOMATICAMENTE.
+function changeProductQuantity(
+  productId,
+  delta
+) {
+
+  const product =
+    productById(productId);
+
+
+  if (!product) {
+    return;
+  }
+
+
+  const stock =
+    Math.max(
+      0,
+      Number(
+        product.stock || 0
+      )
+    );
+
+
+  if (stock <= 0) {
+    return;
+  }
+
+
+  const current =
+    getSelectedQuantity(
+      productId
+    );
+
+
+  const next =
+    current +
+    Number(delta || 0);
+
+
+  if (next < 1) {
+
+    setSelectedQuantity(
+      productId,
+      1
+    );
+
+    applyFilters();
+
+    return;
+
+  }
+
+
+  if (next > stock) {
+
+    showToast(
+      "Você atingiu o estoque disponível.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  setSelectedQuantity(
+    productId,
+    next
+  );
+
+
+  /*
+    Re-renderiza mantendo pesquisa,
+    filtro e ordenação.
+  */
+
+  renderProducts();
+
+}
+
+
+/* =========================================================
+   ADICIONAR AO CARRINHO
 ========================================================= */
 
 function addToCart(id) {
@@ -1048,6 +1331,13 @@ function addToCart(id) {
   }
 
 
+  const quantityToAdd =
+    Math.min(
+      getSelectedQuantity(id),
+      stock
+    );
+
+
   const item =
     state.cart.find(
       entry =>
@@ -1059,23 +1349,40 @@ function addToCart(id) {
     );
 
 
-  if (item) {
+  const currentInCart =
+    item
+      ? Math.max(
+          1,
+          Number(
+            item.quantity
+          ) || 1
+        )
+      : 0;
 
-    const currentQuantity =
+
+  /*
+    Verifica quantidade que já existe
+    + quantidade selecionada.
+  */
+
+  if (
+    currentInCart +
+    quantityToAdd >
+    stock
+  ) {
+
+    const remaining =
       Math.max(
-        1,
-        Number(
-          item.quantity
-        ) || 1
+        0,
+        stock -
+        currentInCart
       );
 
 
-    if (
-      currentQuantity >= stock
-    ) {
+    if (remaining <= 0) {
 
       showToast(
-        "Você atingiu o estoque disponível.",
+        "Você já adicionou todo o estoque disponível deste produto.",
         "error"
       );
 
@@ -1084,15 +1391,32 @@ function addToCart(id) {
     }
 
 
+    showToast(
+      `Você pode adicionar no máximo mais ${remaining} ${
+        remaining === 1
+          ? "unidade"
+          : "unidades"
+      }.`,
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if (item) {
+
     item.quantity =
-      currentQuantity + 1;
+      currentInCart +
+      quantityToAdd;
 
 
   } else {
 
     state.cart.push({
       product_id: product.id,
-      quantity: 1
+      quantity: quantityToAdd
     });
 
   }
@@ -1101,26 +1425,37 @@ function addToCart(id) {
   saveCart();
 
 
-  /*
-    Apenas anima o produto indo
-    até o ícone do carrinho.
-  */
-
   animateProductToCart(
     product.id
   );
 
 
   showToast(
-    "Produto adicionado ao carrinho.",
+    quantityToAdd === 1
+      ? "Produto adicionado ao carrinho."
+      : `${quantityToAdd} unidades adicionadas ao carrinho.`,
     "success"
   );
+
+
+  /*
+    Depois de adicionar,
+    volta seletor para 1.
+  */
+
+  setSelectedQuantity(
+    id,
+    1
+  );
+
+
+  renderProducts();
 
 }
 
 
 /* =========================================================
-   ALTERAR QUANTIDADE
+   ALTERAR QUANTIDADE NO CARRINHO
 ========================================================= */
 
 function changeQty(
@@ -1174,11 +1509,6 @@ function changeQty(
     Number(delta || 0);
 
 
-  /*
-    Se diminuir de 1 para 0,
-    remove o produto.
-  */
-
   if (next <= 0) {
 
     state.cart =
@@ -1197,10 +1527,6 @@ function changeQty(
 
   }
 
-
-  /*
-    Produto ficou sem estoque.
-  */
 
   if (stock <= 0) {
 
@@ -1226,10 +1552,6 @@ function changeQty(
 
   }
 
-
-  /*
-    Nunca ultrapassa o estoque.
-  */
 
   if (next > stock) {
 
@@ -1321,10 +1643,6 @@ function renderCart() {
       );
 
 
-  /*
-    Quantidade total no ícone.
-  */
-
   const quantity =
     rows.reduce(
       (total, row) =>
@@ -1338,10 +1656,6 @@ function renderCart() {
       0
     );
 
-
-  /*
-    Subtotal geral.
-  */
 
   const subtotal =
     rows.reduce(
@@ -1362,7 +1676,8 @@ function renderCart() {
 
         return (
           total +
-          price * itemQuantity
+          price *
+          itemQuantity
         );
 
       },
@@ -1451,10 +1766,6 @@ function renderCart() {
             )
           );
 
-
-        /*
-          Mantém estado sincronizado.
-        */
 
         item.quantity =
           itemQuantity;
@@ -1630,7 +1941,7 @@ function renderCart() {
 
 
 /* =========================================================
-   ABRIR CARRINHO
+   ABRIR / FECHAR CARRINHO
 ========================================================= */
 
 function openCart() {
@@ -1653,10 +1964,6 @@ function openCart() {
 
 }
 
-
-/* =========================================================
-   FECHAR CARRINHO
-========================================================= */
 
 function closeCart() {
 
@@ -1717,10 +2024,6 @@ async function loadFavorites() {
 
 }
 
-
-/* =========================================================
-   FAVORITAR / DESFAVORITAR
-========================================================= */
 
 async function toggleFavorite(id) {
 
@@ -1831,12 +2134,10 @@ async function toggleFavorite(id) {
 
 
 /* =========================================================
-   VERIFICAR PERFIL
+   PERFIL
 ========================================================= */
 
-function profileComplete(
-  profile
-) {
+function profileComplete(profile) {
 
   return [
     profile?.full_name,
@@ -1903,12 +2204,6 @@ async function checkout() {
   }
 
 
-  /*
-    Abre antes das operações assíncronas
-    para o navegador não bloquear
-    o WhatsApp.
-  */
-
   let popup = null;
 
 
@@ -1936,10 +2231,6 @@ async function checkout() {
       await getSession();
 
 
-    /*
-      Precisa estar logado.
-    */
-
     if (!session) {
 
       popup?.close();
@@ -1957,20 +2248,11 @@ async function checkout() {
     }
 
 
-    /*
-      Carrega perfil.
-    */
-
     const profile =
       await getProfile(
         session.user.id
       );
 
-
-    /*
-      Se faltar endereço ou cadastro,
-      vai para Minha Conta.
-    */
 
     if (
       !profileComplete(profile)
@@ -1986,11 +2268,6 @@ async function checkout() {
 
     }
 
-
-    /*
-      Garante novamente que nenhuma
-      quantidade ultrapassou estoque.
-    */
 
     normalizeCart();
 
@@ -2012,10 +2289,6 @@ async function checkout() {
     }
 
 
-    /*
-      Formato esperado pelo RPC.
-    */
-
     const items =
       state.cart.map(
         item => ({
@@ -2029,10 +2302,6 @@ async function checkout() {
         })
       );
 
-
-    /*
-      Cria pedido no Supabase.
-    */
 
     const {
       data,
@@ -2050,11 +2319,6 @@ async function checkout() {
     }
 
 
-    /*
-      Mantém compatibilidade caso
-      o RPC retorne objeto ou array.
-    */
-
     const orderData =
       Array.isArray(data)
         ? data[0]
@@ -2067,11 +2331,6 @@ async function checkout() {
       orderData?.id ||
       "Novo pedido";
 
-
-    /*
-      Usa subtotal retornado pelo banco.
-      Caso não exista, calcula localmente.
-    */
 
     const localSubtotal =
       state.cart.reduce(
@@ -2109,6 +2368,7 @@ async function checkout() {
         orderData?.subtotal
       );
 
+
     const subtotal =
       Number.isFinite(
         finalSubtotal
@@ -2116,10 +2376,6 @@ async function checkout() {
         ? finalSubtotal
         : localSubtotal;
 
-
-    /*
-      Linhas dos produtos.
-    */
 
     const productLines =
       state.cart.map(
@@ -2150,10 +2406,6 @@ async function checkout() {
         }
       );
 
-
-    /*
-      Mensagem final.
-    */
 
     const lines = [
 
@@ -2200,21 +2452,12 @@ async function checkout() {
       }`;
 
 
-    /*
-      Pedido criado:
-      limpa carrinho.
-    */
-
     state.cart = [];
 
     saveCart();
 
     closeCart();
 
-
-    /*
-      Abre WhatsApp.
-    */
 
     if (
       popup &&
@@ -2274,7 +2517,7 @@ async function checkout() {
 
 
 /* =========================================================
-   BOTÃO DA CONTA NO HERO
+   CONTA NO HERO
 ========================================================= */
 
 function hydrateHeroAuth() {
@@ -2316,16 +2559,9 @@ function hydrateHeroAuth() {
 
 /* =========================================================
    EVENTOS
-
-   UMA ÚNICA FUNÇÃO.
-   NÃO EXISTE bindCartEvents() SEPARADA.
 ========================================================= */
 
 function bindEvents() {
-
-  /*
-    ABRIR CARRINHO
-  */
 
   element("openCart")
     ?.addEventListener(
@@ -2333,10 +2569,6 @@ function bindEvents() {
       openCart
     );
 
-
-  /*
-    FECHAR CARRINHO
-  */
 
   element("closeCart")
     ?.addEventListener(
@@ -2352,20 +2584,12 @@ function bindEvents() {
     );
 
 
-  /*
-    CHECKOUT
-  */
-
   element("checkoutButton")
     ?.addEventListener(
       "click",
       checkout
     );
 
-
-  /*
-    PESQUISA
-  */
 
   element("searchInput")
     ?.addEventListener(
@@ -2381,10 +2605,6 @@ function bindEvents() {
     );
 
 
-  /*
-    ORDENAÇÃO
-  */
-
   element("sortSelect")
     ?.addEventListener(
       "change",
@@ -2399,10 +2619,6 @@ function bindEvents() {
       }
     );
 
-
-  /*
-    CATEGORIAS
-  */
 
   element("categoryRow")
     ?.addEventListener(
@@ -2445,41 +2661,68 @@ function bindEvents() {
     );
 
 
-  /*
-    PRODUTOS
-
-    Ordem importante:
-    1 - adicionar
-    2 - favoritar
-    3 - abrir produto
-  */
+  /* =======================================================
+     EVENTOS DOS PRODUTOS
+  ======================================================= */
 
   element("productGrid")
     ?.addEventListener(
       "click",
       event => {
 
+        /*
+          SELETOR DE QUANTIDADE
+        */
+
+        const quantityButton =
+          event.target.closest(
+            "[data-product-qty]"
+          );
+
+
+        if (quantityButton) {
+
+          event.preventDefault();
+
+          event.stopPropagation();
+
+
+          if (
+            quantityButton.disabled
+          ) {
+            return;
+          }
+
+
+          const id =
+            quantityButton.dataset.id;
+
+
+          const delta =
+            Number(
+              quantityButton.dataset.productQty
+            );
+
+
+          changeProductQuantity(
+            id,
+            delta
+          );
+
+          return;
+
+        }
+
+
+        /*
+          ADICIONAR AO CARRINHO
+        */
+
         const add =
           event.target.closest(
             "[data-add]"
           );
 
-
-        const favorite =
-          event.target.closest(
-            "[data-favorite]"
-          );
-
-
-        const openProductButton =
-          event.target.closest(
-            "[data-open-product]"
-          );
-
-
-        /*
-          ADICIONAR
-        */
 
         if (add) {
 
@@ -2506,6 +2749,12 @@ function bindEvents() {
           FAVORITAR
         */
 
+        const favorite =
+          event.target.closest(
+            "[data-favorite]"
+          );
+
+
         if (favorite) {
 
           event.preventDefault();
@@ -2525,6 +2774,12 @@ function bindEvents() {
         /*
           ABRIR PRODUTO
         */
+
+        const openProductButton =
+          event.target.closest(
+            "[data-open-product]"
+          );
+
 
         if (openProductButton) {
 
@@ -2550,10 +2805,9 @@ function bindEvents() {
     );
 
 
-  /*
-    CARRINHO:
-    + / - / remover
-  */
+  /* =======================================================
+     EVENTOS DO CARRINHO
+  ======================================================= */
 
   element("cartItems")
     ?.addEventListener(
@@ -2571,10 +2825,6 @@ function bindEvents() {
             "[data-remove]"
           );
 
-
-        /*
-          QUANTIDADE
-        */
 
         if (qty) {
 
@@ -2595,10 +2845,6 @@ function bindEvents() {
         }
 
 
-        /*
-          REMOVER
-        */
-
         if (remove) {
 
           removeFromCart(
@@ -2612,7 +2858,7 @@ function bindEvents() {
 
 
   /*
-    ESC fecha o carrinho.
+    ESC fecha carrinho.
   */
 
   document.addEventListener(
@@ -2635,22 +2881,12 @@ function bindEvents() {
 
 /* =========================================================
    INICIALIZAÇÃO
-
-   UMA ÚNICA init().
 ========================================================= */
 
 async function init() {
 
-  /*
-    Eventos.
-  */
-
   bindEvents();
 
-
-  /*
-    Instagram.
-  */
 
   const instagram =
     element(
@@ -2666,10 +2902,6 @@ async function init() {
   }
 
 
-  /*
-    WhatsApp.
-  */
-
   const whatsapp =
     element(
       "footerWhatsapp"
@@ -2683,10 +2915,6 @@ async function init() {
 
   }
 
-
-  /*
-    Ano.
-  */
 
   const year =
     element("year");
@@ -2703,10 +2931,6 @@ async function init() {
   }
 
 
-  /*
-    Cabeçalho de autenticação.
-  */
-
   try {
 
     await hydrateHeaderAuth();
@@ -2720,10 +2944,6 @@ async function init() {
 
   }
 
-
-  /*
-    Sessão.
-  */
 
   if (
     isConfigured &&
@@ -2754,10 +2974,6 @@ async function init() {
     }
 
 
-    /*
-      Login / logout em tempo real.
-    */
-
     supabase.auth
       .onAuthStateChange(
         async (
@@ -2785,11 +3001,6 @@ async function init() {
 
           }
 
-
-          /*
-            Atualiza favoritos quando
-            a sessão mudar.
-          */
 
           try {
 
@@ -2828,20 +3039,12 @@ async function init() {
   }
 
 
-  /*
-    Carrega catálogo.
-  */
-
   await loadProducts();
 
 
   /*
-    Comprar agora / retorno do login.
-
-    produto.html envia:
+    Comprar agora:
     /index.html?checkout=1
-
-    Nesse caso o carrinho abre.
   */
 
   const params =
@@ -2857,11 +3060,6 @@ async function init() {
 
     openCart();
 
-
-    /*
-      Remove checkout=1 da URL
-      sem atualizar a página.
-    */
 
     try {
 
@@ -2900,9 +3098,7 @@ async function init() {
 
 
 /* =========================================================
-   INICIAR A LOJA
-
-   Apenas UMA inicialização.
+   START
 ========================================================= */
 
 document.addEventListener(
