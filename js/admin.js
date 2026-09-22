@@ -18,6 +18,10 @@ const BRAND_ICON =
   "/assets/crazy-chicken-icon.png";
 
 
+const PRODUCT_IMAGES_BUCKET =
+  "product-images";
+
+
 let adminSession =
   null;
 
@@ -31,6 +35,30 @@ let orders =
 
 
 let customers =
+  [];
+
+
+/*
+  Imagens que já existem no banco
+  quando estamos editando um produto.
+*/
+let existingProductImages =
+  [];
+
+
+/*
+  Novas imagens escolhidas pelo usuário
+  antes de salvar.
+*/
+let selectedProductImages =
+  [];
+
+
+/*
+  URLs temporárias usadas somente
+  para mostrar a prévia das novas imagens.
+*/
+let selectedPreviewUrls =
   [];
 
 
@@ -56,6 +84,10 @@ const statuses = {
 
 };
 
+
+/* =========================================
+   AUTENTICAÇÃO ADMIN
+========================================= */
 
 async function protegerAdmin() {
 
@@ -271,7 +303,6 @@ async function protegerAdmin() {
       await supabase.auth
         .signOut();
 
-
     } catch {}
 
 
@@ -287,6 +318,10 @@ async function protegerAdmin() {
 
 }
 
+
+/* =========================================
+   NAVEGAÇÃO
+========================================= */
 
 function setSection(name) {
 
@@ -351,6 +386,454 @@ function setSection(name) {
 }
 
 
+/* =========================================
+   UTILIDADES DAS IMAGENS
+========================================= */
+
+function clearSelectedPreviewUrls() {
+
+  selectedPreviewUrls
+    .forEach(
+      url => {
+
+        try {
+
+          URL.revokeObjectURL(
+            url
+          );
+
+        } catch {}
+
+      }
+    );
+
+
+  selectedPreviewUrls =
+    [];
+
+}
+
+
+function resetImageState() {
+
+  clearSelectedPreviewUrls();
+
+
+  existingProductImages =
+    [];
+
+
+  selectedProductImages =
+    [];
+
+
+  const input =
+    $("#productImage");
+
+
+  if (input) {
+
+    input.value =
+      "";
+
+  }
+
+
+  renderImagePreview();
+
+}
+
+
+function updateImagesInfo() {
+
+  const info =
+    $("#productImagesInfo");
+
+
+  if (!info) {
+    return;
+  }
+
+
+  const existingCount =
+    existingProductImages.length;
+
+
+  const newCount =
+    selectedProductImages.length;
+
+
+  const total =
+    existingCount +
+    newCount;
+
+
+  if (!total) {
+
+    info.textContent =
+      "Nenhuma nova imagem selecionada.";
+
+    return;
+
+  }
+
+
+  if (
+    existingCount &&
+    newCount
+  ) {
+
+    info.textContent =
+      `${existingCount} imagem(ns) já salva(s) + ${newCount} nova(s) imagem(ns).`;
+
+    return;
+
+  }
+
+
+  if (existingCount) {
+
+    info.textContent =
+      `${existingCount} imagem(ns) cadastrada(s). Você pode adicionar mais imagens.`;
+
+    return;
+
+  }
+
+
+  info.textContent =
+    `${newCount} nova(s) imagem(ns) selecionada(s). A primeira será a principal.`;
+
+}
+
+
+function renderImagePreview() {
+
+  const root =
+    $("#imagePreview");
+
+
+  if (!root) {
+    return;
+  }
+
+
+  clearSelectedPreviewUrls();
+
+
+  const existingHTML =
+    existingProductImages
+
+      .map(
+        (
+          image,
+          index
+        ) => {
+
+          const isMain =
+            index === 0;
+
+
+          return `
+            <div
+              class="product-image-preview-item ${
+                isMain
+                  ? "is-main"
+                  : ""
+              }"
+            >
+
+              <img
+                src="${
+                  escapeHTML(
+                    image.image_url ||
+                    BRAND_ICON
+                  )
+                }"
+                alt="Imagem do produto"
+                onerror="
+                  this.onerror=null;
+                  this.src='${BRAND_ICON}'
+                "
+              >
+
+              <span
+                class="product-image-badge"
+              >
+                ${
+                  isMain
+                    ? "Principal"
+                    : `Foto ${index + 1}`
+                }
+              </span>
+
+              <button
+                class="product-image-remove"
+                type="button"
+                data-remove-existing-image="${
+                  escapeHTML(
+                    String(
+                      image.id ||
+                      ""
+                    )
+                  )
+                }"
+                aria-label="Excluir imagem"
+                title="Excluir imagem"
+              >
+                ×
+              </button>
+
+            </div>
+          `;
+
+        }
+      )
+
+      .join("");
+
+
+  const offset =
+    existingProductImages.length;
+
+
+  const newHTML =
+    selectedProductImages
+
+      .map(
+        (
+          file,
+          index
+        ) => {
+
+          const url =
+            URL.createObjectURL(
+              file
+            );
+
+
+          selectedPreviewUrls
+            .push(
+              url
+            );
+
+
+          const position =
+            offset +
+            index;
+
+
+          const isMain =
+            position === 0;
+
+
+          return `
+            <div
+              class="product-image-preview-item ${
+                isMain
+                  ? "is-main"
+                  : ""
+              }"
+            >
+
+              <img
+                src="${url}"
+                alt="Nova imagem do produto"
+              >
+
+              <span
+                class="product-image-badge"
+              >
+                ${
+                  isMain
+                    ? "Principal"
+                    : `Foto ${position + 1}`
+                }
+              </span>
+
+              <button
+                class="product-image-remove"
+                type="button"
+                data-remove-new-image="${index}"
+                aria-label="Remover imagem"
+                title="Remover imagem"
+              >
+                ×
+              </button>
+
+            </div>
+          `;
+
+        }
+      )
+
+      .join("");
+
+
+  root.innerHTML =
+    existingHTML +
+    newHTML;
+
+
+  updateImagesInfo();
+
+}
+
+
+function validateImageFile(
+  file
+) {
+
+  if (!file) {
+
+    throw new Error(
+      "Arquivo de imagem inválido."
+    );
+
+  }
+
+
+  if (
+    file.size >
+    6 * 1024 * 1024
+  ) {
+
+    throw new Error(
+      `"${file.name}" ultrapassa o limite de 6 MB.`
+    );
+
+  }
+
+
+  const allowed = [
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+  ];
+
+
+  if (
+    !allowed.includes(
+      file.type
+    )
+  ) {
+
+    throw new Error(
+      `"${file.name}" não é JPG, PNG ou WebP.`
+    );
+
+  }
+
+}
+
+
+function addSelectedImages(
+  files
+) {
+
+  const incoming =
+    Array.from(
+      files || []
+    );
+
+
+  if (
+    !incoming.length
+  ) {
+
+    return;
+
+  }
+
+
+  try {
+
+    incoming
+      .forEach(
+        validateImageFile
+      );
+
+
+    selectedProductImages =
+      [
+        ...selectedProductImages,
+        ...incoming
+      ];
+
+
+    renderImagePreview();
+
+
+  } catch (error) {
+
+    handleError(
+      error
+    );
+
+  }
+
+
+  const input =
+    $("#productImage");
+
+
+  if (input) {
+
+    /*
+      Limpamos o input para permitir
+      selecionar o mesmo arquivo novamente
+      caso ele tenha sido removido da prévia.
+    */
+    input.value =
+      "";
+
+  }
+
+}
+
+
+function removeNewSelectedImage(
+  index
+) {
+
+  const safeIndex =
+    Number(
+      index
+    );
+
+
+  if (
+    !Number.isInteger(
+      safeIndex
+    )
+    ||
+    safeIndex < 0
+    ||
+    safeIndex >=
+      selectedProductImages.length
+  ) {
+
+    return;
+
+  }
+
+
+  selectedProductImages
+    .splice(
+      safeIndex,
+      1
+    );
+
+
+  renderImagePreview();
+
+}
+
+
+/* =========================================
+   PRODUTO - RESET
+========================================= */
+
 function resetProductForm() {
 
   const form =
@@ -381,8 +864,7 @@ function resetProductForm() {
     "0";
 
 
-  $("#imagePreview").innerHTML =
-    "Sem imagem selecionada";
+  resetImageState();
 
 
   $("#productFormTitle").textContent =
@@ -394,6 +876,10 @@ function resetProductForm() {
 
 }
 
+
+/* =========================================
+   PRODUTOS - LISTAGEM
+========================================= */
 
 function renderProducts() {
 
@@ -652,7 +1138,113 @@ async function loadProducts() {
 }
 
 
-function editProduct(id) {
+/* =========================================
+   PRODUTOS - CARREGAR GALERIA
+========================================= */
+
+async function loadProductImages(
+  product
+) {
+
+  const {
+    data,
+    error
+  } =
+    await supabase
+
+      .from(
+        "product_images"
+      )
+
+      .select(
+        `
+        id,
+        product_id,
+        image_url,
+        image_path,
+        position,
+        created_at
+        `
+      )
+
+      .eq(
+        "product_id",
+        product.id
+      )
+
+      .order(
+        "position",
+        {
+          ascending: true
+        }
+      )
+
+      .order(
+        "created_at",
+        {
+          ascending: true
+        }
+      );
+
+
+  if (error) {
+    throw error;
+  }
+
+
+  existingProductImages =
+    data || [];
+
+
+  /*
+    Compatibilidade com produtos antigos.
+
+    Se o produto já existia antes da tabela
+    product_images e possui image_url,
+    mostramos essa imagem normalmente.
+  */
+  if (
+    !existingProductImages.length
+    &&
+    product.image_url
+  ) {
+
+    existingProductImages = [
+      {
+        id:
+          `legacy-${product.id}`,
+
+        product_id:
+          product.id,
+
+        image_url:
+          product.image_url,
+
+        image_path:
+          product.image_path ||
+          null,
+
+        position:
+          0,
+
+        legacy:
+          true
+      }
+    ];
+
+  }
+
+
+  renderImagePreview();
+
+}
+
+
+/* =========================================
+   PRODUTOS - EDITAR
+========================================= */
+
+async function editProduct(id) {
 
   const product =
     products
@@ -733,21 +1325,18 @@ function editProduct(id) {
     );
 
 
-  const preview =
-    product.image_url ||
-    BRAND_ICON;
+  selectedProductImages =
+    [];
 
 
-  $("#imagePreview").innerHTML = `
-    <img
-      src="${escapeHTML(preview)}"
-      alt="Prévia"
-      onerror="
-        this.onerror=null;
-        this.src='${BRAND_ICON}'
-      "
-    >
-  `;
+  clearSelectedPreviewUrls();
+
+
+  existingProductImages =
+    [];
+
+
+  renderImagePreview();
 
 
   $("#productFormTitle").textContent =
@@ -769,48 +1358,37 @@ function editProduct(id) {
       }
     );
 
+
+  try {
+
+    await loadProductImages(
+      product
+    );
+
+
+  } catch (error) {
+
+    handleError(
+      error
+    );
+
+  }
+
 }
 
 
+/* =========================================
+   STORAGE - UPLOAD
+========================================= */
+
 async function uploadImage(
-  file
+  file,
+  productId
 ) {
 
-  if (!file) {
-    return null;
-  }
-
-
-  if (
-    file.size >
-    6 * 1024 * 1024
-  ) {
-
-    throw new Error(
-      "A imagem deve ter no máximo 6 MB."
-    );
-
-  }
-
-
-  const allowed = [
-    "image/jpeg",
-    "image/png",
-    "image/webp"
-  ];
-
-
-  if (
-    !allowed.includes(
-      file.type
-    )
-  ) {
-
-    throw new Error(
-      "Use uma imagem JPG, PNG ou WebP."
-    );
-
-  }
+  validateImageFile(
+    file
+  );
 
 
   const ext =
@@ -822,8 +1400,12 @@ async function uploadImage(
     "jpg";
 
 
+  /*
+    Estrutura:
+    ID DO ADMIN / ID DO PRODUTO / FOTO
+  */
   const path =
-    `${adminSession.user.id}/${crypto.randomUUID()}.${ext}`;
+    `${adminSession.user.id}/${productId}/${crypto.randomUUID()}.${ext}`;
 
 
   const {
@@ -832,7 +1414,7 @@ async function uploadImage(
     await supabase.storage
 
       .from(
-        "product-images"
+        PRODUCT_IMAGES_BUCKET
       )
 
       .upload(
@@ -864,7 +1446,7 @@ async function uploadImage(
     supabase.storage
 
       .from(
-        "product-images"
+        PRODUCT_IMAGES_BUCKET
       )
 
       .getPublicUrl(
@@ -883,6 +1465,707 @@ async function uploadImage(
 
 }
 
+
+/* =========================================
+   GALERIA - REORDENAR POSIÇÕES
+========================================= */
+
+async function normalizeImagePositions(
+  productId
+) {
+
+  const {
+    data,
+    error
+  } =
+    await supabase
+
+      .from(
+        "product_images"
+      )
+
+      .select(
+        "id, position"
+      )
+
+      .eq(
+        "product_id",
+        productId
+      )
+
+      .order(
+        "position",
+        {
+          ascending: true
+        }
+      )
+
+      .order(
+        "created_at",
+        {
+          ascending: true
+        }
+      );
+
+
+  if (error) {
+    throw error;
+  }
+
+
+  const rows =
+    data || [];
+
+
+  for (
+    let index = 0;
+    index < rows.length;
+    index++
+  ) {
+
+    if (
+      Number(
+        rows[index].position
+      ) ===
+      index
+    ) {
+
+      continue;
+
+    }
+
+
+    const {
+      error:
+        updateError
+    } =
+      await supabase
+
+        .from(
+          "product_images"
+        )
+
+        .update(
+          {
+            position:
+              index
+          }
+        )
+
+        .eq(
+          "id",
+          rows[index].id
+        );
+
+
+    if (
+      updateError
+    ) {
+
+      throw updateError;
+
+    }
+
+  }
+
+}
+
+
+/* =========================================
+   GALERIA - SINCRONIZAR FOTO PRINCIPAL
+========================================= */
+
+async function syncProductMainImage(
+  productId
+) {
+
+  const {
+    data,
+    error
+  } =
+    await supabase
+
+      .from(
+        "product_images"
+      )
+
+      .select(
+        `
+        id,
+        image_url,
+        image_path,
+        position
+        `
+      )
+
+      .eq(
+        "product_id",
+        productId
+      )
+
+      .order(
+        "position",
+        {
+          ascending: true
+        }
+      )
+
+      .limit(1);
+
+
+  if (error) {
+    throw error;
+  }
+
+
+  const mainImage =
+    data?.[0] ||
+    null;
+
+
+  const {
+    error:
+      productError
+  } =
+    await supabase
+
+      .from(
+        "products"
+      )
+
+      .update(
+        {
+
+          image_url:
+            mainImage?.image_url ||
+            null,
+
+          image_path:
+            mainImage?.image_path ||
+            null
+
+        }
+      )
+
+      .eq(
+        "id",
+        productId
+      );
+
+
+  if (
+    productError
+  ) {
+
+    throw productError;
+
+  }
+
+}
+
+
+/* =========================================
+   GALERIA - MIGRAR IMAGEM ANTIGA
+========================================= */
+
+async function ensureLegacyImageInGallery(
+  product
+) {
+
+  if (
+    !product ||
+    !product.id ||
+    !product.image_url
+  ) {
+
+    return;
+
+  }
+
+
+  const {
+    data,
+    error
+  } =
+    await supabase
+
+      .from(
+        "product_images"
+      )
+
+      .select(
+        "id"
+      )
+
+      .eq(
+        "product_id",
+        product.id
+      )
+
+      .limit(1);
+
+
+  if (error) {
+    throw error;
+  }
+
+
+  if (
+    data?.length
+  ) {
+
+    return;
+
+  }
+
+
+  const {
+    error:
+      insertError
+  } =
+    await supabase
+
+      .from(
+        "product_images"
+      )
+
+      .insert(
+        {
+
+          product_id:
+            product.id,
+
+          image_url:
+            product.image_url,
+
+          image_path:
+            product.image_path ||
+            null,
+
+          position:
+            0
+
+        }
+      );
+
+
+  if (
+    insertError
+  ) {
+
+    throw insertError;
+
+  }
+
+}
+
+
+/* =========================================
+   GALERIA - EXCLUIR FOTO
+========================================= */
+
+async function removeExistingProductImage(
+  imageId
+) {
+
+  const productId =
+    $("#productId")
+      ?.value;
+
+
+  if (
+    !productId
+  ) {
+
+    return;
+
+  }
+
+
+  const image =
+    existingProductImages
+      .find(
+        item =>
+          String(
+            item.id
+          ) ===
+          String(
+            imageId
+          )
+      );
+
+
+  if (!image) {
+    return;
+  }
+
+
+  if (
+    !confirm(
+      "Excluir esta imagem do produto?"
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  try {
+
+    /*
+      Produto antigo que ainda não tinha
+      registro na tabela product_images.
+    */
+    if (
+      image.legacy
+    ) {
+
+      if (
+        image.image_path
+      ) {
+
+        const {
+          error:
+            storageError
+        } =
+          await supabase.storage
+
+            .from(
+              PRODUCT_IMAGES_BUCKET
+            )
+
+            .remove(
+              [
+                image.image_path
+              ]
+            );
+
+
+        if (
+          storageError
+        ) {
+
+          throw storageError;
+
+        }
+
+      }
+
+
+      const {
+        error:
+          productError
+      } =
+        await supabase
+
+          .from(
+            "products"
+          )
+
+          .update(
+            {
+
+              image_url:
+                null,
+
+              image_path:
+                null
+
+            }
+          )
+
+          .eq(
+            "id",
+            productId
+          );
+
+
+      if (
+        productError
+      ) {
+
+        throw productError;
+
+      }
+
+
+    } else {
+
+      const {
+        error:
+          deleteError
+      } =
+        await supabase
+
+          .from(
+            "product_images"
+          )
+
+          .delete()
+
+          .eq(
+            "id",
+            image.id
+          );
+
+
+      if (
+        deleteError
+      ) {
+
+        throw deleteError;
+
+      }
+
+
+      if (
+        image.image_path
+      ) {
+
+        const {
+          error:
+            storageError
+        } =
+          await supabase.storage
+
+            .from(
+              PRODUCT_IMAGES_BUCKET
+            )
+
+            .remove(
+              [
+                image.image_path
+              ]
+            );
+
+
+        if (
+          storageError
+        ) {
+
+          console.warn(
+            "Registro excluído, mas não foi possível remover o arquivo do Storage:",
+            storageError
+          );
+
+        }
+
+      }
+
+
+      await normalizeImagePositions(
+        productId
+      );
+
+
+      await syncProductMainImage(
+        productId
+      );
+
+    }
+
+
+    const product =
+      products
+        .find(
+          item =>
+            String(
+              item.id
+            ) ===
+            String(
+              productId
+            )
+        );
+
+
+    if (product) {
+
+      const {
+        data:
+          refreshedProduct
+      } =
+        await supabase
+
+          .from(
+            "products"
+          )
+
+          .select("*")
+
+          .eq(
+            "id",
+            productId
+          )
+
+          .single();
+
+
+      if (
+        refreshedProduct
+      ) {
+
+        Object.assign(
+          product,
+          refreshedProduct
+        );
+
+      }
+
+
+      await loadProductImages(
+        product
+      );
+
+    }
+
+
+    await loadProducts();
+
+
+    showToast(
+      "Imagem excluída.",
+      "success"
+    );
+
+
+  } catch (error) {
+
+    handleError(
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   GALERIA - SALVAR NOVAS IMAGENS
+========================================= */
+
+async function saveNewProductImages(
+  productId,
+  files,
+  startPosition = 0
+) {
+
+  const uploaded =
+    [];
+
+
+  try {
+
+    for (
+      let index = 0;
+      index < files.length;
+      index++
+    ) {
+
+      const file =
+        files[index];
+
+
+      const result =
+        await uploadImage(
+          file,
+          productId
+        );
+
+
+      uploaded.push(
+        result
+      );
+
+
+      const {
+        error
+      } =
+        await supabase
+
+          .from(
+            "product_images"
+          )
+
+          .insert(
+            {
+
+              product_id:
+                productId,
+
+              image_url:
+                result.url,
+
+              image_path:
+                result.path,
+
+              position:
+                startPosition +
+                index
+
+            }
+          );
+
+
+      if (error) {
+        throw error;
+      }
+
+    }
+
+
+    return uploaded;
+
+
+  } catch (error) {
+
+    /*
+      Se alguma coisa der errado no meio
+      do upload, tentamos remover os
+      arquivos que acabaram de ser enviados.
+    */
+    const paths =
+      uploaded
+        .map(
+          item =>
+            item.path
+        )
+        .filter(
+          Boolean
+        );
+
+
+    if (
+      paths.length
+    ) {
+
+      try {
+
+        await supabase.storage
+
+          .from(
+            PRODUCT_IMAGES_BUCKET
+          )
+
+          .remove(
+            paths
+          );
+
+      } catch {}
+
+    }
+
+
+    throw error;
+
+  }
+
+}
+
+
+/* =========================================
+   PRODUTO - EXCLUIR
+========================================= */
 
 async function deleteProduct(id) {
 
@@ -916,6 +2199,78 @@ async function deleteProduct(id) {
 
   try {
 
+    /*
+      Pegamos todas as imagens antes
+      de apagar o produto.
+
+      O ON DELETE CASCADE remove os
+      registros de product_images.
+    */
+    const {
+      data:
+        galleryImages,
+      error:
+        galleryError
+    } =
+      await supabase
+
+        .from(
+          "product_images"
+        )
+
+        .select(
+          "image_path"
+        )
+
+        .eq(
+          "product_id",
+          id
+        );
+
+
+    if (
+      galleryError
+    ) {
+
+      throw galleryError;
+
+    }
+
+
+    const paths =
+      (
+        galleryImages ||
+        []
+      )
+
+        .map(
+          image =>
+            image.image_path
+        )
+
+        .filter(
+          Boolean
+        );
+
+
+    /*
+      Compatibilidade com produto antigo
+      que ainda não está em product_images.
+    */
+    if (
+      product.image_path &&
+      !paths.includes(
+        product.image_path
+      )
+    ) {
+
+      paths.push(
+        product.image_path
+      );
+
+    }
+
+
     const {
       error
     } =
@@ -939,20 +2294,47 @@ async function deleteProduct(id) {
 
 
     if (
-      product.image_path
+      paths.length
     ) {
 
-      await supabase.storage
+      const {
+        error:
+          storageError
+      } =
+        await supabase.storage
 
-        .from(
-          "product-images"
-        )
+          .from(
+            PRODUCT_IMAGES_BUCKET
+          )
 
-        .remove(
-          [
-            product.image_path
-          ]
+          .remove(
+            paths
+          );
+
+
+      if (
+        storageError
+      ) {
+
+        console.warn(
+          "Produto excluído, mas alguns arquivos não puderam ser removidos:",
+          storageError
         );
+
+      }
+
+    }
+
+
+    if (
+      String(
+        $("#productId")
+          ?.value
+      ) ===
+      String(id)
+    ) {
+
+      resetProductForm();
 
     }
 
@@ -976,6 +2358,10 @@ async function deleteProduct(id) {
 
 }
 
+
+/* =========================================
+   PEDIDOS
+========================================= */
 
 function statusOptions(
   current
@@ -1449,6 +2835,10 @@ async function saveOrder(
 }
 
 
+/* =========================================
+   CLIENTES
+========================================= */
+
 async function loadCustomers() {
 
   const {
@@ -1605,6 +2995,10 @@ async function loadCustomers() {
 }
 
 
+/* =========================================
+   MÉTRICAS
+========================================= */
+
 async function loadMetrics() {
 
   await Promise.all(
@@ -1621,6 +3015,10 @@ async function loadMetrics() {
 
 }
 
+
+/* =========================================
+   ERROS
+========================================= */
 
 function handleError(
   error
@@ -1639,6 +3037,10 @@ function handleError(
 
 }
 
+
+/* =========================================
+   EVENTOS
+========================================= */
 
 function bindEvents() {
 
@@ -1686,33 +3088,68 @@ function bindEvents() {
     );
 
 
+  /*
+    Agora pegamos TODOS os arquivos,
+    e não apenas files[0].
+  */
   $("#productImage")
     ?.addEventListener(
       "change",
       event => {
 
-        const file =
+        addSelectedImages(
+          event.target.files
+        );
+
+      }
+    );
+
+
+  /*
+    Botões × das imagens.
+  */
+  $("#imagePreview")
+    ?.addEventListener(
+      "click",
+      event => {
+
+        const removeNew =
           event.target
-            .files?.[0];
+            .closest(
+              "[data-remove-new-image]"
+            );
 
 
-        if (!file) {
-          return;
-        }
+        if (removeNew) {
 
-
-        const url =
-          URL.createObjectURL(
-            file
+          removeNewSelectedImage(
+            removeNew.dataset
+              .removeNewImage
           );
 
 
-        $("#imagePreview").innerHTML = `
-          <img
-            src="${url}"
-            alt="Prévia"
-          >
-        `;
+          return;
+
+        }
+
+
+        const removeExisting =
+          event.target
+            .closest(
+              "[data-remove-existing-image]"
+            );
+
+
+        if (
+          removeExisting
+        ) {
+
+          removeExistingProductImage(
+            removeExisting.dataset
+              .removeExistingImage
+          );
+
+        }
 
       }
     );
@@ -1807,6 +3244,10 @@ function bindEvents() {
     );
 
 
+  /* =========================================
+     SALVAR PRODUTO
+  ========================================= */
+
   $("#productForm")
     ?.addEventListener(
       "submit",
@@ -1826,29 +3267,19 @@ function bindEvents() {
         );
 
 
-        let uploaded =
+        let createdProductId =
           null;
+
+
+        let newUploadedImages =
+          [];
 
 
         try {
 
           const id =
-            $("#productId").value;
-
-
-          const file =
-            $("#productImage")
-              .files?.[0];
-
-
-          if (file) {
-
-            uploaded =
-              await uploadImage(
-                file
-              );
-
-          }
+            $("#productId")
+              .value;
 
 
           const payload = {
@@ -1915,18 +3346,6 @@ function bindEvents() {
           };
 
 
-          if (uploaded) {
-
-            payload.image_url =
-              uploaded.url;
-
-
-            payload.image_path =
-              uploaded.path;
-
-          }
-
-
           if (
             payload.compare_at_price
             &&
@@ -1940,6 +3359,10 @@ function bindEvents() {
           }
 
 
+          /* =================================
+             EDITANDO PRODUTO
+          ================================= */
+
           if (id) {
 
             const oldProduct =
@@ -1948,10 +3371,30 @@ function bindEvents() {
                   item =>
                     String(
                       item.id
-                    )
-                    ===
+                    ) ===
                     String(id)
                 );
+
+
+            if (
+              !oldProduct
+            ) {
+
+              throw new Error(
+                "Produto não encontrado."
+              );
+
+            }
+
+
+            /*
+              Se for produto antigo, registramos
+              sua imagem atual na nova tabela
+              antes de adicionar outras.
+            */
+            await ensureLegacyImageInGallery(
+              oldProduct
+            );
 
 
             const {
@@ -1978,24 +3421,69 @@ function bindEvents() {
             }
 
 
-            if (
-              uploaded &&
-              oldProduct?.image_path
-            ) {
-
-              await supabase.storage
+            /*
+              Descobre quantas imagens já existem
+              para colocar as novas no final.
+            */
+            const {
+              count,
+              error:
+                countError
+            } =
+              await supabase
 
                 .from(
-                  "product-images"
+                  "product_images"
                 )
 
-                .remove(
-                  [
-                    oldProduct.image_path
-                  ]
+                .select(
+                  "id",
+                  {
+                    count:
+                      "exact",
+
+                    head:
+                      true
+                  }
+                )
+
+                .eq(
+                  "product_id",
+                  id
+                );
+
+
+            if (
+              countError
+            ) {
+
+              throw countError;
+
+            }
+
+
+            if (
+              selectedProductImages.length
+            ) {
+
+              newUploadedImages =
+                await saveNewProductImages(
+                  id,
+                  selectedProductImages,
+                  count || 0
                 );
 
             }
+
+
+            await normalizeImagePositions(
+              id
+            );
+
+
+            await syncProductMainImage(
+              id
+            );
 
 
             showToast(
@@ -2006,8 +3494,30 @@ function bindEvents() {
 
           } else {
 
+            /* =================================
+               NOVO PRODUTO
+            ================================= */
+
+            if (
+              !selectedProductImages.length
+            ) {
+
+              throw new Error(
+                "Selecione pelo menos uma imagem para o produto."
+              );
+
+            }
+
+
+            /*
+              Primeiro criamos o produto
+              para receber seu UUID.
+            */
             const {
-              error
+              data:
+                createdProduct,
+              error:
+                insertError
             } =
               await supabase
 
@@ -2017,12 +3527,46 @@ function bindEvents() {
 
                 .insert(
                   payload
-                );
+                )
+
+                .select("*")
+
+                .single();
 
 
-            if (error) {
-              throw error;
+            if (
+              insertError
+            ) {
+
+              throw insertError;
+
             }
+
+
+            createdProductId =
+              createdProduct.id;
+
+
+            /*
+              Agora enviamos todas as imagens
+              usando o UUID do produto.
+            */
+            newUploadedImages =
+              await saveNewProductImages(
+                createdProduct.id,
+                selectedProductImages,
+                0
+              );
+
+
+            /*
+              A posição 0 vira image_url/image_path
+              no products para o catálogo antigo
+              continuar funcionando normalmente.
+            */
+            await syncProductMainImage(
+              createdProduct.id
+            );
 
 
             showToast(
@@ -2041,26 +3585,72 @@ function bindEvents() {
 
         } catch (error) {
 
+          /*
+            Se era um produto novo e houve erro
+            depois da criação, removemos o produto
+            incompleto. O cascade também limpa
+            product_images.
+          */
           if (
-            uploaded?.path
+            createdProductId
           ) {
 
             try {
 
-              await supabase.storage
+              const paths =
+                newUploadedImages
+
+                  .map(
+                    image =>
+                      image.path
+                  )
+
+                  .filter(
+                    Boolean
+                  );
+
+
+              if (
+                paths.length
+              ) {
+
+                await supabase.storage
+
+                  .from(
+                    PRODUCT_IMAGES_BUCKET
+                  )
+
+                  .remove(
+                    paths
+                  );
+
+              }
+
+
+              await supabase
 
                 .from(
-                  "product-images"
+                  "products"
                 )
 
-                .remove(
-                  [
-                    uploaded.path
-                  ]
+                .delete()
+
+                .eq(
+                  "id",
+                  createdProductId
                 );
 
 
-            } catch {}
+            } catch (
+              cleanupError
+            ) {
+
+              console.error(
+                "Erro ao limpar cadastro incompleto:",
+                cleanupError
+              );
+
+            }
 
           }
 
@@ -2084,6 +3674,10 @@ function bindEvents() {
 
 }
 
+
+/* =========================================
+   INICIALIZAÇÃO
+========================================= */
 
 async function init() {
 
@@ -2125,6 +3719,9 @@ async function init() {
   bindEvents();
 
 
+  resetImageState();
+
+
   try {
 
     await loadMetrics();
@@ -2140,6 +3737,10 @@ async function init() {
 
 }
 
+
+/* =========================================
+   ALTERAÇÃO DA SESSÃO
+========================================= */
 
 if (
   isConfigured &&
