@@ -22,6 +22,21 @@ let cart =
   loadCart();
 
 
+/*
+  CONTROLE DO SWIPE MOBILE
+*/
+
+let touchStartX = 0;
+
+let touchStartY = 0;
+
+let touchCurrentX = 0;
+
+let touchMoved = false;
+
+let swipeHandled = false;
+
+
 /* =========================
    ELEMENTO
 ========================= */
@@ -250,12 +265,6 @@ async function loadProductImages(
         : [];
 
 
-    /*
-      Se existem imagens na nova
-      tabela, elas passam a ser
-      utilizadas pela galeria.
-    */
-
     if (galleryImages.length) {
 
       productImages =
@@ -268,15 +277,6 @@ async function loadProductImages(
 
   } catch (error) {
 
-    /*
-      Não derrubamos a página se
-      ocorrer algum problema apenas
-      na galeria.
-
-      A imagem antiga do produto
-      continua funcionando.
-    */
-
     console.error(
       "Erro ao carregar galeria:",
       error
@@ -287,11 +287,6 @@ async function loadProductImages(
 
   /*
     FALLBACK PARA PRODUTOS ANTIGOS
-
-    Produtos cadastrados antes da
-    criação da tabela product_images
-    continuam mostrando normalmente
-    products.image_url.
   */
 
   if (product?.image_url) {
@@ -363,57 +358,27 @@ function getMainImage() {
 
 
 /* =========================
-   TROCAR IMAGEM
+   ATUALIZAR INDICADORES
 ========================= */
 
-function selectProductImage(index) {
-
-  const parsedIndex =
-    Number(index);
-
-
-  if (
-    !Number.isInteger(
-      parsedIndex
-    ) ||
-    parsedIndex < 0 ||
-    parsedIndex >=
-      productImages.length
-  ) {
-    return;
-  }
-
-
-  currentImageIndex =
-    parsedIndex;
-
-
-  const image =
-    element(
-      "mainProductImage"
-    );
-
-
-  if (image) {
-
-    image.src =
-      getMainImage();
-
-  }
-
+function updateGalleryIndicators() {
 
   document
     .querySelectorAll(
       ".product-thumbnail"
     )
     .forEach(
-      (
-        thumbnail,
-        thumbnailIndex
-      ) => {
+      thumbnail => {
+
+        const index =
+          Number(
+            thumbnail.dataset
+              .productImage
+          );
+
 
         const active =
-          thumbnailIndex ===
+          index ===
           currentImageIndex;
 
 
@@ -435,6 +400,182 @@ function selectProductImage(index) {
       }
     );
 
+
+  document
+    .querySelectorAll(
+      ".mobile-gallery-dot"
+    )
+    .forEach(
+      dot => {
+
+        const index =
+          Number(
+            dot.dataset
+              .galleryDot
+          );
+
+
+        dot
+          .classList
+          .toggle(
+            "active",
+            index ===
+              currentImageIndex
+          );
+
+      }
+    );
+
+}
+
+
+/* =========================
+   TROCAR IMAGEM
+========================= */
+
+function selectProductImage(
+  index,
+  animate = true
+) {
+
+  const parsedIndex =
+    Number(index);
+
+
+  if (
+    !Number.isInteger(
+      parsedIndex
+    ) ||
+    parsedIndex < 0 ||
+    parsedIndex >=
+      productImages.length
+  ) {
+    return;
+  }
+
+
+  if (
+    parsedIndex ===
+    currentImageIndex
+  ) {
+
+    updateGalleryIndicators();
+
+    return;
+
+  }
+
+
+  currentImageIndex =
+    parsedIndex;
+
+
+  const image =
+    element(
+      "mainProductImage"
+    );
+
+
+  if (image) {
+
+    if (animate) {
+
+      image.classList.add(
+        "image-changing"
+      );
+
+    }
+
+
+    image.src =
+      getMainImage();
+
+
+    image.alt =
+      `${
+        product?.name ||
+        "Produto"
+      } - imagem ${
+        currentImageIndex + 1
+      }`;
+
+
+    if (animate) {
+
+      window.setTimeout(
+        () => {
+
+          image.classList.remove(
+            "image-changing"
+          );
+
+        },
+        150
+      );
+
+    }
+
+  }
+
+
+  updateGalleryIndicators();
+
+}
+
+
+/* =========================
+   PRÓXIMA IMAGEM
+========================= */
+
+function nextProductImage() {
+
+  if (
+    productImages.length <= 1
+  ) {
+    return;
+  }
+
+
+  const nextIndex =
+    (
+      currentImageIndex + 1
+    ) %
+    productImages.length;
+
+
+  selectProductImage(
+    nextIndex
+  );
+
+}
+
+
+/* =========================
+   IMAGEM ANTERIOR
+========================= */
+
+function previousProductImage() {
+
+  if (
+    productImages.length <= 1
+  ) {
+    return;
+  }
+
+
+  const previousIndex =
+    (
+      currentImageIndex -
+      1 +
+      productImages.length
+    ) %
+    productImages.length;
+
+
+  selectProductImage(
+    previousIndex
+  );
+
 }
 
 
@@ -443,12 +584,6 @@ function selectProductImage(index) {
 ========================= */
 
 function renderProductThumbnails() {
-
-  /*
-    Com apenas uma imagem não há
-    necessidade de mostrar uma
-    miniatura embaixo dela.
-  */
 
   if (
     productImages.length <= 1
@@ -527,6 +662,57 @@ function renderProductThumbnails() {
               `;
 
             }
+          )
+
+          .join("")
+      }
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================
+   BOLINHAS MOBILE
+========================= */
+
+function renderMobileGalleryDots() {
+
+  if (
+    productImages.length <= 1
+  ) {
+    return "";
+  }
+
+
+  return `
+
+    <div
+      class="mobile-gallery-dots"
+      aria-hidden="true"
+    >
+
+      ${
+        productImages
+
+          .map(
+            (
+              _,
+              index
+            ) => `
+
+              <span
+                class="mobile-gallery-dot ${
+                  index === 0
+                    ? "active"
+                    : ""
+                }"
+                data-gallery-dot="${index}"
+              ></span>
+
+            `
           )
 
           .join("")
@@ -637,21 +823,10 @@ async function loadProduct() {
       data;
 
 
-    /*
-      Depois de encontrar o produto,
-      buscamos todas as imagens dele.
-    */
-
     await loadProductImages(
       product.id
     );
 
-
-    /*
-      Só renderizamos depois que
-      produto + imagens estiverem
-      carregados.
-    */
 
     renderProduct();
 
@@ -785,9 +960,7 @@ function renderProduct() {
 
     <div class="product-layout">
 
-      <!-- =========================
-           GALERIA
-      ========================== -->
+      <!-- GALERIA -->
 
       <section class="gallery">
 
@@ -808,6 +981,7 @@ function renderProduct() {
                 "Produto"
               )
             }"
+            draggable="false"
             onerror="
               this.onerror=null;
               this.src='${BRAND_ICON}'
@@ -820,11 +994,14 @@ function renderProduct() {
         ${renderProductThumbnails()}
 
 
+        ${renderMobileGalleryDots()}
+
+
         <div class="image-tip">
 
           ${
             productImages.length > 1
-              ? "Selecione uma imagem ou toque na foto para ampliar"
+              ? "Passe pelas imagens no computador ou deslize no celular"
               : "Toque na imagem para ampliar"
           }
 
@@ -833,9 +1010,7 @@ function renderProduct() {
       </section>
 
 
-      <!-- =========================
-           DETALHES
-      ========================== -->
+      <!-- DETALHES -->
 
       <section class="details">
 
@@ -859,8 +1034,6 @@ function renderProduct() {
         </h1>
 
 
-        <!-- ESTOQUE -->
-
         <span
           class="stock ${stockClass}"
         >
@@ -874,8 +1047,6 @@ function renderProduct() {
 
         </span>
 
-
-        <!-- PREÇO -->
 
         <div class="price-box">
 
@@ -902,10 +1073,7 @@ function renderProduct() {
         </div>
 
 
-        <!-- INFORMAÇÕES DA COMPRA -->
-
         <div class="purchase-info">
-
 
           <div class="purchase-info-item">
 
@@ -915,7 +1083,6 @@ function renderProduct() {
             >
               📍
             </div>
-
 
             <div class="purchase-info-text">
 
@@ -942,7 +1109,6 @@ function renderProduct() {
               💬
             </div>
 
-
             <div class="purchase-info-text">
 
               <strong>
@@ -968,7 +1134,6 @@ function renderProduct() {
               🛒
             </div>
 
-
             <div class="purchase-info-text">
 
               <strong>
@@ -984,11 +1149,8 @@ function renderProduct() {
 
           </div>
 
-
         </div>
 
-
-        <!-- BOTÕES -->
 
         <div class="actions">
 
@@ -1034,14 +1196,11 @@ function renderProduct() {
         </div>
 
 
-        <!-- DESCRIÇÃO -->
-
         <div class="description">
 
           <h2>
             Descrição do produto
           </h2>
-
 
           <p>
             ${
@@ -1220,7 +1379,6 @@ async function loadRelatedProducts() {
                 }"
               >
 
-
                 <div class="related-image">
 
                   <img
@@ -1238,7 +1396,6 @@ async function loadRelatedProducts() {
                     "
                   >
 
-
                   ${
                     relatedProduct.is_new
                       ? `
@@ -1254,33 +1411,27 @@ async function loadRelatedProducts() {
 
                 <div class="related-info">
 
-
                   <span class="related-category">
-
                     ${
                       escapeHTML(
                         relatedProduct.category ||
                         "Produtos"
                       )
                     }
-
                   </span>
 
 
                   <h3 class="related-name">
-
                     ${
                       escapeHTML(
                         relatedProduct.name ||
                         "Produto"
                       )
                     }
-
                   </h3>
 
 
                   <span class="related-old-price">
-
                     ${
                       hasCompare
                         ? formatBRL(
@@ -1288,31 +1439,25 @@ async function loadRelatedProducts() {
                           )
                         : "&nbsp;"
                     }
-
                   </span>
 
 
                   <strong class="related-price">
-
                     ${
                       formatBRL(
                         price
                       )
                     }
-
                   </strong>
 
 
                   <span class="related-stock">
-
                     ${
                       stock > 0
                         ? `${stock} em estoque`
                         : "Indisponível"
                     }
-
                   </span>
-
 
                 </div>
 
@@ -1503,36 +1648,29 @@ function animateCartButton() {
 
   button.animate(
     [
-
       {
         transform:
           "scale(1)"
       },
-
       {
         transform:
           "scale(1.12)"
       },
-
       {
         transform:
           "scale(.96)"
       },
-
       {
         transform:
           "scale(1)"
       }
-
     ],
-
     {
       duration: 350,
 
       easing:
         "ease-out"
     }
-
   );
 
 }
@@ -1639,18 +1777,12 @@ async function renderCartProducts() {
 
     const ids =
       [
-
         ...new Set(
-
           cart.map(
-
             item =>
               item.product_id
-
           )
-
         )
-
       ];
 
 
@@ -1739,7 +1871,6 @@ async function renderCartProducts() {
 
               <div class="cart-item">
 
-
                 <img
                   src="${
                     escapeHTML(
@@ -1747,14 +1878,12 @@ async function renderCartProducts() {
                       BRAND_ICON
                     )
                   }"
-
                   alt="${
                     escapeHTML(
                       cartProduct.name ||
                       "Produto"
                     )
                   }"
-
                   onerror="
                     this.onerror=null;
                     this.src='${BRAND_ICON}'
@@ -1764,16 +1893,13 @@ async function renderCartProducts() {
 
                 <div class="cart-item-info">
 
-
                   <strong>
-
                     ${
                       escapeHTML(
                         cartProduct.name ||
                         "Produto"
                       )
                     }
-
                   </strong>
 
 
@@ -1789,25 +1915,19 @@ async function renderCartProducts() {
 
                   </span>
 
-
                 </div>
 
 
                 <button
                   class="cart-item-remove"
                   type="button"
-
                   data-remove="${
                     cartProduct.id
                   }"
-
                   aria-label="Remover produto"
                 >
-
                   ×
-
                 </button>
-
 
               </div>
 
@@ -1951,11 +2071,6 @@ function openImage() {
   }
 
 
-  /*
-    Abre exatamente a imagem
-    que estiver selecionada.
-  */
-
   expanded.src =
     image.src;
 
@@ -1990,6 +2105,157 @@ function closeImage() {
 
 
 /* =========================
+   SWIPE MOBILE
+========================= */
+
+function handleTouchStart(event) {
+
+  if (
+    productImages.length <= 1
+  ) {
+    return;
+  }
+
+
+  const touch =
+    event.touches?.[0];
+
+
+  if (!touch) {
+    return;
+  }
+
+
+  touchStartX =
+    touch.clientX;
+
+
+  touchStartY =
+    touch.clientY;
+
+
+  touchCurrentX =
+    touch.clientX;
+
+
+  touchMoved =
+    false;
+
+
+  swipeHandled =
+    false;
+
+}
+
+
+function handleTouchMove(event) {
+
+  if (
+    productImages.length <= 1
+  ) {
+    return;
+  }
+
+
+  const touch =
+    event.touches?.[0];
+
+
+  if (!touch) {
+    return;
+  }
+
+
+  touchCurrentX =
+    touch.clientX;
+
+
+  const distanceX =
+    touchCurrentX -
+    touchStartX;
+
+
+  const distanceY =
+    touch.clientY -
+    touchStartY;
+
+
+  /*
+    Só consideramos swipe quando
+    o movimento horizontal é maior
+    que o vertical.
+
+    Assim a página continua rolando
+    normalmente para cima e para baixo.
+  */
+
+  if (
+    Math.abs(distanceX) >
+      Math.abs(distanceY) &&
+    Math.abs(distanceX) > 10
+  ) {
+
+    touchMoved =
+      true;
+
+  }
+
+}
+
+
+function handleTouchEnd() {
+
+  if (
+    productImages.length <= 1
+  ) {
+    return;
+  }
+
+
+  const distance =
+    touchCurrentX -
+    touchStartX;
+
+
+  const minimumSwipe =
+    45;
+
+
+  if (
+    touchMoved &&
+    Math.abs(distance) >=
+      minimumSwipe
+  ) {
+
+    swipeHandled =
+      true;
+
+
+    if (distance < 0) {
+
+      nextProductImage();
+
+    } else {
+
+      previousProductImage();
+
+    }
+
+  }
+
+
+  touchStartX = 0;
+
+  touchStartY = 0;
+
+  touchCurrentX = 0;
+
+  touchMoved = false;
+
+}
+
+
+/* =========================
    EVENTOS DO PRODUTO
 ========================= */
 
@@ -2011,9 +2277,20 @@ function bindProductEvents() {
 
   /*
     MINIATURAS
+
+    Clique funciona normalmente.
+
+    Mouseenter faz a troca automática
+    no computador.
   */
 
-  element("productThumbnails")
+  const thumbnails =
+    element(
+      "productThumbnails"
+    );
+
+
+  thumbnails
     ?.addEventListener(
 
       "click",
@@ -2044,8 +2321,45 @@ function bindProductEvents() {
 
 
   /*
-    ZOOM DA IMAGEM PRINCIPAL
+    HOVER SOMENTE EM DISPOSITIVOS
+    QUE REALMENTE POSSUEM MOUSE.
   */
+
+  if (
+    window.matchMedia(
+      "(hover: hover) and (pointer: fine)"
+    ).matches
+  ) {
+
+    thumbnails
+      ?.querySelectorAll(
+        "[data-product-image]"
+      )
+      .forEach(
+        button => {
+
+          button.addEventListener(
+
+            "mouseenter",
+
+            () => {
+
+              selectProductImage(
+                Number(
+                  button.dataset
+                    .productImage
+                )
+              );
+
+            }
+
+          );
+
+        }
+      );
+
+  }
+
 
   const mainImage =
     element(
@@ -2053,12 +2367,79 @@ function bindProductEvents() {
     );
 
 
+  /*
+    SWIPE MOBILE
+  */
+
   mainImage
     ?.addEventListener(
-      "click",
-      openImage
+      "touchstart",
+      handleTouchStart,
+      {
+        passive: true
+      }
     );
 
+
+  mainImage
+    ?.addEventListener(
+      "touchmove",
+      handleTouchMove,
+      {
+        passive: true
+      }
+    );
+
+
+  mainImage
+    ?.addEventListener(
+      "touchend",
+      handleTouchEnd,
+      {
+        passive: true
+      }
+    );
+
+
+  /*
+    CLIQUE = ZOOM
+
+    Se o usuário acabou de fazer
+    swipe, o clique gerado pelo toque
+    é ignorado.
+  */
+
+  mainImage
+    ?.addEventListener(
+
+      "click",
+
+      event => {
+
+        if (swipeHandled) {
+
+          event.preventDefault();
+
+
+          swipeHandled =
+            false;
+
+
+          return;
+
+        }
+
+
+        openImage();
+
+      }
+
+    );
+
+
+  /*
+    ACESSIBILIDADE NO PC
+  */
 
   mainImage
     ?.addEventListener(
