@@ -2090,15 +2090,6 @@ init()
    EVENTOS GERAIS
 ========================================================= */
 
-function bindEvents() {
-
-  bindCartEvents();
-
-  bindProductEvents();
-
-  bindCatalogEvents();
-
-}
 
 
 /* =========================================================
