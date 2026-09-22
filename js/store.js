@@ -2096,49 +2096,6 @@ init()
    ESTADO INICIAL DO CARRINHO
 ========================================================= */
 
-function renderInitialCartCount() {
-
-  const count =
-    element(
-      "cartCount"
-    );
-
-
-  if (!count) {
-
-    return;
-
-  }
-
-
-  const quantity =
-    state.cart.reduce(
-      (
-        total,
-        item
-      ) => {
-
-        return (
-          total +
-          Math.max(
-            0,
-            Number(
-              item.quantity
-            ) || 0
-          )
-        );
-
-      },
-      0
-    );
-
-
-  count.textContent =
-    String(
-      quantity
-    );
-
-}
 
 
 /* =========================================================
