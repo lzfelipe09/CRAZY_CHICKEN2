@@ -4,13 +4,19 @@ import {
 } from "/js/supabaseClient.js";
 
 
-const CART_KEY =
-  "crazy_chicken_cart_v4";
+/* =========================================================
+   CONFIGURAÇÕES
+========================================================= */
 
+const CART_KEY = "crazy_chicken_cart_v4";
 
 const BRAND_ICON =
   "/assets/crazy-chicken-icon.png";
 
+
+/* =========================================================
+   ESTADO
+========================================================= */
 
 let product = null;
 
@@ -18,13 +24,14 @@ let productImages = [];
 
 let currentImageIndex = 0;
 
-let cart =
-  loadCart();
+let selectedQuantity = 1;
+
+let cart = loadCart();
 
 
-/*
-  CONTROLE DO SWIPE MOBILE
-*/
+/* =========================================================
+   CONTROLE DO SWIPE MOBILE
+========================================================= */
 
 let touchStartX = 0;
 
@@ -37,21 +44,16 @@ let touchMoved = false;
 let swipeHandled = false;
 
 
-/* =========================
-   ELEMENTO
-========================= */
+/* =========================================================
+   HELPERS
+========================================================= */
 
 function element(id) {
 
-  return document
-    .getElementById(id);
+  return document.getElementById(id);
 
 }
 
-
-/* =========================
-   SEGURANÇA HTML
-========================= */
 
 function escapeHTML(value) {
 
@@ -64,10 +66,6 @@ function escapeHTML(value) {
 
 }
 
-
-/* =========================
-   FORMATAR PREÇO
-========================= */
 
 function formatBRL(value) {
 
@@ -84,20 +82,17 @@ function formatBRL(value) {
 }
 
 
-/* =========================
-   CARREGAR CARRINHO
-========================= */
+/* =========================================================
+   CARRINHO - LOCAL STORAGE
+========================================================= */
 
 function loadCart() {
 
   try {
 
-    const parsed =
-      JSON.parse(
-        localStorage.getItem(
-          CART_KEY
-        ) || "[]"
-      );
+    const parsed = JSON.parse(
+      localStorage.getItem(CART_KEY) || "[]"
+    );
 
 
     return Array.isArray(parsed)
@@ -105,7 +100,13 @@ function loadCart() {
       : [];
 
 
-  } catch {
+  } catch (error) {
+
+    console.error(
+      "Erro ao carregar carrinho:",
+      error
+    );
+
 
     return [];
 
@@ -114,10 +115,6 @@ function loadCart() {
 }
 
 
-/* =========================
-   SALVAR CARRINHO
-========================= */
-
 function saveCart() {
 
   localStorage.setItem(
@@ -125,58 +122,109 @@ function saveCart() {
     JSON.stringify(cart)
   );
 
+
   renderCart();
 
 }
 
 
-/* =========================
+/* =========================================================
    TOAST
-========================= */
+========================================================= */
 
 function showToast(message) {
 
-  const toast =
-    element("toast");
+  let toast = element("toast");
 
 
-  if (!toast) {
-    return;
-  }
+  /*
+    Caso o HTML já tenha o toast,
+    utilizamos o existente.
+  */
+
+  if (toast) {
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
 
 
-  toast.textContent =
-    message;
+    clearTimeout(
+      showToast.timer
+    );
 
 
-  toast.classList.add(
-    "show"
-  );
-
-
-  clearTimeout(
-    showToast.timer
-  );
-
-
-  showToast.timer =
-    setTimeout(
+    showToast.timer = setTimeout(
       () => {
 
-        toast.classList.remove(
-          "show"
-        );
+        toast.classList.remove("show");
 
       },
       2200
     );
 
+
+    return;
+
+  }
+
+
+  /*
+    Fallback caso o elemento não exista.
+  */
+
+  toast = document.createElement("div");
+
+  toast.id = "dynamicProductToast";
+
+  toast.textContent = message;
+
+
+  Object.assign(
+    toast.style,
+    {
+      position: "fixed",
+      left: "50%",
+      bottom: "28px",
+      transform: "translateX(-50%)",
+      zIndex: "999999",
+      background: "#171717",
+      color: "#fff",
+      border: "1px solid #333",
+      borderRadius: "12px",
+      padding: "12px 18px",
+      fontSize: "13px",
+      fontWeight: "700",
+      boxShadow: "0 12px 35px rgba(0,0,0,.35)",
+      maxWidth: "calc(100vw - 32px)",
+      textAlign: "center"
+    }
+  );
+
+
+  document.body.appendChild(toast);
+
+
+  clearTimeout(
+    showToast.dynamicTimer
+  );
+
+
+  showToast.dynamicTimer = setTimeout(
+    () => {
+
+      toast.remove();
+
+    },
+    2200
+  );
+
 }
 
 
-/* =========================
+/* =========================================================
    ID DO PRODUTO
-========================= */
+========================================================= */
 
 function getProductId() {
 
@@ -191,13 +239,11 @@ function getProductId() {
 }
 
 
-/* =========================
-   CARREGAR IMAGENS
-========================= */
+/* =========================================================
+   GALERIA - CARREGAR IMAGENS
+========================================================= */
 
-async function loadProductImages(
-  productId
-) {
+async function loadProductImages(productId) {
 
   productImages = [];
 
@@ -208,7 +254,9 @@ async function loadProductImages(
     !supabase ||
     !productId
   ) {
+
     return;
+
   }
 
 
@@ -217,51 +265,54 @@ async function loadProductImages(
     const {
       data,
       error
-    } =
-      await supabase
+    } = await supabase
 
-        .from("product_images")
+      .from("product_images")
 
-        .select(`
-          id,
-          product_id,
-          image_url,
-          image_path,
-          position,
-          created_at
-        `)
+      .select(`
+        id,
+        product_id,
+        image_url,
+        image_path,
+        position,
+        created_at
+      `)
 
-        .eq(
-          "product_id",
-          productId
-        )
+      .eq(
+        "product_id",
+        productId
+      )
 
-        .order(
-          "position",
-          {
-            ascending: true
-          }
-        )
+      .order(
+        "position",
+        {
+          ascending: true
+        }
+      )
 
-        .order(
-          "created_at",
-          {
-            ascending: true
-          }
-        );
+      .order(
+        "created_at",
+        {
+          ascending: true
+        }
+      );
 
 
     if (error) {
+
       throw error;
+
     }
 
 
     const galleryImages =
       Array.isArray(data)
+
         ? data.filter(
             image =>
               image?.image_url
           )
+
         : [];
 
 
@@ -269,6 +320,7 @@ async function loadProductImages(
 
       productImages =
         galleryImages;
+
 
       return;
 
@@ -286,15 +338,16 @@ async function loadProductImages(
 
 
   /*
-    FALLBACK PARA PRODUTOS ANTIGOS
+    FALLBACK PARA PRODUTOS
+    QUE POSSUEM SOMENTE image_url
   */
 
   if (product?.image_url) {
 
     productImages = [
+
       {
-        id:
-          "legacy-main-image",
+        id: "legacy-main-image",
 
         product_id:
           product.id,
@@ -305,17 +358,18 @@ async function loadProductImages(
         image_path:
           product.image_path || null,
 
-        position:
-          0
+        position: 0
       }
+
     ];
+
 
   } else {
 
     productImages = [
+
       {
-        id:
-          "brand-fallback",
+        id: "brand-fallback",
 
         product_id:
           product?.id || null,
@@ -326,9 +380,9 @@ async function loadProductImages(
         image_path:
           null,
 
-        position:
-          0
+        position: 0
       }
+
     ];
 
   }
@@ -336,9 +390,9 @@ async function loadProductImages(
 }
 
 
-/* =========================
-   IMAGEM PRINCIPAL
-========================= */
+/* =========================================================
+   GALERIA - IMAGEM PRINCIPAL
+========================================================= */
 
 function getMainImage() {
 
@@ -357,9 +411,9 @@ function getMainImage() {
 }
 
 
-/* =========================
-   ATUALIZAR INDICADORES
-========================= */
+/* =========================================================
+   GALERIA - INDICADORES
+========================================================= */
 
 function updateGalleryIndicators() {
 
@@ -372,22 +426,18 @@ function updateGalleryIndicators() {
 
         const index =
           Number(
-            thumbnail.dataset
-              .productImage
+            thumbnail.dataset.productImage
           );
 
 
         const active =
-          index ===
-          currentImageIndex;
+          index === currentImageIndex;
 
 
-        thumbnail
-          .classList
-          .toggle(
-            "active",
-            active
-          );
+        thumbnail.classList.toggle(
+          "active",
+          active
+        );
 
 
         thumbnail.setAttribute(
@@ -410,18 +460,14 @@ function updateGalleryIndicators() {
 
         const index =
           Number(
-            dot.dataset
-              .galleryDot
+            dot.dataset.galleryDot
           );
 
 
-        dot
-          .classList
-          .toggle(
-            "active",
-            index ===
-              currentImageIndex
-          );
+        dot.classList.toggle(
+          "active",
+          index === currentImageIndex
+        );
 
       }
     );
@@ -429,9 +475,9 @@ function updateGalleryIndicators() {
 }
 
 
-/* =========================
-   TROCAR IMAGEM
-========================= */
+/* =========================================================
+   GALERIA - TROCAR IMAGEM
+========================================================= */
 
 function selectProductImage(
   index,
@@ -443,20 +489,18 @@ function selectProductImage(
 
 
   if (
-    !Number.isInteger(
-      parsedIndex
-    ) ||
+    !Number.isInteger(parsedIndex) ||
     parsedIndex < 0 ||
-    parsedIndex >=
-      productImages.length
+    parsedIndex >= productImages.length
   ) {
+
     return;
+
   }
 
 
   if (
-    parsedIndex ===
-    currentImageIndex
+    parsedIndex === currentImageIndex
   ) {
 
     updateGalleryIndicators();
@@ -471,9 +515,7 @@ function selectProductImage(
 
 
   const image =
-    element(
-      "mainProductImage"
-    );
+    element("mainProductImage");
 
 
   if (image) {
@@ -523,16 +565,18 @@ function selectProductImage(
 }
 
 
-/* =========================
-   PRÓXIMA IMAGEM
-========================= */
+/* =========================================================
+   GALERIA - PRÓXIMA
+========================================================= */
 
 function nextProductImage() {
 
   if (
     productImages.length <= 1
   ) {
+
     return;
+
   }
 
 
@@ -550,16 +594,18 @@ function nextProductImage() {
 }
 
 
-/* =========================
-   IMAGEM ANTERIOR
-========================= */
+/* =========================================================
+   GALERIA - ANTERIOR
+========================================================= */
 
 function previousProductImage() {
 
   if (
     productImages.length <= 1
   ) {
+
     return;
+
   }
 
 
@@ -579,16 +625,18 @@ function previousProductImage() {
 }
 
 
-/* =========================
-   HTML DAS MINIATURAS
-========================= */
+/* =========================================================
+   MINIATURAS DESKTOP
+========================================================= */
 
 function renderProductThumbnails() {
 
   if (
     productImages.length <= 1
   ) {
+
     return "";
+
   }
 
 
@@ -674,16 +722,18 @@ function renderProductThumbnails() {
 }
 
 
-/* =========================
+/* =========================================================
    BOLINHAS MOBILE
-========================= */
+========================================================= */
 
 function renderMobileGalleryDots() {
 
   if (
     productImages.length <= 1
   ) {
+
     return "";
+
   }
 
 
@@ -725,14 +775,21 @@ function renderMobileGalleryDots() {
 }
 
 
-/* =========================
+/* =========================================================
    CARREGAR PRODUTO
-========================= */
+========================================================= */
 
 async function loadProduct() {
 
   const root =
     element("productRoot");
+
+
+  if (!root) {
+
+    return;
+
+  }
 
 
   const productId =
@@ -742,10 +799,15 @@ async function loadProduct() {
   if (!productId) {
 
     root.innerHTML = `
+
       <div class="error-box">
+
         Produto não encontrado.
+
       </div>
+
     `;
+
 
     return;
 
@@ -758,10 +820,15 @@ async function loadProduct() {
   ) {
 
     root.innerHTML = `
+
       <div class="error-box">
+
         Não foi possível conectar à loja.
+
       </div>
+
     `;
+
 
     return;
 
@@ -773,54 +840,61 @@ async function loadProduct() {
     const {
       data,
       error
-    } =
-      await supabase
+    } = await supabase
 
-        .from("products")
+      .from("products")
 
-        .select(`
-          id,
-          sku,
-          name,
-          description,
-          category,
-          price,
-          compare_at_price,
-          stock,
-          image_url,
-          image_path,
-          is_new,
-          featured,
-          active
-        `)
+      .select(`
+        id,
+        sku,
+        name,
+        description,
+        category,
+        price,
+        compare_at_price,
+        stock,
+        image_url,
+        image_path,
+        is_new,
+        featured,
+        active
+      `)
 
-        .eq(
-          "id",
-          productId
-        )
+      .eq(
+        "id",
+        productId
+      )
 
-        .eq(
-          "active",
-          true
-        )
+      .eq(
+        "active",
+        true
+      )
 
-        .single();
+      .single();
 
 
     if (error) {
+
       throw error;
+
     }
 
 
     if (!data) {
+
       throw new Error(
         "Produto não encontrado."
       );
+
     }
 
 
     product =
       data;
+
+
+    selectedQuantity =
+      1;
 
 
     await loadProductImages(
@@ -843,7 +917,9 @@ async function loadProduct() {
 
 
     root.innerHTML = `
+
       <div class="error-box">
+
         <div>
 
           <strong>
@@ -856,7 +932,9 @@ async function loadProduct() {
           </p>
 
         </div>
+
       </div>
+
     `;
 
   }
@@ -864,9 +942,9 @@ async function loadProduct() {
 }
 
 
-/* =========================
+/* =========================================================
    RENDERIZAR PRODUTO
-========================= */
+========================================================= */
 
 function renderProduct() {
 
@@ -878,7 +956,9 @@ function renderProduct() {
     !root ||
     !product
   ) {
+
     return;
+
   }
 
 
@@ -890,8 +970,7 @@ function renderProduct() {
 
   const comparePrice =
     Number(
-      product.compare_at_price ||
-      0
+      product.compare_at_price || 0
     );
 
 
@@ -935,6 +1014,7 @@ function renderProduct() {
     stockText =
       `${stock} unidades disponíveis`;
 
+
   } else if (lowStock) {
 
     stockClass =
@@ -960,7 +1040,9 @@ function renderProduct() {
 
     <div class="product-layout">
 
-      <!-- GALERIA -->
+      <!-- =========================
+           GALERIA
+      ========================== -->
 
       <section class="gallery">
 
@@ -1001,7 +1083,9 @@ function renderProduct() {
 
           ${
             productImages.length > 1
+
               ? "Passe pelas imagens no computador ou deslize no celular"
+
               : "Toque na imagem para ampliar"
           }
 
@@ -1010,27 +1094,33 @@ function renderProduct() {
       </section>
 
 
-      <!-- DETALHES -->
+      <!-- =========================
+           DETALHES
+      ========================== -->
 
       <section class="details">
 
         <span class="category">
+
           ${
             escapeHTML(
               product.category ||
               "Produtos"
             )
           }
+
         </span>
 
 
         <h1 class="title">
+
           ${
             escapeHTML(
               product.name ||
               "Produto"
             )
           }
+
         </h1>
 
 
@@ -1048,30 +1138,43 @@ function renderProduct() {
         </span>
 
 
+        <!-- PREÇO -->
+
         <div class="price-box">
 
           ${
             hasCompare
               ? `
+
                 <span class="old-price">
+
                   ${formatBRL(comparePrice)}
+
                 </span>
+
               `
               : ""
           }
 
 
           <strong class="price">
+
             ${formatBRL(price)}
+
           </strong>
 
 
           <span class="payment-note">
-            Valor do produto. Entrega calculada conforme o CEP.
+
+            Valor do produto.
+            Entrega calculada conforme o CEP.
+
           </span>
 
         </div>
 
+
+        <!-- INFORMAÇÕES -->
 
         <div class="purchase-info">
 
@@ -1084,6 +1187,7 @@ function renderProduct() {
               📍
             </div>
 
+
             <div class="purchase-info-text">
 
               <strong>
@@ -1091,8 +1195,10 @@ function renderProduct() {
               </strong>
 
               <span>
+
                 Valor e disponibilidade da entrega
                 são calculados conforme o CEP.
+
               </span>
 
             </div>
@@ -1109,6 +1215,7 @@ function renderProduct() {
               💬
             </div>
 
+
             <div class="purchase-info-text">
 
               <strong>
@@ -1116,8 +1223,10 @@ function renderProduct() {
               </strong>
 
               <span>
+
                 O pedido é finalizado diretamente
                 pelo WhatsApp da Crazy Chicken.
+
               </span>
 
             </div>
@@ -1134,6 +1243,7 @@ function renderProduct() {
               🛒
             </div>
 
+
             <div class="purchase-info-text">
 
               <strong>
@@ -1141,8 +1251,10 @@ function renderProduct() {
               </strong>
 
               <span>
+
                 Adicione outros produtos antes
                 de finalizar o seu pedido.
+
               </span>
 
             </div>
@@ -1151,6 +1263,141 @@ function renderProduct() {
 
         </div>
 
+
+        <!-- =========================
+             SELETOR DE QUANTIDADE
+        ========================== -->
+
+        ${
+          available
+            ? `
+
+              <div
+                class="product-quantity-selector"
+                style="
+                  display:flex;
+                  align-items:center;
+                  justify-content:space-between;
+                  gap:16px;
+                  margin:20px 0 14px;
+                  padding:14px 16px;
+                  border:1px solid #2b2b2b;
+                  border-radius:14px;
+                  background:#101010;
+                "
+              >
+
+                <div>
+
+                  <strong
+                    style="
+                      display:block;
+                      color:#ffffff;
+                      font-size:13px;
+                      font-weight:800;
+                    "
+                  >
+
+                    Quantidade
+
+                  </strong>
+
+
+                  <span
+                    style="
+                      display:block;
+                      margin-top:3px;
+                      color:#888888;
+                      font-size:11px;
+                    "
+                  >
+
+                    Escolha quantas unidades deseja
+
+                  </span>
+
+                </div>
+
+
+                <div
+                  style="
+                    display:flex;
+                    align-items:center;
+                    gap:10px;
+                  "
+                >
+
+                  <button
+                    id="decreaseQuantity"
+                    type="button"
+                    aria-label="Diminuir quantidade"
+                    style="
+                      width:40px;
+                      height:40px;
+                      display:flex;
+                      align-items:center;
+                      justify-content:center;
+                      border:1px solid #333333;
+                      border-radius:10px;
+                      background:#181818;
+                      color:#ffffff;
+                      font-size:21px;
+                      font-weight:700;
+                      cursor:pointer;
+                    "
+                  >
+                    −
+                  </button>
+
+
+                  <strong
+                    id="selectedQuantity"
+                    style="
+                      min-width:34px;
+                      text-align:center;
+                      color:#ffffff;
+                      font-size:17px;
+                      font-weight:800;
+                    "
+                  >
+
+                    ${selectedQuantity}
+
+                  </strong>
+
+
+                  <button
+                    id="increaseQuantity"
+                    type="button"
+                    aria-label="Aumentar quantidade"
+                    style="
+                      width:40px;
+                      height:40px;
+                      display:flex;
+                      align-items:center;
+                      justify-content:center;
+                      border:1px solid #333333;
+                      border-radius:10px;
+                      background:#181818;
+                      color:#ffffff;
+                      font-size:21px;
+                      font-weight:700;
+                      cursor:pointer;
+                    "
+                  >
+                    +
+                  </button>
+
+                </div>
+
+              </div>
+
+            `
+            : ""
+        }
+
+
+        <!-- BOTÕES -->
 
         <div class="actions">
 
@@ -1196,19 +1443,26 @@ function renderProduct() {
         </div>
 
 
+        <!-- DESCRIÇÃO -->
+
         <div class="description">
 
           <h2>
+
             Descrição do produto
+
           </h2>
 
+
           <p>
+
             ${
               escapeHTML(
                 product.description ||
                 "Sem descrição disponível."
               )
             }
+
           </p>
 
         </div>
@@ -1216,6 +1470,7 @@ function renderProduct() {
       </section>
 
     </div>
+
   `;
 
 
@@ -1224,14 +1479,15 @@ function renderProduct() {
 }
 
 
-/* =========================
+/* =========================================================
    PRODUTOS RELACIONADOS
-========================= */
+========================================================= */
 
 async function loadRelatedProducts() {
 
   const section =
     element("relatedSection");
+
 
   const root =
     element("relatedProducts");
@@ -1243,7 +1499,9 @@ async function loadRelatedProducts() {
     !product ||
     !supabase
   ) {
+
     return;
+
   }
 
 
@@ -1262,7 +1520,9 @@ async function loadRelatedProducts() {
 
 
   if (!category) {
+
     return;
+
   }
 
 
@@ -1271,51 +1531,44 @@ async function loadRelatedProducts() {
     const {
       data,
       error
-    } =
-      await supabase
+    } = await supabase
 
-        .from("products")
+      .from("products")
 
-        .select(`
-          id,
-          name,
-          category,
-          price,
-          compare_at_price,
-          stock,
-          image_url,
-          is_new,
-          featured,
-          active
-        `)
+      .select(`
+        id,
+        name,
+        category,
+        price,
+        compare_at_price,
+        stock,
+        image_url,
+        is_new,
+        active
+      `)
 
-        .eq(
-          "active",
-          true
-        )
+      .eq(
+        "active",
+        true
+      )
 
-        .eq(
-          "category",
-          category
-        )
+      .eq(
+        "category",
+        category
+      )
 
-        .neq(
-          "id",
-          product.id
-        )
+      .neq(
+        "id",
+        product.id
+      )
 
-        .order(
-          "featured",
-          {
-            ascending: false
-          }
-        )
-
-        .limit(4);
+      .limit(4);
 
 
     if (error) {
+
       throw error;
+
     }
 
 
@@ -1326,150 +1579,160 @@ async function loadRelatedProducts() {
 
 
     if (!related.length) {
+
       return;
+
     }
 
 
-    root.innerHTML =
-      related
+    root.innerHTML = related
 
-        .map(
+      .map(
+        relatedProduct => {
 
-          relatedProduct => {
-
-            const price =
-              Number(
-                relatedProduct.price ||
-                0
-              );
+          const price =
+            Number(
+              relatedProduct.price || 0
+            );
 
 
-            const comparePrice =
-              Number(
-                relatedProduct
-                  .compare_at_price ||
-                0
-              );
+          const comparePrice =
+            Number(
+              relatedProduct.compare_at_price || 0
+            );
 
 
-            const hasCompare =
-              comparePrice > price;
+          const hasCompare =
+            comparePrice > price;
 
 
-            const stock =
-              Number(
-                relatedProduct.stock ||
-                0
-              );
+          const stock =
+            Number(
+              relatedProduct.stock || 0
+            );
 
 
-            const image =
-              relatedProduct.image_url ||
-              BRAND_ICON;
+          const image =
+            relatedProduct.image_url ||
+            BRAND_ICON;
 
 
-            return `
+          return `
 
-              <a
-                class="related-card"
-                href="/produto.html?id=${
-                  encodeURIComponent(
-                    relatedProduct.id
-                  )
-                }"
-              >
+            <a
+              class="related-card"
+              href="/produto.html?id=${
+                encodeURIComponent(
+                  relatedProduct.id
+                )
+              }"
+            >
 
-                <div class="related-image">
+              <div class="related-image">
 
-                  <img
-                    src="${escapeHTML(image)}"
-                    alt="${
-                      escapeHTML(
-                        relatedProduct.name ||
-                        "Produto"
-                      )
-                    }"
-                    loading="lazy"
-                    onerror="
-                      this.onerror=null;
-                      this.src='${BRAND_ICON}'
-                    "
-                  >
+                <img
+                  src="${escapeHTML(image)}"
+                  alt="${
+                    escapeHTML(
+                      relatedProduct.name ||
+                      "Produto"
+                    )
+                  }"
+                  loading="lazy"
+                  onerror="
+                    this.onerror=null;
+                    this.src='${BRAND_ICON}'
+                  "
+                >
+
+
+                ${
+                  relatedProduct.is_new
+                    ? `
+
+                      <span class="related-new">
+
+                        Novidade
+
+                      </span>
+
+                    `
+                    : ""
+                }
+
+              </div>
+
+
+              <div class="related-info">
+
+                <span class="related-category">
 
                   ${
-                    relatedProduct.is_new
-                      ? `
-                        <span class="related-new">
-                          Novidade
-                        </span>
-                      `
-                      : ""
+                    escapeHTML(
+                      relatedProduct.category ||
+                      "Produtos"
+                    )
                   }
 
-                </div>
+                </span>
 
 
-                <div class="related-info">
+                <h3 class="related-name">
 
-                  <span class="related-category">
-                    ${
-                      escapeHTML(
-                        relatedProduct.category ||
-                        "Produtos"
-                      )
-                    }
-                  </span>
+                  ${
+                    escapeHTML(
+                      relatedProduct.name ||
+                      "Produto"
+                    )
+                  }
 
-
-                  <h3 class="related-name">
-                    ${
-                      escapeHTML(
-                        relatedProduct.name ||
-                        "Produto"
-                      )
-                    }
-                  </h3>
+                </h3>
 
 
-                  <span class="related-old-price">
-                    ${
-                      hasCompare
-                        ? formatBRL(
-                            comparePrice
-                          )
-                        : "&nbsp;"
-                    }
-                  </span>
+                <span class="related-old-price">
+
+                  ${
+                    hasCompare
+                      ? formatBRL(
+                          comparePrice
+                        )
+                      : "&nbsp;"
+                  }
+
+                </span>
 
 
-                  <strong class="related-price">
-                    ${
-                      formatBRL(
-                        price
-                      )
-                    }
-                  </strong>
+                <strong class="related-price">
+
+                  ${
+                    formatBRL(
+                      price
+                    )
+                  }
+
+                </strong>
 
 
-                  <span class="related-stock">
-                    ${
-                      stock > 0
-                        ? `${stock} em estoque`
-                        : "Indisponível"
-                    }
-                  </span>
+                <span class="related-stock">
 
-                </div>
+                  ${
+                    stock > 0
+                      ? `${stock} em estoque`
+                      : "Indisponível"
+                  }
 
-              </a>
+                </span>
 
-            `;
+              </div>
 
-          }
+            </a>
 
-        )
+          `;
 
-        .join("");
+        }
+      )
+
+      .join("");
 
 
     section.hidden =
@@ -1496,14 +1759,189 @@ async function loadRelatedProducts() {
 }
 
 
-/* =========================
+/* =========================================================
+   QUANTIDADE DO PRODUTO
+========================================================= */
+
+function updateQuantitySelector() {
+
+  if (!product) {
+
+    return;
+
+  }
+
+
+  const stock =
+    Math.max(
+      0,
+      Number(
+        product.stock || 0
+      )
+    );
+
+
+  selectedQuantity =
+    Math.max(
+      1,
+      Math.min(
+        Number(selectedQuantity) || 1,
+        Math.max(
+          stock,
+          1
+        )
+      )
+    );
+
+
+  const value =
+    element("selectedQuantity");
+
+
+  const decrease =
+    element("decreaseQuantity");
+
+
+  const increase =
+    element("increaseQuantity");
+
+
+  if (value) {
+
+    value.textContent =
+      String(selectedQuantity);
+
+  }
+
+
+  /*
+    BOTÃO MENOS
+  */
+
+  if (decrease) {
+
+    decrease.disabled =
+      selectedQuantity <= 1 ||
+      stock <= 0;
+
+
+    decrease.style.opacity =
+      decrease.disabled
+        ? "0.35"
+        : "1";
+
+
+    decrease.style.cursor =
+      decrease.disabled
+        ? "not-allowed"
+        : "pointer";
+
+  }
+
+
+  /*
+    BOTÃO MAIS
+  */
+
+  if (increase) {
+
+    increase.disabled =
+      selectedQuantity >= stock ||
+      stock <= 0;
+
+
+    increase.style.opacity =
+      increase.disabled
+        ? "0.35"
+        : "1";
+
+
+    increase.style.cursor =
+      increase.disabled
+        ? "not-allowed"
+        : "pointer";
+
+  }
+
+}
+
+
+/* =========================================================
+   ALTERAR QUANTIDADE
+========================================================= */
+
+function changeSelectedQuantity(delta) {
+
+  if (!product) {
+
+    return;
+
+  }
+
+
+  const stock =
+    Number(
+      product.stock || 0
+    );
+
+
+  if (stock <= 0) {
+
+    return;
+
+  }
+
+
+  const next =
+    selectedQuantity +
+    Number(delta || 0);
+
+
+  /*
+    NÃO PERMITE PASSAR DO ESTOQUE
+  */
+
+  if (next > stock) {
+
+    showToast(
+      "Você atingiu o estoque disponível."
+    );
+
+
+    updateQuantitySelector();
+
+
+    return;
+
+  }
+
+
+  /*
+    NÃO PERMITE MENOS DE 1
+  */
+
+  selectedQuantity =
+    Math.max(
+      1,
+      next
+    );
+
+
+  updateQuantitySelector();
+
+}
+
+
+/* =========================================================
    ADICIONAR PRODUTO
-========================= */
+========================================================= */
 
 function addCurrentProduct() {
 
   if (!product) {
+
     return false;
+
   }
 
 
@@ -1519,57 +1957,125 @@ function addCurrentProduct() {
       "Produto sem estoque."
     );
 
+
     return false;
 
   }
 
 
+  /*
+    QUANTIDADE ESCOLHIDA NA PÁGINA
+  */
+
+  const quantityToAdd =
+    Math.max(
+      1,
+      Math.min(
+        Number(
+          selectedQuantity
+        ) || 1,
+        stock
+      )
+    );
+
+
+  /*
+    PROCURA SE O PRODUTO
+    JÁ ESTÁ NO CARRINHO
+  */
+
   const item =
     cart.find(
       entry =>
+
         String(
           entry.product_id
         ) ===
+
         String(
           product.id
         )
     );
 
 
-  if (item) {
+  const currentQuantity =
+    item
+      ? Number(
+          item.quantity || 0
+        )
+      : 0;
 
-    if (
-      Number(
-        item.quantity
-      ) >= stock
-    ) {
+
+  /*
+    ESTOQUE REAL CONSIDERANDO
+    O QUE JÁ ESTÁ NO CARRINHO
+  */
+
+  const finalQuantity =
+    currentQuantity +
+    quantityToAdd;
+
+
+  if (
+    finalQuantity > stock
+  ) {
+
+    const remaining =
+      Math.max(
+        0,
+        stock -
+        currentQuantity
+      );
+
+
+    if (remaining <= 0) {
 
       showToast(
         "Você atingiu o estoque disponível."
       );
 
-      return false;
+
+    } else {
+
+      showToast(
+
+        `Você pode adicionar no máximo mais ${remaining} ${
+          remaining === 1
+            ? "unidade"
+            : "unidades"
+        }.`
+
+      );
 
     }
 
 
+    return false;
+
+  }
+
+
+  /*
+    ATUALIZA OU CRIA ITEM
+  */
+
+  if (item) {
+
     item.quantity =
-      Number(
-        item.quantity
-      ) + 1;
+      finalQuantity;
 
 
   } else {
 
-    cart.push({
+    cart.push(
+      {
+        product_id:
+          product.id,
 
-      product_id:
-        product.id,
-
-      quantity:
-        1
-
-    });
+        quantity:
+          quantityToAdd
+      }
+    );
 
   }
 
@@ -1582,34 +2088,65 @@ function addCurrentProduct() {
 }
 
 
-/* =========================
+/* =========================================================
    ADICIONAR AO CARRINHO
-========================= */
+========================================================= */
 
 function addToCart() {
+
+  const quantityAdded =
+    selectedQuantity;
+
 
   const added =
     addCurrentProduct();
 
 
   if (!added) {
+
     return;
+
   }
 
 
-  showToast(
-    "Produto adicionado ao carrinho."
-  );
+  if (
+    quantityAdded === 1
+  ) {
+
+    showToast(
+      "Produto adicionado ao carrinho."
+    );
+
+
+  } else {
+
+    showToast(
+      `${quantityAdded} unidades adicionadas ao carrinho.`
+    );
+
+  }
 
 
   animateCartButton();
 
+
+  /*
+    DEPOIS DE ADICIONAR,
+    VOLTA O SELETOR PARA 1
+  */
+
+  selectedQuantity =
+    1;
+
+
+  updateQuantitySelector();
+
 }
 
 
-/* =========================
+/* =========================================================
    COMPRAR AGORA
-========================= */
+========================================================= */
 
 function buyNow() {
 
@@ -1618,9 +2155,16 @@ function buyNow() {
 
 
   if (!added) {
+
     return;
+
   }
 
+
+  /*
+    ABRE O CARRINHO/CHECKOUT
+    NA PÁGINA PRINCIPAL
+  */
 
   location.href =
     "/index.html?checkout=1";
@@ -1628,9 +2172,9 @@ function buyNow() {
 }
 
 
-/* =========================
+/* =========================================================
    ANIMAÇÃO DO CARRINHO
-========================= */
+========================================================= */
 
 function animateCartButton() {
 
@@ -1642,7 +2186,9 @@ function animateCartButton() {
     !button ||
     !button.animate
   ) {
+
     return;
+
   }
 
 
@@ -1652,33 +2198,35 @@ function animateCartButton() {
         transform:
           "scale(1)"
       },
+
       {
         transform:
           "scale(1.12)"
       },
+
       {
         transform:
           "scale(.96)"
       },
+
       {
         transform:
           "scale(1)"
       }
     ],
+
     {
       duration: 350,
-
-      easing:
-        "ease-out"
+      easing: "ease"
     }
   );
 
 }
 
 
-/* =========================
-   CARRINHO
-========================= */
+/* =========================================================
+   RENDERIZAR CARRINHO
+========================================================= */
 
 function renderCart() {
 
@@ -1686,41 +2234,34 @@ function renderCart() {
     element("cartCount");
 
 
-  const itemsRoot =
-    element("cartItems");
-
-
-  const subtotalRoot =
-    element("cartSubtotal");
-
-
-  if (
-    !count ||
-    !itemsRoot ||
-    !subtotalRoot
-  ) {
-    return;
-  }
-
-
   const totalQuantity =
     cart.reduce(
-
-      (total, item) =>
+      (
+        total,
+        item
+      ) =>
 
         total +
-
         Number(
           item.quantity || 0
         ),
 
       0
-
     );
 
 
-  count.textContent =
-    totalQuantity;
+  if (count) {
+
+    count.textContent =
+      String(
+        totalQuantity
+      );
+
+
+    count.hidden =
+      totalQuantity <= 0;
+
+  }
 
 
   renderCartProducts();
@@ -1728,9 +2269,9 @@ function renderCart() {
 }
 
 
-/* =========================
+/* =========================================================
    PRODUTOS DO CARRINHO
-========================= */
+========================================================= */
 
 async function renderCartProducts() {
 
@@ -1742,25 +2283,36 @@ async function renderCartProducts() {
     element("cartSubtotal");
 
 
-  if (
-    !root ||
-    !subtotalRoot
-  ) {
+  if (!root) {
+
     return;
+
   }
 
+
+  /*
+    CARRINHO VAZIO
+  */
 
   if (!cart.length) {
 
     root.innerHTML = `
+
       <div class="cart-empty">
+
         Seu carrinho está vazio.
+
       </div>
+
     `;
 
 
-    subtotalRoot.textContent =
-      formatBRL(0);
+    if (subtotalRoot) {
+
+      subtotalRoot.textContent =
+        formatBRL(0);
+
+    }
 
 
     return;
@@ -1768,47 +2320,60 @@ async function renderCartProducts() {
   }
 
 
-  if (!supabase) {
+  if (
+    !supabase ||
+    !isConfigured
+  ) {
+
     return;
+
   }
 
 
   try {
 
-    const ids =
-      [
-        ...new Set(
-          cart.map(
-            item =>
-              item.product_id
-          )
-        )
-      ];
+    const ids = cart
+
+      .map(
+        item =>
+          item.product_id
+      )
+
+      .filter(Boolean);
+
+
+    if (!ids.length) {
+
+      return;
+
+    }
 
 
     const {
       data,
       error
-    } =
-      await supabase
+    } = await supabase
 
-        .from("products")
+      .from("products")
 
-        .select(`
-          id,
-          name,
-          price,
-          image_url
-        `)
+      .select(`
+        id,
+        name,
+        price,
+        image_url,
+        stock
+      `)
 
-        .in(
-          "id",
-          ids
-        );
+      .in(
+        "id",
+        ids
+      );
 
 
     if (error) {
+
       throw error;
+
     }
 
 
@@ -1822,138 +2387,153 @@ async function renderCartProducts() {
       0;
 
 
-    const rows =
-      cart
+    const rows = cart
 
-        .map(
+      .map(
+        item => {
 
-          item => {
+          const cartProduct =
+            products.find(
+              entry =>
 
-            const cartProduct =
-              products.find(
+                String(
+                  entry.id
+                ) ===
 
-                entry =>
+                String(
+                  item.product_id
+                )
+            );
 
-                  String(
-                    entry.id
-                  ) ===
 
-                  String(
-                    item.product_id
+          if (!cartProduct) {
+
+            return "";
+
+          }
+
+
+          const quantity =
+            Number(
+              item.quantity || 1
+            );
+
+
+          const unitPrice =
+            Number(
+              cartProduct.price || 0
+            );
+
+
+          const itemSubtotal =
+            unitPrice *
+            quantity;
+
+
+          subtotal +=
+            itemSubtotal;
+
+
+          return `
+
+            <div class="cart-item">
+
+              <img
+                src="${
+                  escapeHTML(
+                    cartProduct.image_url ||
+                    BRAND_ICON
                   )
-
-              );
-
-
-            if (!cartProduct) {
-              return "";
-            }
-
-
-            const quantity =
-              Number(
-                item.quantity || 1
-              );
-
-
-            subtotal +=
-
-              Number(
-                cartProduct.price || 0
-              )
-
-              *
-
-              quantity;
+                }"
+                alt="${
+                  escapeHTML(
+                    cartProduct.name ||
+                    "Produto"
+                  )
+                }"
+                onerror="
+                  this.onerror=null;
+                  this.src='${BRAND_ICON}'
+                "
+              >
 
 
-            return `
+              <div class="cart-item-info">
 
-              <div class="cart-item">
+                <strong>
 
-                <img
-                  src="${
-                    escapeHTML(
-                      cartProduct.image_url ||
-                      BRAND_ICON
-                    )
-                  }"
-                  alt="${
+                  ${
                     escapeHTML(
                       cartProduct.name ||
                       "Produto"
                     )
-                  }"
-                  onerror="
-                    this.onerror=null;
-                    this.src='${BRAND_ICON}'
-                  "
-                >
+                  }
+
+                </strong>
 
 
-                <div class="cart-item-info">
+                <span>
 
-                  <strong>
-                    ${
-                      escapeHTML(
-                        cartProduct.name ||
-                        "Produto"
-                      )
-                    }
-                  </strong>
+                  ${quantity}x
+                  ${formatBRL(unitPrice)}
+
+                </span>
 
 
-                  <span>
+                <span>
 
-                    ${quantity}x
+                  ${formatBRL(itemSubtotal)}
 
-                    ${
-                      formatBRL(
-                        cartProduct.price
-                      )
-                    }
-
-                  </span>
-
-                </div>
-
-
-                <button
-                  class="cart-item-remove"
-                  type="button"
-                  data-remove="${
-                    cartProduct.id
-                  }"
-                  aria-label="Remover produto"
-                >
-                  ×
-                </button>
+                </span>
 
               </div>
 
-            `;
 
-          }
+              <button
+                class="cart-item-remove"
+                type="button"
+                data-remove="${
+                  cartProduct.id
+                }"
+                aria-label="Remover produto"
+              >
 
-        )
+                ×
 
-        .join("");
+              </button>
+
+            </div>
+
+          `;
+
+        }
+      )
+
+      .join("");
 
 
     root.innerHTML =
       rows ||
 
       `
+
         <div class="cart-empty">
+
           Seu carrinho está vazio.
+
         </div>
+
       `;
 
 
-    subtotalRoot.textContent =
-      formatBRL(
-        subtotal
-      );
+    if (subtotalRoot) {
+
+      subtotalRoot.textContent =
+        formatBRL(
+          subtotal
+        );
+
+    }
 
 
   } catch (error) {
@@ -1968,15 +2548,14 @@ async function renderCartProducts() {
 }
 
 
-/* =========================
-   REMOVER DO CARRINHO
-========================= */
+/* =========================================================
+   REMOVER PRODUTO DO CARRINHO
+========================================================= */
 
 function removeFromCart(id) {
 
   cart =
     cart.filter(
-
       item =>
 
         String(
@@ -1984,7 +2563,6 @@ function removeFromCart(id) {
         ) !==
 
         String(id)
-
     );
 
 
@@ -1993,9 +2571,9 @@ function removeFromCart(id) {
 }
 
 
-/* =========================
+/* =========================================================
    ABRIR CARRINHO
-========================= */
+========================================================= */
 
 function openCart() {
 
@@ -2011,17 +2589,16 @@ function openCart() {
     );
 
 
-  document.body
-    .classList.add(
-      "no-scroll"
-    );
+  document.body.classList.add(
+    "no-scroll"
+  );
 
 }
 
 
-/* =========================
+/* =========================================================
    FECHAR CARRINHO
-========================= */
+========================================================= */
 
 function closeCart() {
 
@@ -2037,37 +2614,34 @@ function closeCart() {
     );
 
 
-  document.body
-    .classList.remove(
-      "no-scroll"
-    );
+  document.body.classList.remove(
+    "no-scroll"
+  );
 
 }
 
 
-/* =========================
-   ABRIR IMAGEM
-========================= */
+/* =========================================================
+   ABRIR ZOOM DA IMAGEM
+========================================================= */
 
 function openImage() {
 
   const image =
-    element(
-      "mainProductImage"
-    );
+    element("mainProductImage");
 
 
   const expanded =
-    element(
-      "expandedImage"
-    );
+    element("expandedImage");
 
 
   if (
     !image ||
     !expanded
   ) {
+
     return;
+
   }
 
 
@@ -2090,9 +2664,9 @@ function openImage() {
 }
 
 
-/* =========================
-   FECHAR IMAGEM
-========================= */
+/* =========================================================
+   FECHAR ZOOM
+========================================================= */
 
 function closeImage() {
 
@@ -2104,16 +2678,18 @@ function closeImage() {
 }
 
 
-/* =========================
-   SWIPE MOBILE
-========================= */
+/* =========================================================
+   SWIPE - INÍCIO
+========================================================= */
 
 function handleTouchStart(event) {
 
   if (
     productImages.length <= 1
   ) {
+
     return;
+
   }
 
 
@@ -2122,7 +2698,9 @@ function handleTouchStart(event) {
 
 
   if (!touch) {
+
     return;
+
   }
 
 
@@ -2148,12 +2726,18 @@ function handleTouchStart(event) {
 }
 
 
+/* =========================================================
+   SWIPE - MOVIMENTO
+========================================================= */
+
 function handleTouchMove(event) {
 
   if (
     productImages.length <= 1
   ) {
+
     return;
+
   }
 
 
@@ -2162,7 +2746,9 @@ function handleTouchMove(event) {
 
 
   if (!touch) {
+
     return;
+
   }
 
 
@@ -2181,17 +2767,15 @@ function handleTouchMove(event) {
 
 
   /*
-    Só consideramos swipe quando
-    o movimento horizontal é maior
-    que o vertical.
-
-    Assim a página continua rolando
-    normalmente para cima e para baixo.
+    SÓ CONSIDERA SWIPE SE
+    O MOVIMENTO HORIZONTAL
+    FOR MAIOR QUE O VERTICAL.
   */
 
   if (
     Math.abs(distanceX) >
       Math.abs(distanceY) &&
+
     Math.abs(distanceX) > 10
   ) {
 
@@ -2203,12 +2787,18 @@ function handleTouchMove(event) {
 }
 
 
+/* =========================================================
+   SWIPE - FINAL
+========================================================= */
+
 function handleTouchEnd() {
 
   if (
     productImages.length <= 1
   ) {
+
     return;
+
   }
 
 
@@ -2235,6 +2825,7 @@ function handleTouchEnd() {
 
       nextProductImage();
 
+
     } else {
 
       previousProductImage();
@@ -2255,11 +2846,48 @@ function handleTouchEnd() {
 }
 
 
-/* =========================
+/* =========================================================
    EVENTOS DO PRODUTO
-========================= */
+========================================================= */
 
 function bindProductEvents() {
+
+  /*
+    QUANTIDADE
+  */
+
+  element("decreaseQuantity")
+    ?.addEventListener(
+      "click",
+      () => {
+
+        changeSelectedQuantity(
+          -1
+        );
+
+      }
+    );
+
+
+  element("increaseQuantity")
+    ?.addEventListener(
+      "click",
+      () => {
+
+        changeSelectedQuantity(
+          1
+        );
+
+      }
+    );
+
+
+  updateQuantitySelector();
+
+
+  /*
+    ADICIONAR AO CARRINHO
+  */
 
   element("addCart")
     ?.addEventListener(
@@ -2267,6 +2895,10 @@ function bindProductEvents() {
       addToCart
     );
 
+
+  /*
+    COMPRAR AGORA
+  */
 
   element("buyNow")
     ?.addEventListener(
@@ -2277,11 +2909,6 @@ function bindProductEvents() {
 
   /*
     MINIATURAS
-
-    Clique funciona normalmente.
-
-    Mouseenter faz a troca automática
-    no computador.
   */
 
   const thumbnails =
@@ -2292,9 +2919,7 @@ function bindProductEvents() {
 
   thumbnails
     ?.addEventListener(
-
       "click",
-
       event => {
 
         const button =
@@ -2304,25 +2929,24 @@ function bindProductEvents() {
 
 
         if (!button) {
+
           return;
+
         }
 
 
         selectProductImage(
           Number(
-            button.dataset
-              .productImage
+            button.dataset.productImage
           )
         );
 
       }
-
     );
 
 
   /*
-    HOVER SOMENTE EM DISPOSITIVOS
-    QUE REALMENTE POSSUEM MOUSE.
+    HOVER NO COMPUTADOR
   */
 
   if (
@@ -2339,20 +2963,16 @@ function bindProductEvents() {
         button => {
 
           button.addEventListener(
-
             "mouseenter",
-
             () => {
 
               selectProductImage(
                 Number(
-                  button.dataset
-                    .productImage
+                  button.dataset.productImage
                 )
               );
 
             }
-
           );
 
         }
@@ -2360,6 +2980,10 @@ function bindProductEvents() {
 
   }
 
+
+  /*
+    IMAGEM PRINCIPAL
+  */
 
   const mainImage =
     element(
@@ -2402,19 +3026,18 @@ function bindProductEvents() {
 
 
   /*
-    CLIQUE = ZOOM
-
-    Se o usuário acabou de fazer
-    swipe, o clique gerado pelo toque
-    é ignorado.
+    CLIQUE NA IMAGEM = ZOOM
   */
 
   mainImage
     ?.addEventListener(
-
       "click",
-
       event => {
+
+        /*
+          IGNORA O CLIQUE GERADO
+          DEPOIS DE UM SWIPE.
+        */
 
         if (swipeHandled) {
 
@@ -2433,47 +3056,45 @@ function bindProductEvents() {
         openImage();
 
       }
-
     );
 
 
   /*
-    ACESSIBILIDADE NO PC
+    TECLADO / ACESSIBILIDADE
   */
 
   mainImage
     ?.addEventListener(
-
       "keydown",
-
       event => {
 
         if (
-          event.key ===
-            "Enter" ||
-
-          event.key ===
-            " "
+          event.key === "Enter" ||
+          event.key === " "
         ) {
 
           event.preventDefault();
+
 
           openImage();
 
         }
 
       }
-
     );
 
 }
 
 
-/* =========================
+/* =========================================================
    EVENTOS GLOBAIS
-========================= */
+========================================================= */
 
 function bindGlobalEvents() {
+
+  /*
+    ABRIR CARRINHO
+  */
 
   element("openCart")
     ?.addEventListener(
@@ -2481,6 +3102,10 @@ function bindGlobalEvents() {
       openCart
     );
 
+
+  /*
+    FECHAR CARRINHO
+  */
 
   element("closeCart")
     ?.addEventListener(
@@ -2496,6 +3121,10 @@ function bindGlobalEvents() {
     );
 
 
+  /*
+    FECHAR ZOOM
+  */
+
   element("closeImage")
     ?.addEventListener(
       "click",
@@ -2505,9 +3134,7 @@ function bindGlobalEvents() {
 
   element("imageModal")
     ?.addEventListener(
-
       "click",
-
       event => {
 
         if (
@@ -2520,15 +3147,16 @@ function bindGlobalEvents() {
         }
 
       }
-
     );
 
 
+  /*
+    REMOVER ITEM DO CARRINHO
+  */
+
   element("cartItems")
     ?.addEventListener(
-
       "click",
-
       event => {
 
         const remove =
@@ -2538,7 +3166,9 @@ function bindGlobalEvents() {
 
 
         if (!remove) {
+
           return;
+
         }
 
 
@@ -2547,19 +3177,19 @@ function bindGlobalEvents() {
         );
 
       }
-
     );
 
 
+  /*
+    ESC
+  */
+
   document.addEventListener(
-
     "keydown",
-
     event => {
 
       if (
-        event.key ===
-        "Escape"
+        event.key === "Escape"
       ) {
 
         closeCart();
@@ -2569,26 +3199,31 @@ function bindGlobalEvents() {
       }
 
     }
-
   );
 
 }
 
 
-/* =========================
+/* =========================================================
    INICIALIZAÇÃO
-========================= */
+========================================================= */
 
 async function init() {
 
   bindGlobalEvents();
 
+
   renderCart();
+
 
   await loadProduct();
 
 }
 
+
+/* =========================================================
+   START
+========================================================= */
 
 document.addEventListener(
   "DOMContentLoaded",
