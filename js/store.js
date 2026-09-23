@@ -21,29 +21,30 @@ import {
 } from "/js/config.js";
 
 
-/* =========================================================
-   CONFIGURAÇÕES
-========================================================= */
-
 const CART_KEY = "crazy_chicken_cart_v4";
-const BRAND_ICON = "/assets/crazy-chicken-icon.png";
+
+const BRAND_ICON =
+  "/assets/crazy-chicken-icon.png";
 
 
 const state = {
-  products: [],
-  filtered: [],
-  cart: loadCart(),
-  favorites: new Set(),
-  session: null,
-  category: "all",
-  search: "",
-  sort: "featured",
 
-  /*
-    Quantidade selecionada nos cards
-    antes de adicionar ao carrinho.
-  */
-  productQuantities: new Map()
+  products: [],
+
+  filtered: [],
+
+  cart: loadCart(),
+
+  favorites: new Set(),
+
+  session: null,
+
+  category: "all",
+
+  search: "",
+
+  sort: "featured"
+
 };
 
 
@@ -52,7 +53,9 @@ const state = {
 ========================================================= */
 
 function element(id) {
+
   return document.getElementById(id);
+
 }
 
 
@@ -64,13 +67,18 @@ function loadCart() {
 
   try {
 
-    const parsed = JSON.parse(
-      localStorage.getItem(CART_KEY) || "[]"
-    );
+    const parsed =
+      JSON.parse(
+        localStorage.getItem(
+          CART_KEY
+        ) || "[]"
+      );
+
 
     return Array.isArray(parsed)
       ? parsed
       : [];
+
 
   } catch (error) {
 
@@ -78,6 +86,7 @@ function loadCart() {
       "Não foi possível carregar o carrinho:",
       error
     );
+
 
     return [];
 
@@ -92,8 +101,11 @@ function saveCart() {
 
     localStorage.setItem(
       CART_KEY,
-      JSON.stringify(state.cart)
+      JSON.stringify(
+        state.cart
+      )
     );
+
 
   } catch (error) {
 
@@ -103,6 +115,7 @@ function saveCart() {
     );
 
   }
+
 
   renderCart();
 
@@ -117,78 +130,8 @@ function productById(id) {
 
   return state.products.find(
     product =>
-      String(product.id) === String(id)
-  );
-
-}
-
-
-/* =========================================================
-   QUANTIDADE SELECIONADA NO CARD
-========================================================= */
-
-function getSelectedQuantity(productId) {
-
-  const quantity =
-    Number(
-      state.productQuantities.get(
-        String(productId)
-      )
-    );
-
-  return Math.max(
-    1,
-    quantity || 1
-  );
-
-}
-
-
-function setSelectedQuantity(
-  productId,
-  quantity
-) {
-
-  const product =
-    productById(productId);
-
-  if (!product) {
-    return;
-  }
-
-
-  const stock =
-    Math.max(
-      0,
-      Number(product.stock || 0)
-    );
-
-
-  if (stock <= 0) {
-
-    state.productQuantities.set(
-      String(productId),
-      1
-    );
-
-    return;
-
-  }
-
-
-  const safeQuantity =
-    Math.min(
-      Math.max(
-        1,
-        Number(quantity) || 1
-      ),
-      stock
-    );
-
-
-  state.productQuantities.set(
-    String(productId),
-    safeQuantity
+      String(product.id) ===
+      String(id)
   );
 
 }
@@ -200,51 +143,72 @@ function setSelectedQuantity(
 
 function normalizeCart() {
 
-  state.cart = state.cart
-    .map(item => {
+  state.cart =
+    state.cart
 
-      const product =
-        productById(item.product_id);
+      .map(item => {
 
-      if (
-        !product ||
-        !product.active
-      ) {
-        return null;
-      }
+        const product =
+          productById(
+            item.product_id
+          );
 
 
-      const stock =
-        Number(product.stock || 0);
+        if (
+          !product ||
+          !product.active
+        ) {
+
+          return null;
+
+        }
 
 
-      if (stock <= 0) {
-        return null;
-      }
+        const stock =
+          Number(
+            product.stock || 0
+          );
 
 
-      return {
-        product_id: product.id,
+        if (stock <= 0) {
 
-        quantity: Math.min(
-          Math.max(
-            Number(item.quantity) || 1,
-            1
-          ),
-          stock
-        )
-      };
+          return null;
 
-    })
-    .filter(Boolean);
+        }
+
+
+        return {
+
+          product_id:
+            product.id,
+
+          quantity:
+            Math.min(
+              Math.max(
+                Number(
+                  item.quantity
+                ) || 1,
+                1
+              ),
+              stock
+            )
+
+        };
+
+      })
+
+      .filter(Boolean);
 
 
   try {
 
     localStorage.setItem(
       CART_KEY,
-      JSON.stringify(state.cart)
+      JSON.stringify(
+        state.cart
+      )
     );
+
 
   } catch (error) {
 
@@ -269,13 +233,18 @@ async function loadProducts() {
 
 
   if (!grid) {
+
     return;
+
   }
 
 
   grid.innerHTML = `
+
     <div class="empty">
+
       <div>
+
         <strong>
           Carregando produtos...
         </strong>
@@ -283,8 +252,11 @@ async function loadProducts() {
         <span>
           Buscando catálogo.
         </span>
+
       </div>
+
     </div>
+
   `;
 
 
@@ -294,8 +266,11 @@ async function loadProducts() {
   ) {
 
     grid.innerHTML = `
+
       <div class="empty">
+
         <div>
+
           <strong>
             Supabase não configurado.
           </strong>
@@ -303,11 +278,16 @@ async function loadProducts() {
           <span>
             Verifique a configuração da loja.
           </span>
+
         </div>
+
       </div>
+
     `;
 
+
     showSetupWarning();
+
 
     return;
 
@@ -319,42 +299,53 @@ async function loadProducts() {
     const {
       data,
       error
-    } = await supabase
-      .from("products")
-      .select(`
-        id,
-        sku,
-        name,
-        description,
-        category,
-        price,
-        compare_at_price,
-        stock,
-        image_url,
-        image_path,
-        is_new,
-        featured,
-        active,
-        created_at,
-        updated_at
-      `)
-      .eq("active", true)
-      .order(
-        "featured",
-        {
-          ascending: false
-        }
-      )
-      .order(
-        "created_at",
-        {
-          ascending: false
-        }
-      );
+    } =
+      await supabase
+
+        .from("products")
+
+        .select(`
+          id,
+          sku,
+          name,
+          description,
+          category,
+          price,
+          compare_at_price,
+          stock,
+          image_url,
+          image_path,
+          is_new,
+          featured,
+          active,
+          created_at,
+          updated_at
+        `)
+
+        .eq(
+          "active",
+          true
+        )
+
+        .order(
+          "featured",
+          {
+            ascending: false
+          }
+        )
+
+        .order(
+          "created_at",
+          {
+            ascending: false
+          }
+        );
 
 
     if (error) {
+
       throw error;
+
     }
 
 
@@ -364,38 +355,18 @@ async function loadProducts() {
         : [];
 
 
-    /*
-      Inicializa quantidade de cada produto.
-    */
-
-    state.products.forEach(product => {
-
-      const key =
-        String(product.id);
-
-      if (
-        !state.productQuantities.has(key)
-      ) {
-
-        state.productQuantities.set(
-          key,
-          1
-        );
-
-      }
-
-    });
-
-
     state.filtered =
       [...state.products];
 
 
     normalizeCart();
 
+
     renderCategories();
 
+
     applyFilters();
+
 
     renderCart();
 
@@ -404,7 +375,9 @@ async function loadProducts() {
 
       await loadFavorites();
 
+
       applyFilters();
+
 
     } catch (error) {
 
@@ -425,6 +398,7 @@ async function loadProducts() {
 
 
     grid.innerHTML = `
+
       <div class="empty">
 
         <div>
@@ -445,6 +419,7 @@ async function loadProducts() {
         </div>
 
       </div>
+
     `;
 
 
@@ -461,12 +436,22 @@ async function loadProducts() {
 
 /* =========================================================
    CARD DO PRODUTO
+
+   IMPORTANTE:
+   NÃO EXISTE MAIS SELETOR DE QUANTIDADE AQUI.
+
+   O CATÁLOGO ADICIONA 1 UNIDADE.
+
+   QUANTIDADE PERSONALIZADA FICA SOMENTE
+   NA PÁGINA INDIVIDUAL DO PRODUTO.
 ========================================================= */
 
 function productCard(product) {
 
   const stock =
-    Number(product.stock || 0);
+    Number(
+      product.stock || 0
+    );
 
 
   const inStock =
@@ -474,16 +459,21 @@ function productCard(product) {
 
 
   const favorite =
-    state.favorites.has(product.id);
+    state.favorites.has(
+      product.id
+    );
 
 
   const price =
-    Number(product.price || 0);
+    Number(
+      product.price || 0
+    );
 
 
   const comparePrice =
     Number(
-      product.compare_at_price || 0
+      product.compare_at_price ||
+      0
     );
 
 
@@ -496,20 +486,8 @@ function productCard(product) {
     BRAND_ICON;
 
 
-  const selectedQuantity =
-    Math.min(
-      getSelectedQuantity(
-        product.id
-      ),
-      Math.max(stock, 1)
-    );
-
-
-  const atMax =
-    selectedQuantity >= stock;
-
-
   return `
+
     <article
       class="product-card"
       data-product-id="${product.id}"
@@ -545,11 +523,13 @@ function productCard(product) {
               : ""
           }
 
+
           ${
             product.featured
               ? `<span>Destaque</span>`
               : ""
           }
+
 
           ${
             !inStock
@@ -570,11 +550,13 @@ function productCard(product) {
           data-favorite="${product.id}"
           aria-label="Favoritar produto"
         >
+
           ${
             favorite
               ? "♥"
               : "♡"
           }
+
         </button>
 
       </div>
@@ -583,12 +565,14 @@ function productCard(product) {
       <div class="product-body">
 
         <small>
+
           ${
             escapeHTML(
               product.category ||
               "Produtos"
             )
           }
+
         </small>
 
 
@@ -596,22 +580,26 @@ function productCard(product) {
           data-open-product="${product.id}"
           style="cursor:pointer;"
         >
+
           ${
             escapeHTML(
               product.name ||
               "Produto"
             )
           }
+
         </h3>
 
 
         <p>
+
           ${
             escapeHTML(
               product.description ||
               "Produto Crazy Chicken."
             )
           }
+
         </p>
 
 
@@ -622,12 +610,15 @@ function productCard(product) {
             ${
               hasCompare
                 ? `
+
                   <s>
                     ${formatBRL(comparePrice)}
                   </s>
+
                 `
                 : ""
             }
+
 
             <strong>
               ${formatBRL(price)}
@@ -637,120 +628,16 @@ function productCard(product) {
 
 
           <span>
+
             ${
               inStock
                 ? `${stock} em estoque`
                 : "Indisponível"
             }
+
           </span>
 
         </div>
-
-
-        ${
-          inStock
-            ? `
-              <div
-                class="product-quantity-selector"
-                style="
-                  display:flex;
-                  align-items:center;
-                  justify-content:space-between;
-                  gap:12px;
-                  margin:12px 0;
-                  padding:8px 10px;
-                  border:1px solid #292929;
-                  border-radius:10px;
-                  background:#111;
-                "
-              >
-
-                <span
-                  style="
-                    font-size:11px;
-                    color:#999;
-                    font-weight:700;
-                  "
-                >
-                  Quantidade
-                </span>
-
-
-                <div
-                  style="
-                    display:flex;
-                    align-items:center;
-                    gap:10px;
-                  "
-                >
-
-                  <button
-                    type="button"
-                    data-product-qty="-1"
-                    data-id="${product.id}"
-                    aria-label="Diminuir quantidade"
-                    style="
-                      width:32px;
-                      height:32px;
-                      border:1px solid #333;
-                      border-radius:8px;
-                      background:#181818;
-                      color:#fff;
-                      font-size:18px;
-                      cursor:pointer;
-                    "
-                    ${
-                      selectedQuantity <= 1
-                        ? "disabled"
-                        : ""
-                    }
-                  >
-                    −
-                  </button>
-
-
-                  <strong
-                    data-product-qty-value="${product.id}"
-                    style="
-                      min-width:24px;
-                      text-align:center;
-                      font-size:14px;
-                    "
-                  >
-                    ${selectedQuantity}
-                  </strong>
-
-
-                  <button
-                    type="button"
-                    data-product-qty="1"
-                    data-id="${product.id}"
-                    aria-label="Aumentar quantidade"
-                    style="
-                      width:32px;
-                      height:32px;
-                      border:1px solid #333;
-                      border-radius:8px;
-                      background:#181818;
-                      color:#fff;
-                      font-size:18px;
-                      cursor:pointer;
-                    "
-                    ${
-                      atMax
-                        ? "disabled"
-                        : ""
-                    }
-                  >
-                    +
-                  </button>
-
-                </div>
-
-              </div>
-            `
-            : ""
-        }
 
 
         <button
@@ -763,16 +650,19 @@ function productCard(product) {
               : "disabled"
           }
         >
+
           ${
             inStock
-              ? `Adicionar ${selectedQuantity > 1 ? `${selectedQuantity} unidades` : "ao carrinho"}`
+              ? "Adicionar ao carrinho"
               : "Sem estoque"
           }
+
         </button>
 
       </div>
 
     </article>
+
   `;
 
 }
@@ -789,13 +679,18 @@ function renderProducts() {
 
 
   if (!grid) {
+
     return;
+
   }
 
 
-  if (!state.filtered.length) {
+  if (
+    !state.filtered.length
+  ) {
 
     grid.innerHTML = `
+
       <div class="empty">
 
         <div>
@@ -811,7 +706,9 @@ function renderProducts() {
         </div>
 
       </div>
+
     `;
+
 
     return;
 
@@ -840,6 +737,7 @@ function applyFilters() {
 
   const list =
     state.products
+
       .filter(product => {
 
         const category =
@@ -852,16 +750,22 @@ function applyFilters() {
 
 
         const text = `
+
           ${product.name || ""}
+
           ${product.description || ""}
+
           ${product.category || ""}
+
           ${product.sku || ""}
+
         `.toLowerCase();
 
 
         const categoryMatches =
           state.category === "all" ||
-          category === state.category;
+          category ===
+            state.category;
 
 
         const searchMatches =
@@ -877,66 +781,100 @@ function applyFilters() {
       });
 
 
-  list.sort((a, b) => {
+  list.sort(
+    (a, b) => {
 
-    if (
-      state.sort ===
-      "price-asc"
-    ) {
+      if (
+        state.sort ===
+        "price-asc"
+      ) {
+
+        return (
+          Number(a.price) -
+          Number(b.price)
+        );
+
+      }
+
+
+      if (
+        state.sort ===
+        "price-desc"
+      ) {
+
+        return (
+          Number(b.price) -
+          Number(a.price)
+        );
+
+      }
+
+
+      if (
+        state.sort ===
+        "name"
+      ) {
+
+        return String(
+          a.name || ""
+        ).localeCompare(
+          String(
+            b.name || ""
+          ),
+          "pt-BR"
+        );
+
+      }
+
 
       return (
-        Number(a.price) -
-        Number(b.price)
+
+        Number(
+          Boolean(
+            b.featured
+          )
+        )
+
+        -
+
+        Number(
+          Boolean(
+            a.featured
+          )
+        )
+
+        ||
+
+        Number(
+          Boolean(
+            b.is_new
+          )
+        )
+
+        -
+
+        Number(
+          Boolean(
+            a.is_new
+          )
+        )
+
+        ||
+
+        new Date(
+          b.created_at
+        )
+
+        -
+
+        new Date(
+          a.created_at
+        )
+
       );
 
     }
-
-
-    if (
-      state.sort ===
-      "price-desc"
-    ) {
-
-      return (
-        Number(b.price) -
-        Number(a.price)
-      );
-
-    }
-
-
-    if (
-      state.sort ===
-      "name"
-    ) {
-
-      return String(
-        a.name || ""
-      ).localeCompare(
-        String(
-          b.name || ""
-        ),
-        "pt-BR"
-      );
-
-    }
-
-
-    return (
-      Number(Boolean(b.featured))
-      -
-      Number(Boolean(a.featured))
-      ||
-      Number(Boolean(b.is_new))
-      -
-      Number(Boolean(a.is_new))
-      ||
-      new Date(b.created_at)
-      -
-      new Date(a.created_at)
-    );
-
-  });
+  );
 
 
   state.filtered =
@@ -959,21 +897,30 @@ function renderCategories() {
 
 
   if (!row) {
+
     return;
+
   }
 
 
   const categories = [
+
     ...new Set(
+
       state.products
-        .map(product =>
-          String(
-            product.category ||
-            "Outros"
-          ).trim()
+
+        .map(
+          product =>
+            String(
+              product.category ||
+              "Outros"
+            ).trim()
         )
+
         .filter(Boolean)
+
     )
+
   ].sort(
     (a, b) =>
       a.localeCompare(
@@ -994,37 +941,55 @@ function renderCategories() {
       type="button"
       data-category="all"
     >
+
       Todos
+
     </button>
 
 
     ${
       categories
-        .map(category => {
 
-          const normalized =
-            category.toLowerCase();
+        .map(
+          category => {
 
-          return `
-            <button
-              class="chip ${
-                state.category ===
-                normalized
-                  ? "active"
-                  : ""
-              }"
-              type="button"
-              data-category="${
-                escapeHTML(normalized)
-              }"
-            >
-              ${escapeHTML(category)}
-            </button>
-          `;
+            const normalized =
+              category.toLowerCase();
 
-        })
+
+            return `
+
+              <button
+                class="chip ${
+                  state.category ===
+                  normalized
+                    ? "active"
+                    : ""
+                }"
+                type="button"
+                data-category="${
+                  escapeHTML(
+                    normalized
+                  )
+                }"
+              >
+
+                ${
+                  escapeHTML(
+                    category
+                  )
+                }
+
+              </button>
+
+            `;
+
+          }
+        )
+
         .join("")
     }
+
   `;
 
 }
@@ -1040,9 +1005,11 @@ function animateProductToCart(
 
   const card =
     document.querySelector(
-      `[data-product-id="${CSS.escape(
-        String(productId)
-      )}"]`
+      `[data-product-id="${
+        CSS.escape(
+          String(productId)
+        )
+      }"]`
     );
 
 
@@ -1060,7 +1027,9 @@ function animateProductToCart(
     !productImage ||
     !cartButton
   ) {
+
     return;
+
   }
 
 
@@ -1075,49 +1044,69 @@ function animateProductToCart(
 
 
   const flyingImage =
-    productImage.cloneNode(true);
+    productImage.cloneNode(
+      true
+    );
 
 
   flyingImage.style.position =
     "fixed";
 
+
   flyingImage.style.left =
     `${imageRect.left}px`;
+
 
   flyingImage.style.top =
     `${imageRect.top}px`;
 
+
   flyingImage.style.width =
     `${imageRect.width}px`;
+
 
   flyingImage.style.height =
     `${imageRect.height}px`;
 
+
   flyingImage.style.objectFit =
     "cover";
+
 
   flyingImage.style.borderRadius =
     "16px";
 
+
   flyingImage.style.zIndex =
     "999999";
+
 
   flyingImage.style.pointerEvents =
     "none";
 
+
   flyingImage.style.opacity =
     "0.95";
+
 
   flyingImage.style.boxShadow =
     "0 12px 35px rgba(0,0,0,.45)";
 
+
   flyingImage.style.transition = [
+
     "left .7s cubic-bezier(.22,.61,.36,1)",
+
     "top .7s cubic-bezier(.22,.61,.36,1)",
+
     "width .7s ease",
+
     "height .7s ease",
+
     "opacity .7s ease",
+
     "transform .7s ease"
+
   ].join(", ");
 
 
@@ -1126,170 +1115,107 @@ function animateProductToCart(
   );
 
 
-  requestAnimationFrame(() => {
+  requestAnimationFrame(
+    () => {
 
-    requestAnimationFrame(() => {
+      requestAnimationFrame(
+        () => {
 
-      flyingImage.style.left =
-        `${
-          cartRect.left +
-          cartRect.width / 2 -
-          15
-        }px`;
-
-      flyingImage.style.top =
-        `${
-          cartRect.top +
-          cartRect.height / 2 -
-          15
-        }px`;
-
-      flyingImage.style.width =
-        "30px";
-
-      flyingImage.style.height =
-        "30px";
-
-      flyingImage.style.opacity =
-        "0.25";
-
-      flyingImage.style.transform =
-        "rotate(8deg) scale(.5)";
-
-    });
-
-  });
+          flyingImage.style.left =
+            `${
+              cartRect.left +
+              cartRect.width / 2 -
+              15
+            }px`;
 
 
-  setTimeout(() => {
+          flyingImage.style.top =
+            `${
+              cartRect.top +
+              cartRect.height / 2 -
+              15
+            }px`;
 
-    flyingImage.remove();
+
+          flyingImage.style.width =
+            "30px";
 
 
-    if (
-      typeof cartButton.animate ===
-      "function"
-    ) {
+          flyingImage.style.height =
+            "30px";
 
-      cartButton.animate(
-        [
-          {
-            transform:
-              "scale(1)"
-          },
-          {
-            transform:
-              "scale(1.18)"
-          },
-          {
-            transform:
-              "scale(.95)"
-          },
-          {
-            transform:
-              "scale(1)"
-          }
-        ],
-        {
-          duration: 350,
-          easing: "ease-out"
+
+          flyingImage.style.opacity =
+            "0.25";
+
+
+          flyingImage.style.transform =
+            "rotate(8deg) scale(.5)";
+
         }
       );
 
     }
-
-  }, 700);
-
-}
-
-
-/* =========================================================
-   ALTERAR QUANTIDADE DO CARD
-========================================================= */
-
-function changeProductQuantity(
-  productId,
-  delta
-) {
-
-  const product =
-    productById(productId);
-
-
-  if (!product) {
-    return;
-  }
-
-
-  const stock =
-    Math.max(
-      0,
-      Number(
-        product.stock || 0
-      )
-    );
-
-
-  if (stock <= 0) {
-    return;
-  }
-
-
-  const current =
-    getSelectedQuantity(
-      productId
-    );
-
-
-  const next =
-    current +
-    Number(delta || 0);
-
-
-  if (next < 1) {
-
-    setSelectedQuantity(
-      productId,
-      1
-    );
-
-    applyFilters();
-
-    return;
-
-  }
-
-
-  if (next > stock) {
-
-    showToast(
-      "Você atingiu o estoque disponível.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  setSelectedQuantity(
-    productId,
-    next
   );
 
 
-  /*
-    Re-renderiza mantendo pesquisa,
-    filtro e ordenação.
-  */
+  setTimeout(
+    () => {
 
-  renderProducts();
+      flyingImage.remove();
+
+
+      if (
+        typeof cartButton.animate ===
+        "function"
+      ) {
+
+        cartButton.animate(
+
+          [
+
+            {
+              transform:
+                "scale(1)"
+            },
+
+            {
+              transform:
+                "scale(1.18)"
+            },
+
+            {
+              transform:
+                "scale(.95)"
+            },
+
+            {
+              transform:
+                "scale(1)"
+            }
+
+          ],
+
+          {
+            duration: 350,
+            easing: "ease-out"
+          }
+
+        );
+
+      }
+
+    },
+    700
+  );
 
 }
 
 
 /* =========================================================
    ADICIONAR AO CARRINHO
+
+   NO CATÁLOGO SEMPRE ADICIONA 1 UNIDADE.
 ========================================================= */
 
 function addToCart(id) {
@@ -1304,6 +1230,7 @@ function addToCart(id) {
       "Produto não encontrado.",
       "error"
     );
+
 
     return;
 
@@ -1326,16 +1253,10 @@ function addToCart(id) {
       "error"
     );
 
+
     return;
 
   }
-
-
-  const quantityToAdd =
-    Math.min(
-      getSelectedQuantity(id),
-      stock
-    );
 
 
   const item =
@@ -1343,8 +1264,7 @@ function addToCart(id) {
       entry =>
         String(
           entry.product_id
-        )
-        ===
+        ) ===
         String(id)
     );
 
@@ -1361,44 +1281,21 @@ function addToCart(id) {
 
 
   /*
-    Verifica quantidade que já existe
-    + quantidade selecionada.
+    O CARD ADICIONA SOMENTE 1.
+
+    SE O CARRINHO JÁ TIVER TODO O ESTOQUE,
+    NÃO DEIXA PASSAR.
   */
 
   if (
-    currentInCart +
-    quantityToAdd >
-    stock
+    currentInCart >= stock
   ) {
 
-    const remaining =
-      Math.max(
-        0,
-        stock -
-        currentInCart
-      );
-
-
-    if (remaining <= 0) {
-
-      showToast(
-        "Você já adicionou todo o estoque disponível deste produto.",
-        "error"
-      );
-
-      return;
-
-    }
-
-
     showToast(
-      `Você pode adicionar no máximo mais ${remaining} ${
-        remaining === 1
-          ? "unidade"
-          : "unidades"
-      }.`,
+      "Você já adicionou todo o estoque disponível deste produto.",
       "error"
     );
+
 
     return;
 
@@ -1408,16 +1305,19 @@ function addToCart(id) {
   if (item) {
 
     item.quantity =
-      currentInCart +
-      quantityToAdd;
+      currentInCart + 1;
 
 
   } else {
 
-    state.cart.push({
-      product_id: product.id,
-      quantity: quantityToAdd
-    });
+    state.cart.push(
+      {
+        product_id:
+          product.id,
+
+        quantity: 1
+      }
+    );
 
   }
 
@@ -1425,37 +1325,28 @@ function addToCart(id) {
   saveCart();
 
 
+  /*
+    NÃO ABRE O CARRINHO.
+
+    APENAS MOSTRA A ANIMAÇÃO
+    INDO ATÉ O ÍCONE.
+  */
+
   animateProductToCart(
     product.id
   );
 
 
   showToast(
-    quantityToAdd === 1
-      ? "Produto adicionado ao carrinho."
-      : `${quantityToAdd} unidades adicionadas ao carrinho.`,
+    "Produto adicionado ao carrinho.",
     "success"
   );
-
-
-  /*
-    Depois de adicionar,
-    volta seletor para 1.
-  */
-
-  setSelectedQuantity(
-    id,
-    1
-  );
-
-
-  renderProducts();
 
 }
 
 
 /* =========================================================
-   ALTERAR QUANTIDADE NO CARRINHO
+   ALTERAR QUANTIDADE DENTRO DO CARRINHO
 ========================================================= */
 
 function changeQty(
@@ -1468,8 +1359,7 @@ function changeQty(
       entry =>
         String(
           entry.product_id
-        )
-        ===
+        ) ===
         String(id)
     );
 
@@ -1482,7 +1372,9 @@ function changeQty(
     !item ||
     !product
   ) {
+
     return;
+
   }
 
 
@@ -1506,8 +1398,15 @@ function changeQty(
 
   const next =
     currentQuantity +
-    Number(delta || 0);
+    Number(
+      delta || 0
+    );
 
+
+  /*
+    AO DIMINUIR DE 1 PARA 0,
+    REMOVE O PRODUTO.
+  */
 
   if (next <= 0) {
 
@@ -1516,17 +1415,23 @@ function changeQty(
         entry =>
           String(
             entry.product_id
-          )
-          !==
+          ) !==
           String(id)
       );
 
+
     saveCart();
+
 
     return;
 
   }
 
+
+  /*
+    SE PRODUTO FICOU SEM ESTOQUE,
+    REMOVE DO CARRINHO.
+  */
 
   if (stock <= 0) {
 
@@ -1535,10 +1440,10 @@ function changeQty(
         entry =>
           String(
             entry.product_id
-          )
-          !==
+          ) !==
           String(id)
       );
+
 
     saveCart();
 
@@ -1548,10 +1453,15 @@ function changeQty(
       "error"
     );
 
+
     return;
 
   }
 
+
+  /*
+    NÃO DEIXA PASSAR DO ESTOQUE.
+  */
 
   if (next > stock) {
 
@@ -1560,7 +1470,9 @@ function changeQty(
       "error"
     );
 
+
     renderCart();
+
 
     return;
 
@@ -1587,8 +1499,7 @@ function removeFromCart(id) {
       item =>
         String(
           item.product_id
-        )
-        !==
+        ) !==
         String(id)
     );
 
@@ -1613,8 +1524,10 @@ function renderCart() {
   const root =
     element("cartItems");
 
+
   const count =
     element("cartCount");
+
 
   const subtotalEl =
     element("cartSubtotal");
@@ -1625,46 +1538,67 @@ function renderCart() {
     !count ||
     !subtotalEl
   ) {
+
     return;
+
   }
 
 
   const rows =
     state.cart
-      .map(item => ({
-        item,
-        product:
-          productById(
-            item.product_id
-          )
-      }))
+
+      .map(
+        item => ({
+
+          item,
+
+          product:
+            productById(
+              item.product_id
+            )
+
+        })
+      )
+
       .filter(
-        row => row.product
+        row =>
+          row.product
       );
 
 
   const quantity =
     rows.reduce(
-      (total, row) =>
+      (
+        total,
+        row
+      ) =>
+
         total +
+
         Math.max(
           0,
           Number(
             row.item.quantity
           ) || 0
         ),
+
       0
     );
 
 
   const subtotal =
     rows.reduce(
-      (total, row) => {
+      (
+        total,
+        row
+      ) => {
 
         const price =
           Number(
-            row.product.price || 0
+            row.product.price ||
+            0
           );
+
 
         const itemQuantity =
           Math.max(
@@ -1673,6 +1607,7 @@ function renderCart() {
               row.item.quantity
             ) || 0
           );
+
 
         return (
           total +
@@ -1696,6 +1631,7 @@ function renderCart() {
   if (!rows.length) {
 
     root.innerHTML = `
+
       <div class="empty">
 
         <div>
@@ -1711,7 +1647,9 @@ function renderCart() {
         </div>
 
       </div>
+
     `;
+
 
     return;
 
@@ -1719,229 +1657,261 @@ function renderCart() {
 
 
   root.innerHTML =
-    rows.map(
-      ({
-        item,
-        product
-      }) => {
+    rows
 
-        const thumb =
-          product.image_url ||
-          BRAND_ICON;
+      .map(
+        ({
+          item,
+          product
+        }) => {
 
-
-        const productName =
-          String(
-            product.name ||
-            "Produto"
-          );
+          const thumb =
+            product.image_url ||
+            BRAND_ICON;
 
 
-        const price =
-          Number(
-            product.price || 0
-          );
+          const productName =
+            String(
+              product.name ||
+              "Produto"
+            );
 
 
-        const stock =
-          Math.max(
-            0,
+          const price =
             Number(
-              product.stock || 0
-            )
-          );
+              product.price ||
+              0
+            );
 
 
-        const itemQuantity =
-          Math.min(
+          const stock =
             Math.max(
-              1,
+              0,
               Number(
-                item.quantity
-              ) || 1
-            ),
-            Math.max(
-              stock,
-              1
-            )
-          );
-
-
-        item.quantity =
-          itemQuantity;
-
-
-        const itemSubtotal =
-          price *
-          itemQuantity;
-
-
-        const atMaxStock =
-          itemQuantity >= stock;
-
-
-        return `
-          <div
-            class="cart-item"
-            data-cart-item="${
-              escapeHTML(
-                String(product.id)
+                product.stock ||
+                0
               )
-            }"
-          >
+            );
 
-            <div class="cart-thumb">
 
-              <img
-                src="${
-                  escapeHTML(thumb)
-                }"
-                alt="${
-                  escapeHTML(
-                    productName
+          const itemQuantity =
+            Math.min(
+
+              Math.max(
+                1,
+                Number(
+                  item.quantity
+                ) || 1
+              ),
+
+              Math.max(
+                stock,
+                1
+              )
+
+            );
+
+
+          item.quantity =
+            itemQuantity;
+
+
+          const itemSubtotal =
+            price *
+            itemQuantity;
+
+
+          const atMaxStock =
+            itemQuantity >= stock;
+
+
+          return `
+
+            <div
+              class="cart-item"
+              data-cart-item="${
+                escapeHTML(
+                  String(
+                    product.id
                   )
-                }"
-                onerror="
-                  this.onerror=null;
-                  this.src='${BRAND_ICON}'
-                "
-              >
+                )
+              }"
+            >
 
-            </div>
+              <div class="cart-thumb">
 
-
-            <div class="cart-info">
-
-              <strong>
-                ${
-                  escapeHTML(
-                    productName
-                  )
-                }
-              </strong>
-
-
-              <span class="cart-unit-price">
-                ${formatBRL(price)} cada
-              </span>
-
-
-              <div class="cart-stock">
-
-                ${
-                  stock > 0
-                    ? `${stock} ${
-                        stock === 1
-                          ? "unidade disponível"
-                          : "unidades disponíveis"
-                      }`
-                    : "Sem estoque"
-                }
-
-              </div>
-
-
-              <div class="cart-item-bottom">
-
-                <div
-                  class="qty"
-                  aria-label="Quantidade de ${
+                <img
+                  src="${
+                    escapeHTML(
+                      thumb
+                    )
+                  }"
+                  alt="${
                     escapeHTML(
                       productName
                     )
                   }"
+                  onerror="
+                    this.onerror=null;
+                    this.src='${BRAND_ICON}'
+                  "
                 >
 
-                  <button
-                    type="button"
-                    data-qty="-1"
-                    data-id="${
-                      escapeHTML(
-                        String(product.id)
-                      )
-                    }"
-                    aria-label="Diminuir quantidade"
-                  >
-                    −
-                  </button>
+              </div>
 
 
-                  <b class="qty-value">
-                    ${itemQuantity}
-                  </b>
+              <div class="cart-info">
+
+                <strong>
+
+                  ${
+                    escapeHTML(
+                      productName
+                    )
+                  }
+
+                </strong>
 
 
-                  <button
-                    type="button"
-                    data-qty="1"
-                    data-id="${
-                      escapeHTML(
-                        String(product.id)
-                      )
-                    }"
-                    aria-label="Aumentar quantidade"
-                    ${
-                      atMaxStock
-                        ? "disabled"
-                        : ""
-                    }
-                  >
-                    +
-                  </button>
+                <span class="cart-unit-price">
+
+                  ${formatBRL(price)}
+                  cada
+
+                </span>
+
+
+                <div class="cart-stock">
+
+                  ${
+                    stock > 0
+                      ? `${stock} ${
+                          stock === 1
+                            ? "unidade disponível"
+                            : "unidades disponíveis"
+                        }`
+                      : "Sem estoque"
+                  }
 
                 </div>
 
 
-                <div class="cart-item-subtotal">
+                <div class="cart-item-bottom">
 
-                  <span>
-                    Subtotal
-                  </span>
-
-                  <strong>
-                    ${
-                      formatBRL(
-                        itemSubtotal
+                  <div
+                    class="qty"
+                    aria-label="Quantidade de ${
+                      escapeHTML(
+                        productName
                       )
-                    }
-                  </strong>
+                    }"
+                  >
+
+                    <button
+                      type="button"
+                      data-qty="-1"
+                      data-id="${
+                        escapeHTML(
+                          String(
+                            product.id
+                          )
+                        )
+                      }"
+                      aria-label="Diminuir quantidade"
+                    >
+                      −
+                    </button>
+
+
+                    <b class="qty-value">
+
+                      ${itemQuantity}
+
+                    </b>
+
+
+                    <button
+                      type="button"
+                      data-qty="1"
+                      data-id="${
+                        escapeHTML(
+                          String(
+                            product.id
+                          )
+                        )
+                      }"
+                      aria-label="Aumentar quantidade"
+                      ${
+                        atMaxStock
+                          ? "disabled"
+                          : ""
+                      }
+                    >
+                      +
+                    </button>
+
+                  </div>
+
+
+                  <div class="cart-item-subtotal">
+
+                    <span>
+                      Subtotal
+                    </span>
+
+                    <strong>
+
+                      ${
+                        formatBRL(
+                          itemSubtotal
+                        )
+                      }
+
+                    </strong>
+
+                  </div>
 
                 </div>
 
               </div>
 
+
+              <button
+                class="remove"
+                type="button"
+                data-remove="${
+                  escapeHTML(
+                    String(
+                      product.id
+                    )
+                  )
+                }"
+                aria-label="Remover ${
+                  escapeHTML(
+                    productName
+                  )
+                }"
+                title="Remover produto"
+              >
+
+                ×
+
+              </button>
+
             </div>
 
+          `;
 
-            <button
-              class="remove"
-              type="button"
-              data-remove="${
-                escapeHTML(
-                  String(product.id)
-                )
-              }"
-              aria-label="Remover ${
-                escapeHTML(
-                  productName
-                )
-              }"
-              title="Remover produto"
-            >
-              ×
-            </button>
+        }
+      )
 
-          </div>
-        `;
-
-      }
-    ).join("");
+      .join("");
 
 }
 
 
 /* =========================================================
-   ABRIR / FECHAR CARRINHO
+   ABRIR CARRINHO
 ========================================================= */
 
 function openCart() {
@@ -1950,11 +1920,15 @@ function openCart() {
 
 
   element("cartDrawer")
-    ?.classList.add("open");
+    ?.classList.add(
+      "open"
+    );
 
 
   element("cartBackdrop")
-    ?.classList.add("open");
+    ?.classList.add(
+      "open"
+    );
 
 
   document.body
@@ -1965,14 +1939,22 @@ function openCart() {
 }
 
 
+/* =========================================================
+   FECHAR CARRINHO
+========================================================= */
+
 function closeCart() {
 
   element("cartDrawer")
-    ?.classList.remove("open");
+    ?.classList.remove(
+      "open"
+    );
 
 
   element("cartBackdrop")
-    ?.classList.remove("open");
+    ?.classList.remove(
+      "open"
+    );
 
 
   document.body
@@ -1993,43 +1975,59 @@ async function loadFavorites() {
     !state.session ||
     !supabase
   ) {
+
     return;
+
   }
 
 
   const {
     data,
     error
-  } = await supabase
-    .from("favorites")
-    .select("product_id")
-    .eq(
-      "user_id",
-      state.session.user.id
-    );
+  } =
+    await supabase
+
+      .from("favorites")
+
+      .select(
+        "product_id"
+      )
+
+      .eq(
+        "user_id",
+        state.session.user.id
+      );
 
 
   if (error) {
+
     throw error;
+
   }
 
 
   state.favorites =
     new Set(
-      (data || []).map(
-        row =>
-          row.product_id
-      )
+      (data || [])
+        .map(
+          row =>
+            row.product_id
+        )
     );
 
 }
 
+
+/* =========================================================
+   FAVORITAR / DESFAVORITAR
+========================================================= */
 
 async function toggleFavorite(id) {
 
   if (!supabase) {
 
     showSetupWarning();
+
 
     return;
 
@@ -2052,6 +2050,7 @@ async function toggleFavorite(id) {
         )
       }`;
 
+
     return;
 
   }
@@ -2065,48 +2064,66 @@ async function toggleFavorite(id) {
 
       const {
         error
-      } = await supabase
-        .from("favorites")
-        .delete()
-        .eq(
-          "user_id",
-          session.user.id
-        )
-        .eq(
-          "product_id",
-          id
-        );
+      } =
+        await supabase
+
+          .from("favorites")
+
+          .delete()
+
+          .eq(
+            "user_id",
+            session.user.id
+          )
+
+          .eq(
+            "product_id",
+            id
+          );
 
 
       if (error) {
+
         throw error;
+
       }
 
 
-      state.favorites.delete(id);
+      state.favorites.delete(
+        id
+      );
 
 
     } else {
 
       const {
         error
-      } = await supabase
-        .from("favorites")
-        .insert({
-          user_id:
-            session.user.id,
+      } =
+        await supabase
 
-          product_id:
-            id
-        });
+          .from("favorites")
+
+          .insert(
+            {
+              user_id:
+                session.user.id,
+
+              product_id:
+                id
+            }
+          );
 
 
       if (error) {
+
         throw error;
+
       }
 
 
-      state.favorites.add(id);
+      state.favorites.add(
+        id
+      );
 
     }
 
@@ -2134,19 +2151,29 @@ async function toggleFavorite(id) {
 
 
 /* =========================================================
-   PERFIL
+   PERFIL COMPLETO
 ========================================================= */
 
-function profileComplete(profile) {
+function profileComplete(
+  profile
+) {
 
   return [
+
     profile?.full_name,
+
     profile?.phone,
+
     profile?.postal_code,
+
     profile?.street,
+
     profile?.number,
+
     profile?.city,
+
     profile?.state
+
   ].every(
     value =>
       String(
@@ -2163,12 +2190,15 @@ function profileComplete(profile) {
 
 async function checkout() {
 
-  if (!state.cart.length) {
+  if (
+    !state.cart.length
+  ) {
 
     showToast(
       "Seu carrinho está vazio.",
       "error"
     );
+
 
     return;
 
@@ -2178,6 +2208,7 @@ async function checkout() {
   if (!supabase) {
 
     showSetupWarning();
+
 
     return;
 
@@ -2196,7 +2227,9 @@ async function checkout() {
 
   if (button) {
 
-    button.disabled = true;
+    button.disabled =
+      true;
+
 
     button.textContent =
       "Preparando pedido...";
@@ -2204,7 +2237,8 @@ async function checkout() {
   }
 
 
-  let popup = null;
+  let popup =
+    null;
 
 
   try {
@@ -2214,6 +2248,7 @@ async function checkout() {
         "about:blank",
         "_blank"
       );
+
 
   } catch (error) {
 
@@ -2243,6 +2278,7 @@ async function checkout() {
           )
         }`;
 
+
       return;
 
     }
@@ -2255,7 +2291,9 @@ async function checkout() {
 
 
     if (
-      !profileComplete(profile)
+      !profileComplete(
+        profile
+      )
     ) {
 
       popup?.close();
@@ -2264,6 +2302,7 @@ async function checkout() {
       location.href =
         "/account.html?checkout=1";
 
+
       return;
 
     }
@@ -2271,10 +2310,13 @@ async function checkout() {
 
     normalizeCart();
 
+
     renderCart();
 
 
-    if (!state.cart.length) {
+    if (
+      !state.cart.length
+    ) {
 
       popup?.close();
 
@@ -2284,6 +2326,7 @@ async function checkout() {
         "error"
       );
 
+
       return;
 
     }
@@ -2292,6 +2335,7 @@ async function checkout() {
     const items =
       state.cart.map(
         item => ({
+
           product_id:
             item.product_id,
 
@@ -2299,6 +2343,7 @@ async function checkout() {
             Number(
               item.quantity
             )
+
         })
       );
 
@@ -2306,16 +2351,20 @@ async function checkout() {
     const {
       data,
       error
-    } = await supabase.rpc(
-      "create_order",
-      {
-        p_items: items
-      }
-    );
+    } =
+      await supabase.rpc(
+        "create_order",
+        {
+          p_items:
+            items
+        }
+      );
 
 
     if (error) {
+
       throw error;
+
     }
 
 
@@ -2334,7 +2383,10 @@ async function checkout() {
 
     const localSubtotal =
       state.cart.reduce(
-        (total, item) => {
+        (
+          total,
+          item
+        ) => {
 
           const product =
             productById(
@@ -2343,19 +2395,30 @@ async function checkout() {
 
 
           if (!product) {
+
             return total;
+
           }
 
 
           return (
-            total +
+
+            total
+
+            +
+
             Number(
-              product.price || 0
+              product.price ||
+              0
             )
+
             *
+
             Number(
-              item.quantity || 0
+              item.quantity ||
+              0
             )
+
           );
 
         },
@@ -2388,19 +2451,37 @@ async function checkout() {
 
 
           const itemSubtotal =
+
             Number(
-              product?.price || 0
+              product?.price ||
+              0
             )
+
             *
+
             Number(
-              item.quantity || 0
+              item.quantity ||
+              0
             );
 
 
           return (
-            `${item.quantity}x ` +
-            `${product?.name || "Produto"} — ` +
-            `${formatBRL(itemSubtotal)}`
+
+            `${item.quantity}x `
+
+            +
+
+            `${
+              product?.name ||
+              "Produto"
+            } — `
+
+            +
+
+            `${formatBRL(
+              itemSubtotal
+            )}`
+
           );
 
         }
@@ -2445,6 +2526,7 @@ async function checkout() {
 
 
     const whatsapp =
+
       `https://wa.me/${WHATSAPP_NUMBER}?text=${
         encodeURIComponent(
           lines.join("\n")
@@ -2452,9 +2534,12 @@ async function checkout() {
       }`;
 
 
-    state.cart = [];
+    state.cart =
+      [];
+
 
     saveCart();
+
 
     closeCart();
 
@@ -2529,7 +2614,9 @@ function hydrateHeroAuth() {
 
 
   if (!button) {
+
     return;
+
   }
 
 
@@ -2540,6 +2627,7 @@ function hydrateHeroAuth() {
     button.href =
       "/account.html";
 
+
     button.textContent =
       "👤 Minha conta";
 
@@ -2548,6 +2636,7 @@ function hydrateHeroAuth() {
 
     button.href =
       "/login.html";
+
 
     button.textContent =
       "👤 Entrar ou criar conta";
@@ -2597,7 +2686,9 @@ function bindEvents() {
       event => {
 
         state.search =
-          event.target.value || "";
+          event.target.value ||
+          "";
+
 
         applyFilters();
 
@@ -2613,6 +2704,7 @@ function bindEvents() {
         state.sort =
           event.target.value ||
           "featured";
+
 
         applyFilters();
 
@@ -2632,7 +2724,9 @@ function bindEvents() {
 
 
         if (!button) {
+
           return;
+
         }
 
 
@@ -2643,16 +2737,20 @@ function bindEvents() {
 
         $$(
           ".chip",
-          element("categoryRow")
+          element(
+            "categoryRow"
+          )
         )
-          .forEach(chip => {
+          .forEach(
+            chip => {
 
-            chip.classList.toggle(
-              "active",
-              chip === button
-            );
+              chip.classList.toggle(
+                "active",
+                chip === button
+              );
 
-          });
+            }
+          );
 
 
         applyFilters();
@@ -2671,50 +2769,6 @@ function bindEvents() {
       event => {
 
         /*
-          SELETOR DE QUANTIDADE
-        */
-
-        const quantityButton =
-          event.target.closest(
-            "[data-product-qty]"
-          );
-
-
-        if (quantityButton) {
-
-          event.preventDefault();
-
-          event.stopPropagation();
-
-
-          if (
-            quantityButton.disabled
-          ) {
-            return;
-          }
-
-
-          const id =
-            quantityButton.dataset.id;
-
-
-          const delta =
-            Number(
-              quantityButton.dataset.productQty
-            );
-
-
-          changeProductQuantity(
-            id,
-            delta
-          );
-
-          return;
-
-        }
-
-
-        /*
           ADICIONAR AO CARRINHO
         */
 
@@ -2731,14 +2785,19 @@ function bindEvents() {
           event.stopPropagation();
 
 
-          if (add.disabled) {
+          if (
+            add.disabled
+          ) {
+
             return;
+
           }
 
 
           addToCart(
             add.dataset.add
           );
+
 
           return;
 
@@ -2766,6 +2825,7 @@ function bindEvents() {
             favorite.dataset.favorite
           );
 
+
           return;
 
         }
@@ -2781,7 +2841,9 @@ function bindEvents() {
           );
 
 
-        if (openProductButton) {
+        if (
+          openProductButton
+        ) {
 
           const id =
             openProductButton
@@ -2790,13 +2852,17 @@ function bindEvents() {
 
 
           if (!id) {
+
             return;
+
           }
 
 
           location.href =
             `/produto.html?id=${
-              encodeURIComponent(id)
+              encodeURIComponent(
+                id
+              )
             }`;
 
         }
@@ -2828,8 +2894,12 @@ function bindEvents() {
 
         if (qty) {
 
-          if (qty.disabled) {
+          if (
+            qty.disabled
+          ) {
+
             return;
+
           }
 
 
@@ -2839,6 +2909,7 @@ function bindEvents() {
               qty.dataset.qty
             )
           );
+
 
           return;
 
@@ -2858,7 +2929,7 @@ function bindEvents() {
 
 
   /*
-    ESC fecha carrinho.
+    ESC FECHA O CARRINHO
   */
 
   document.addEventListener(
@@ -2866,7 +2937,8 @@ function bindEvents() {
     event => {
 
       if (
-        event.key === "Escape"
+        event.key ===
+        "Escape"
       ) {
 
         closeCart();
@@ -2935,6 +3007,7 @@ async function init() {
 
     await hydrateHeaderAuth();
 
+
   } catch (error) {
 
     console.warn(
@@ -2967,7 +3040,9 @@ async function init() {
       );
 
 
-      state.session = null;
+      state.session =
+        null;
+
 
       hydrateHeroAuth();
 
@@ -2992,6 +3067,7 @@ async function init() {
 
             await hydrateHeaderAuth();
 
+
           } catch (error) {
 
             console.warn(
@@ -3007,6 +3083,7 @@ async function init() {
             if (session) {
 
               await loadFavorites();
+
 
             } else {
 
@@ -3043,8 +3120,15 @@ async function init() {
 
 
   /*
-    Comprar agora:
+    QUANDO VEM DE:
+
+    produto.html -> Comprar agora
+
+    A URL É:
+
     /index.html?checkout=1
+
+    ABRIMOS O CARRINHO AUTOMATICAMENTE.
   */
 
   const params =
@@ -3054,8 +3138,9 @@ async function init() {
 
 
   if (
-    params.get("checkout") ===
-    "1"
+    params.get(
+      "checkout"
+    ) === "1"
   ) {
 
     openCart();
